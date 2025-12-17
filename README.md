@@ -148,7 +148,7 @@ Este projeto integra conceitos de:
 
 • Valores financeiros no ambiente de teste são simulados.
 
-• Futuras melhorias podem incluir:
+## 📈 Futuras melhorias podem incluir:
 
 • Transferência de saldo entre alunos
 
