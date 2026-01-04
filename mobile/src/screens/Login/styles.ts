@@ -20,11 +20,6 @@ export const style = StyleSheet.create({
         marginBottom: -50,
         marginTop: 20
     },
-    titleInput:{
-        marginLeft: 5,
-        color: temas.colors.gray,
-        marginTop: 20
-    },
     boxTop:{
         width: '100%',
         alignItems: 'center',
@@ -40,45 +35,6 @@ export const style = StyleSheet.create({
         width: '100%',
         alignItems: 'center',
         marginTop: -50, // Espaçamento reduzido
-    },
-    boxInput:{
-        width: '100%',
-        height: 40,
-        borderWidth: 1,
-        borderRadius: 40,
-        marginTop: 10,
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 10,
-        backgroundColor: temas.colors.lightgray,
-        borderColor: temas.colors.lightgray,
-    },
-    input:{
-        height: '100%',
-        width: '90%',
-        borderRadius: 40,
-        paddingLeft: 5
-    },
-    button:{
-        width: 250,
-        height: 50,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: temas.colors.primary,
-        borderRadius: 40,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 3,
-        },
-        shadowOpacity: 0.29,
-        shadowRadius: 4.65,
-        elevation: 7,    
-    },
-    textButton:{
-        fontSize: 16,
-        color: 'white',
-        fontWeight: 'bold'
     },
     textBottom:{
         fontSize: 16,

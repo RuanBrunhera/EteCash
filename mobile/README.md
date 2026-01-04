@@ -1,0 +1,1 @@
+# Playlist de vídeos utilizado para fazer o frontend: https://www.youtube.com/playlist?list=PLN5FV-HmjCA8UKWLep7O31PtQYqML8-Wd
