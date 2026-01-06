@@ -5,6 +5,8 @@ import { AntDesign, FontAwesome, Entypo, MaterialIcons } from "@expo/vector-icon
 import { temas } from "../../global/themes";
 import { AuthContextList } from "../../context/authContext_list";
 
+//ESTÁ DANDO ERRO NOS PARAMETROS AQUI, MASSSSSSSSS TA FUNCIONANDO NORMAL, SÓ FICA MARCADO
+
 export default({state, navigation})=>{
 
     const {onOpen} = useContext<any>(AuthContextList)
