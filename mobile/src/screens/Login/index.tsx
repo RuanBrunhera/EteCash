@@ -3,44 +3,40 @@ import {
   Text,
   View,
   Image,
-  TextInput,
-  TouchableOpacity,
   Alert
 } from "react-native";
 import { style } from "./styles";
 import { temas } from "../../global/themes";
 import etecash_logo from "../../assets/etecash_logo.png";
 import { MaterialIcons, Octicons } from "@expo/vector-icons";
-import { Input } from "../../components/input";
+import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 
 export default function Login() {
-  const [rm, setRm] = useState("");
-  const [password, setPassword] = useState("");
+  const [rm, setRm] = useState('a');
+  const [password, setPassword] = useState('a');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const navigator = useNavigation<NavigationProp<any>>();
 
   async function getLogin() {
     try {
       setLoading(true);
+      
       if (!rm || !password) {
-        setLoading(false);
         return Alert.alert("Atenção", "Por favor, preencha todos os campos.");
       }
-        if (rm == "ruanlindo" && password == "123") {
-          Alert.alert("Sucesso", "Login realizado com sucesso!");
-          setLoading(false);
 
-        } else {
-          Alert.alert("Erro", "RM ou senha incorretos. Tente novamente.");
-          setLoading(false);
-        }
+        navigator.reset({routes:[{name:"BottomRoutes"}]});
 
         console.log('Logado com sucesso');
+        
+      } catch (error) {
+        console.log(error);
+      }finally{
         setLoading(false);
-
-    } catch (error) {
-      console.log(error);
     }
   }
 

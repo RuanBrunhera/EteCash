@@ -1,10 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Login from './src/screens/Login';
+import './gesture-handler'
+import { StyleSheet } from 'react-native';
+import Routes from './src/routes/index.routes';
+import { NavigationContainer } from '@react-navigation/native';
+import Login from './src/screens/login';
 
 export default function App() {
   return (
-      <Login />
+    <NavigationContainer>
+      {/* <Login/> */}
+      <Routes />
+    </NavigationContainer>
   );
 }
 
