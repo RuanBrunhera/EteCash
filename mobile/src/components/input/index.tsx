@@ -1,5 +1,5 @@
 import React, { forwardRef, LegacyRef } from "react";
-import { Text, View, TextInput, TextInputProps, TouchableOpacity } from 'react-native';
+import { Text, View, TextInput, TextInputProps, TouchableOpacity, StyleProp, TextStyle} from 'react-native';
 import { MaterialIcons, FontAwesome, Octicons } from "@expo/vector-icons";
 import { style } from "./styles";
 import { temas } from "../../global/themes";
@@ -15,7 +15,9 @@ type Props = TextInputProps & {
     IconRightName?: string,
     title?: string,
     onIconLeftPress?: () => void,
-    onIconRightPress?: () => void
+    onIconRightPress?: () => void,
+    height?:number,
+    labelStyle?:StyleProp<TextStyle>
 }
 
 export const Input = forwardRef((Props:Props, ref:LegacyRef<TextInput> | null)=>{
@@ -28,6 +30,8 @@ export const Input = forwardRef((Props:Props, ref:LegacyRef<TextInput> | null)=>
     title,
     onIconLeftPress,
     onIconRightPress,
+    height,
+    labelStyle,
     ...rest
     } = Props
 
@@ -53,10 +57,10 @@ export const Input = forwardRef((Props:Props, ref:LegacyRef<TextInput> | null)=>
 
     return(
         <>
-            {<Text style={style.titleInput}>{title}</Text>}
+            {<Text style={[style.titleInput, labelStyle]}>{title}</Text>}
             <View style={[
                 style.boxInput,
-                {paddingLeft:calculateSizePaddingLeft()}
+                {paddingLeft:calculateSizePaddingLeft(), height:height||40}
                 ]}>
                 {IconLeft && IconLeftName &&(
                 <TouchableOpacity
@@ -74,7 +78,7 @@ export const Input = forwardRef((Props:Props, ref:LegacyRef<TextInput> | null)=>
                 <TextInput 
                     style={[
                         style.input,
-                        {width:calculateSizeWidth()}
+                        {width:calculateSizeWidth(), height: '100%'}
                     ]}
                     {...rest}
                 />

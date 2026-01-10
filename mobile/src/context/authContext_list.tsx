@@ -1,19 +1,219 @@
-import React, { createContext, useContext } from "react";
-import { Alert } from "react-native";
+import React, { createContext, useEffect, useRef, useState } from "react"
+import { Alert, Dimensions, Linking, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import AsyncStorage from "@react-native-async-storage/async-storage"
+import { Modalize } from "react-native-modalize"
+import { AntDesign, MaterialIcons } from "@expo/vector-icons"
 
-export const AuthContextList:any = createContext({});
+import { Input } from "../components/Input"
+import { Button } from "../components/Button"
+import Flag from "../components/Flag"
+import { temas } from "../global/themes"
 
-export const AuthProviderList = (props:any):any => {
-    
-    const onOpen = ()=>{
-        Alert.alert('Atenção', 'Modal Aberto')
+import type { AuthContextType, PropCard, PropFlags } from "../global/Props"
+
+export const AuthContextList = createContext<AuthContextType>(
+  {} as AuthContextType
+)
+
+const flags = [
+  { caption: "Pix", color: temas.colors.red },
+  { caption: "Boleto", color: temas.colors.blueLight }
+]
+
+export const AuthProviderList = ({ children }: any) => {
+  const modalizeRef = useRef<Modalize>(null)
+
+  const [nome, setNome] = useState("")
+  const [cpf, setCpf] = useState("")
+  const [email, setEmail] = useState("")
+  const [valorDeposito, setValorDeposito] = useState("")
+  const [selectedFlag, setSelectedFlag] = useState("")
+
+  const [depositoList, setDepositoList] = useState<PropCard[]>([])
+
+  const onOpen = () => {
+    modalizeRef.current?.open()
+    setNome("")
+    setCpf("")
+    setEmail("")
+    setValorDeposito("")
+    setSelectedFlag("")
+  }
+
+  const onClose = () => {
+    modalizeRef.current?.close()
+  }
+
+  const formatarCPF = (value: string) => { 
+  return value .replace(/\D/g, '') // só números 
+  .replace(/(\d{3})(\d)/, '$1.$2') // 000. -> 000.0 
+  .replace(/(\d{3})(\d)/, '$1.$2') // 000.000. -> 000.000.0 
+  .replace(/(\d{3})(\d{1,2})$/, '$1-$2') // 000.000.000-00 
+  }
+
+  const formatarDinheiro = (value: string) => { 
+    // remove tudo que não é número 
+    const numeros = value.replace(/\D/g, ''); 
+    if (!numeros) return 'R$ 0,00'; // converte para número em centavos 
+    const numero = parseInt(numeros, 10) / 100; return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', }); 
+  };
+
+  const get_depositoList = async () => {
+    try {
+      const storageData = await AsyncStorage.getItem("depositoList")
+      const list = storageData ? JSON.parse(storageData) : []
+      setDepositoList(list)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const handleSave = async () => {
+    if (!nome || !cpf || !email || !valorDeposito || !selectedFlag) {
+      return Alert.alert("Atenção", "Preencha os campos corretamente!")
     }
 
-    return (
-        <AuthContextList.Provider value={{onOpen}}>
-            {props.children}
-        </AuthContextList.Provider>
-    )
+    const flagConvertida: PropFlags =
+      selectedFlag === "Pix" || selectedFlag === "Boleto"
+        ? "crédito"
+        : "débito"
+
+    const newItem: PropCard = {
+      item: Date.now(),
+      title: "Depósito realizado!",
+      description: `Valor: ${valorDeposito} • ${new Date().toLocaleDateString()}`,
+      flag: flagConvertida
+    }
+
+    try {
+      const storageData = await AsyncStorage.getItem("depositoList")
+      const list = storageData ? JSON.parse(storageData) : []
+
+      const updatedList = [...list, newItem]
+
+      await AsyncStorage.setItem("depositoList", JSON.stringify(updatedList))
+      setDepositoList(updatedList)
+
+      onClose()
+      Alert.alert("Sucesso", "Depósito realizado com sucesso!")
+    } catch (error) {
+      console.log("Erro ao salvar histórico", error)
+    }
+  }
+
+  const gotoPagamento = () => {
+    // onClose()
+    // Linking.openURL("https://pag.ae/7QCrhYf4D")
+  
+    console.log(depositoList)
 }
 
-export const useAuth = ()=> useContext(AuthContextList)
+  return (
+    <AuthContextList.Provider value={{ depositoList, onOpen }}>
+      {children}
+
+      <Modalize
+        ref={modalizeRef}
+        modalHeight={Dimensions.get("window").height / 1.3}
+      >
+        <View style={styles.container}>
+          <View style={styles.header}>
+            <TouchableOpacity onPress={onClose}>
+              <MaterialIcons name="close" size={30} />
+            </TouchableOpacity>
+
+            <Text style={styles.title}>Adicionar saldo</Text>
+
+            <TouchableOpacity onPress={handleSave}>
+              <AntDesign name="check" size={30} />
+            </TouchableOpacity>
+          </View>
+
+          <View style={styles.content}>
+            <Input 
+              title="Nome Completo" 
+              value={nome} 
+              onChangeText={setNome} 
+              placeholder="Ex: João da Silva"
+            />
+            <Input 
+              title="CPF" 
+              value={cpf} 
+              onChangeText={(text) => setCpf(formatarCPF(text))} 
+              keyboardType="numeric"
+              placeholder="000.000.000-00"
+              maxLength={14}
+            />
+            <Input 
+              title="E-mail" 
+              value={email} 
+              onChangeText={setEmail} 
+              placeholder="exemplo@gmail.com"
+            />
+            <Input
+              title="Valor a ser depositado"
+              value={valorDeposito}
+              onChangeText={(number) => setValorDeposito(formatarDinheiro(number))}
+              keyboardType="numeric"
+              placeholder="R$000,00"
+            />
+
+          <View style={styles.containerFlag}> 
+            <Text style={styles.label}>Método de pagamento:</Text>
+            <View style={styles.RowFlags}>
+              {flags.map((flag, index) => (
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => setSelectedFlag(flag.caption)}
+                >
+                  <Flag
+                    caption={flag.caption}
+                    color={flag.color}
+                    selected={flag.caption === selectedFlag}
+                  />
+                </TouchableOpacity>
+              ))}
+            </View>
+            </View>
+
+            <View style={{ marginTop: 40 }}>
+              <Button
+                text="Continuar para pagamento"
+                onPress={gotoPagamento}
+              />
+            </View>
+          </View>
+        </View>
+      </Modalize>
+    </AuthContextList.Provider>
+  )
+}
+
+const styles = StyleSheet.create({
+  container: { width: "100%" },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 20
+  },
+  title: { 
+    fontSize: 20, 
+    fontWeight: "bold" 
+  },
+  content: { 
+    paddingHorizontal: 20 
+  },
+  RowFlags: { 
+    flexDirection: "row", 
+    gap: 10, 
+    marginTop: 20 
+  },
+  containerFlag:{ 
+    width: '100%', 
+    padding: 10, 
+    marginTop: 10 
+  }, 
+  label:{ fontWeight: 'bold', 
+    color: 'black' 
+  }, 
+})
