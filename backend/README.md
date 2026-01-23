@@ -1,0 +1,1 @@
+Video para Ajuda Necessária: https://www.youtube.com/watch?v=wyEYpX5U4Vg&t=1699s
