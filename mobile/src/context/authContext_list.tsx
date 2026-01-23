@@ -28,8 +28,19 @@ export const AuthProviderList = ({ children }: any) => {
   const [email, setEmail] = useState("")
   const [valorDeposito, setValorDeposito] = useState("")
   const [selectedFlag, setSelectedFlag] = useState("")
-
   const [depositoList, setDepositoList] = useState<PropCard[]>([])
+  const [depositoListBackup, setDepositoListBackup] = useState<PropCard[]>([])
+  
+type FilterParams = {
+  month: number | null
+  year: number | null
+  paymentType: string | null
+  movementType: 'crédito' | 'débito' | null
+}
+
+  useEffect(() => {
+    get_depositoList()
+  }, [])
 
   const onOpen = () => {
     modalizeRef.current?.open()
@@ -62,7 +73,14 @@ export const AuthProviderList = ({ children }: any) => {
     try {
       const storageData = await AsyncStorage.getItem("depositoList")
       const list = storageData ? JSON.parse(storageData) : []
-      setDepositoList(list)
+
+      const formatedList: PropCard[] = list.map((item:any) => ({
+        ...item,
+        time: new Date(item.time),
+      }))
+      .sort((a: PropCard, b: PropCard) => b.time.getTime() - a.time.getTime())
+      setDepositoList(formatedList)
+      setDepositoListBackup(formatedList)
     } catch (error) {
       console.log(error)
     }
@@ -78,10 +96,13 @@ export const AuthProviderList = ({ children }: any) => {
         ? "crédito"
         : "débito"
 
+
     const newItem: PropCard = {
       item: Date.now(),
       title: "Depósito realizado!",
-      description: `Valor: ${valorDeposito} • ${new Date().toLocaleDateString()}`,
+      description: `Valor: ${valorDeposito}`,
+      paymentType: `${selectedFlag}`,
+      time: new Date(),
       flag: flagConvertida
     }
 
@@ -93,6 +114,7 @@ export const AuthProviderList = ({ children }: any) => {
 
       await AsyncStorage.setItem("depositoList", JSON.stringify(updatedList))
       setDepositoList(updatedList)
+      setDepositoListBackup(updatedList)
 
       onClose()
       Alert.alert("Sucesso", "Depósito realizado com sucesso!")
@@ -108,8 +130,59 @@ export const AuthProviderList = ({ children }: any) => {
     console.log(depositoList)
 }
 
+//TEM QUE VER ESSE NEGOCIO DA TIPAGEM DO ITEMTODELETE
+  const handleDelete = async (itemToDelete:PropCard) => {
+    try {
+      const storageData = await AsyncStorage.getItem('depositoList')
+      const depositoList:Array<any> = storageData ? JSON.parse(storageData):[]
+      
+      const updatedDepositoList = depositoList.filter(item => item.item !== itemToDelete.item)
+
+      await AsyncStorage.setItem('depositoList', JSON.stringify(updatedDepositoList))
+      setDepositoList(updatedDepositoList)
+      setDepositoListBackup(updatedDepositoList)
+    } catch (error) {
+      console.log("Erro ao excluir o item", error)
+    }
+  }
+
+const applyFilters = ({
+  month,
+  year,
+  paymentType,
+  movementType,
+}: FilterParams) => {
+  let list = [...depositoListBackup]
+
+  if (year !== null) {
+    list = list.filter(
+      item => item.time.getFullYear() === year
+    )
+  }
+
+  if (month !== null) {
+    list = list.filter(
+      item => item.time.getMonth() + 1 === month
+    )
+  }
+
+  if (paymentType !== null) {
+    list = list.filter(
+      item => item.paymentType === paymentType
+    )
+  }
+
+  if (movementType !== null) {
+    list = list.filter(
+      item => item.flag === movementType
+    )
+  }
+
+  setDepositoList(list)
+}
+
   return (
-    <AuthContextList.Provider value={{ depositoList, onOpen }}>
+    <AuthContextList.Provider value={{ depositoList, onOpen, handleDelete, applyFilters }}>
       {children}
 
       <Modalize
@@ -213,7 +286,8 @@ const styles = StyleSheet.create({
     padding: 10, 
     marginTop: 10 
   }, 
-  label:{ fontWeight: 'bold', 
+  label:{ 
+    fontWeight: 'bold', 
     color: 'black' 
   }, 
 })

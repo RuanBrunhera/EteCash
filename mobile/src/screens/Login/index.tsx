@@ -1,10 +1,5 @@
 import React, { useEffect, useState } from "react";
-import {
-  Text,
-  View,
-  Image,
-  Alert
-} from "react-native";
+import { Text, View, Image, Alert } from "react-native";
 import { style } from "./styles";
 import { temas } from "../../global/themes";
 import etecash_logo from "../../assets/etecash_logo.png";

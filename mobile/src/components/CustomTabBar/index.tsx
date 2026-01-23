@@ -4,14 +4,14 @@ import { style } from "./styles";
 import { AntDesign, FontAwesome, Entypo, MaterialIcons } from "@expo/vector-icons";
 import { temas } from "../../global/themes";
 import { AuthContextList } from "../../context/authContext_list";
+import { BottomTabBarProps } from "@react-navigation/bottom-tabs";
+import { AuthContextType } from "../../global/Props";
 
-//ESTÁ DANDO ERRO NOS PARAMETROS AQUI, MASSSSSSSSS TA FUNCIONANDO NORMAL, SÓ FICA MARCADO
+export default({state, navigation} : BottomTabBarProps)=>{
 
-export default({state, navigation})=>{
+    const {onOpen} = useContext<AuthContextType>(AuthContextList)
 
-    const {onOpen} = useContext<any>(AuthContextList)
-
-    const goTo = (screenName:String)=>{
+    const goTo = (screenName:string)=>{
         navigation.navigate(screenName)
     }
 
