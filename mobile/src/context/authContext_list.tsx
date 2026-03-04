@@ -124,8 +124,8 @@ type FilterParams = {
   }
 
   const gotoPagamento = () => {
-    // onClose()
-    // Linking.openURL("https://pag.ae/7QCrhYf4D")
+    onClose()
+    Linking.openURL("https://pag.ae/7QCrhYf4D")
   
     console.log(depositoList)
 }
