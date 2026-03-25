@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/RuanBrunhera/Etecash/model"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -31,16 +32,16 @@ type DatabaseConfig struct {
 	User     string
 	Password string
 	DBName   string
-	SSLMode  string // corrigido: SSlMode → SSLMode
+	SSLMode  string
 }
 
 type JWTConfig struct {
-	SecretKey string // corrigido: Secretkey → SecretKey
+	SecretKey string
 	Duration  time.Duration
 }
 
 type RateLimitConfig struct {
-	Requests int // corrigido: requests → Requests (exportado)
+	Requests int
 	Window   time.Duration
 }
 
@@ -57,14 +58,14 @@ func LoadConfig() *Config {
 			User:     "api_etecash",
 			Password: "123456",
 			DBName:   "DB_etecash",
-			SSLMode:  "disable", // corrigido: SSlMode → SSLMode
+			SSLMode:  "disable",
 		},
 		JWT: JWTConfig{
-			SecretKey: "etec", // corrigido: Secretkey → SecretKey
+			SecretKey: "etec",
 			Duration:  24 * time.Hour,
 		},
 		RateLimit: RateLimitConfig{
-			Requests: 100, // corrigido: requests → Requests
+			Requests: 100,
 			Window:   time.Minute,
 		},
 	}
@@ -83,7 +84,6 @@ func LoadConfig() *Config {
 func Conn() {
 	config := LoadConfig()
 
-	// corrigido: "Host=" → "host=" (PostgreSQL DSN é case-sensitive)
 	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
 		config.Database.Host,
 		config.Database.Port,
@@ -94,20 +94,16 @@ func Conn() {
 	)
 
 	var err error
-	// corrigido: logger. incompleto → logger.Default.LogMode(logger.Info)
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
+	if err != nil {
+		log.Fatalf("Falha ao conectar com o banco de dados: %v", err)
+	}
 
-	// corrigido: erro não tratado
-	// if err != nil {
-	// 	log.Fatal("Falha ao conectar com o banco de dados: %v", err)
-	// }
+	if err := DB.AutoMigrate(&model.Aluno{}, &model.Funcionario{}, &model.Produto{}, &model.Transacao{}, &model.ItemTransacao{}); err != nil {
+		log.Fatalf("Falha ao criar tabelas: %v", err)
+	}
 
-	//fazer esta parte quando tiver tudo pronto
-	// if err := DB.AutoMigrate(&model.User{}, &model.Team{}, &model.Tournament{}, &model.Match{}, &model.MatchTeam{}, &model.MatchEvent{}, &model.MatchStatistics{}, &model.Promotion{}); err != nil {
-	// 	log.Fatalf("Falha ao criar tabelas: %v", err)
-	// }
-
-	// log.Println("Conexão com o banco de dados estabelecida com sucesso")
+	log.Println("Conexão com o banco de dados estabelecida com sucesso")
 }
