@@ -7,4 +7,5 @@ type Funcionario struct {
 	Nome     string     `json:"nome"       gorm:"not null;column:nome"      validate:"required,min=3,max=100"`
 	DataNasc *time.Time `json:"data_nasc"  gorm:"column:data_nasc"`
 	Telefone *string    `json:"telefone"   gorm:"column:telefone"            validate:"omitempty,min=10,max=20"`
+	Senha    string     `json:"-"          gorm:"not null;column:senha"`
 }
