@@ -19,14 +19,15 @@ function Login() {
     }
 
     return (
-        <div className={`container ${isActive ? 'active' : ''}`}>
+        <div className="login-page">
+            <div className={`container ${isActive ? 'active' : ''}`}>
 
             {/* Login form */}
             <div className="form-box login">
                 <form>
                     <h1>Login aluno</h1>
                     <div className="input-box">
-                        <input type="text" placeholder="RM" id="inputRM" required />
+                        <input type="text" placeholder="RM" id="inputRM" maxLength={11} required />
                         <i className="fa-solid fa-user"></i>
                     </div>
                     <div className="input-box">
@@ -90,7 +91,7 @@ function Login() {
                 <p>É um(a) etequiano?</p>
                 <button className="btn" onClick={() => setIsActive(false)}>Entrar como aluno</button>
             </div>
-
+            </div>
         </div>
     )
 }
