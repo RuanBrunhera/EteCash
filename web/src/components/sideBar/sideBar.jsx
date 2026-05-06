@@ -15,7 +15,7 @@ import {
 } from 'lucide-react'
 
 const items = [
-  { href: '', label: 'Home', icon: Home },
+  { href: '/home', label: 'Home', icon: Home },
   { href: '/historico', label: "Histórico", icon: ScrollText },
   { href: '#', label: 'Messages', icon: MessageCircle },
   { href: '#', label: 'Statistics', icon: BarChart3 },

@@ -5,9 +5,9 @@ import { Wallet, ShoppingBag, TrendingUp } from "lucide-react"
 
 export default function Home() {
   return (
-    <div className="flex h-screen bg-gray-50 m-3">
+    <div className="flex h-screen bg-gray-800 m-3">
 
-      <main className="flex-1 overflow-auto bg-white rounded-r-3xl p-8">
+      <main className="flex-1 overflow-auto bg-gray-800 rounded-r-3xl p-8">
         <div className="space-y-6">
 
           {/* WelcomeCard ocupa a linha inteira */}

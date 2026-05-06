@@ -2,7 +2,7 @@ import quandale from '../../assets/knpgsvnouo191.jpg';
 
 function WelcomeCard() {
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-blue-800 p-6 text-white">
+    <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 to-blue-800 p-6 text-white mr-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         
         {/* Lado esquerdo - Texto */}
@@ -38,4 +38,4 @@ function WelcomeCard() {
   )
 }
 
-export default WelcomeCard
+export default WelcomeCard;

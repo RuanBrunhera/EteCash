@@ -7,7 +7,7 @@ function StatCard({ title, value, icon: Icon, color }) {
 }
 
   return (
-    <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-border">
+    <div className="rounded-2xl bg-white p-5 shadow-sm ring-1 ring-border mr-4">
       {/* Seu desafio: montar o card com título, valor e ícone */}
       <p className="text-sm text-gray-500">{title}</p>
       <Icon size={24} color={colors[color]}/>

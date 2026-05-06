@@ -2,10 +2,12 @@ import Layout from './components/layout/layout'
 import Home from './pages/home/Home'
 import Historico from './pages/historico/historico'
 import Login from './pages/login/Login'
+import FloatingButton from "./components/floatingButton/floatingButton"
 import { Routes, Route } from 'react-router-dom'
 
 function App() {
   return (
+    <>
     <Routes>
       {/* Sem sidebar */}
       <Route path="/" element={<Login />} />
@@ -14,6 +16,9 @@ function App() {
       <Route path="/home" element={<Layout><Home /></Layout>} />
       <Route path="/historico" element={<Layout><Historico /></Layout>} />
     </Routes>
+
+    {location.pathname !== "/" && <FloatingButton />}
+    </>
   )
 }
 
