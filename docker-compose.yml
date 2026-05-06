@@ -1,0 +1,105 @@
+services:
+
+  api:
+    image: golang:1.25-alpine
+    container_name: etecash_api
+    working_dir: /usr/src/app
+    volumes:
+      - ./backend:/usr/src/app
+      - go_cache:/go
+    ports:
+      - "3000:3000"
+    environment:
+      - BACKEND_PORT=3000
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_NAME=etecash
+      - DB_USER=postgres
+      - DB_PASSWORD=1q2w3e4r5T
+    depends_on:
+      db:
+        condition: service_healthy
+    command: >
+      sh -c "
+      go mod tidy &&
+      go run ./cmd/main.go
+      "
+    restart: unless-stopped
+
+  db:
+    image: postgres:18
+    container_name: etecash_db
+    restart: always
+    environment:
+      POSTGRES_DB: etecash
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1q2w3e4r5T
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d etecash"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mobile:
+    image: node:22-alpine
+    container_name: etecash_mobile
+    working_dir: /usr/src/app
+    volumes:
+      - ./mobile:/usr/src/app
+    tty: true
+    ports:
+      - "8081:8081"
+    command: sh -c "npm install && npm run web"
+    environment:
+      - NODE_ENV=development
+      - EXPO_PUBLIC_API_LOCAL=http://api:3000
+      - EXPO_PUBLIC_API_URL=https://api.dominio.com.br
+    depends_on:
+      - api
+
+  web:
+    image: node:22-alpine
+    container_name: etecash_web
+    working_dir: /usr/src/app
+    volumes:
+      - ./web:/usr/src/app
+    ports:
+      - "5173:5173"
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      - api
+
+  # pgadmin:
+  #   image: dpage/pgadmin4
+  #   restart: always
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: luis_fernando_tcc@admin.com
+  #     PGADMIN_DEFAULT_PASSWORD: 1q2w3e4r5T6y7u8i9o0p
+  #   ports:
+  #     - "5050:80"
+  #   depends_on:
+  #     - db
+
+  # app:
+  #   build: .
+  #   restart: on-failure
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     DB_HOST: db
+  #     DB_PORT: 5432
+  #     DB_USER: postgres
+  #     DB_PASSWORD: 1q2w3e4r5T
+  #     DB_NAME: etecash
+
+volumes:
+  pgdata:
+  go_cache:
