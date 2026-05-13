@@ -4,7 +4,8 @@ CREATE TABLE aluno (
     rm INT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     serie CHAR(1) NOT NULL,
-    saldo NUMERIC(10,2) NOT NULL DEFAULT 0
+    saldo NUMERIC(10,2) NOT NULL DEFAULT 0,
+    senha VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE funcionario (
@@ -45,3 +46,15 @@ CREATE TABLE item_transacao (
     FOREIGN KEY (transacao_id) REFERENCES transacao(id),
     FOREIGN KEY (produto_id) REFERENCES produto(id)
 );
+
+-- tipo de pagamento e forma de pagamento 
+CREATE TYPE tipo_pagamento AS ENUM ('credito', 'debito') 
+CREATE TYPE forma_pagamento AS ENUM ('pix', 'boleto') 
+
+CREATE TABLE historico (
+    id SERIAL PRIMARY KEY
+    aluno_rm INT NOT NULL
+    tipo tipo_pagamento NOT NULL
+    formaPagamento forma_pagamento NOT NULL
+    valor NUMERICO(10,2) NOT NULL
+)

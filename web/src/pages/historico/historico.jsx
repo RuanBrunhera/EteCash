@@ -28,7 +28,6 @@ function TransacaoCard({ tipo, valor, formaPagamento, data }) {
         </p>
         <p className="text-sm text-gray-400">{data}</p>
       </div>
-
     </div>
   )
 }

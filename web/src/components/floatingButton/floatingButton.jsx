@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./styles.css"
+import AdicionarSaldoModal from "../modalAddSaldo/AdicionarSaldo";
 
 const options = [
   { emoji: "💲", label: "Adicionar saldo" }
@@ -7,6 +8,7 @@ const options = [
 
 export default function FloatingButton() {
   const [open, setOpen] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
 
   return (
     <>
@@ -18,7 +20,7 @@ export default function FloatingButton() {
                 <span className="fab-label">{opt.label}</span>
                 <button
                   className="fab-option-btn"
-                  onClick={() => alert(`Clicou em: ${opt.label}`)}
+                  onClick={() => setModalOpen(true)}
                   title={opt.label}
                 >
                   {opt.emoji}
@@ -36,6 +38,14 @@ export default function FloatingButton() {
           <span className={`fab-icon ${open ? "open" : ""}`}>+</span>
         </button>
       </div>
+
+      {isModalOpen && (
+        <AdicionarSaldoModal
+          isOpen={isModalOpen}
+          onClose={() => setModalOpen(false)
+          }
+        />
+      )}
     </>
   );
 }

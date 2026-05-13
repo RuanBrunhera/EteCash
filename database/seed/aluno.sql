@@ -1,4 +1,8 @@
-INSERT INTO aluno (rm, nome, serie, saldo) VALUES
-(1001, 'João Silva', '1', 25.00),
-(1002, 'Maria Oliveira', '2', 15.50),
-(1003, 'Pedro Santos', '3', 40.00);
+INSERT INTO aluno (rm, nome, serie, saldo, senha) 
+VALUES (
+    123456,
+    'João Silva',
+    '1',
+    0.00,
+    'ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f' -- senha: "password"
+);

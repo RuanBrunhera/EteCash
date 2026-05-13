@@ -6,17 +6,40 @@ function Login() {
     const navigate = useNavigate()
     const [isActive, setIsActive] = useState(false)
 
-    const handleLogin = (e) => {
-        e.preventDefault()
-        const rm = document.getElementById('inputRM').value
-        const senha = document.getElementById('inputSenha').value
+    const handleLogin = async (e) => {
+    e.preventDefault()
+    const rm = document.getElementById('inputRM').value
+    const senha = document.getElementById('inputSenha').value
 
-        if (rm && senha) {
-            navigate('/home')
-        } else {
-            alert('Preencha todos os campos!')
-        }
+    if (!rm || !senha) {
+        alert('Preencha todos os campos!')
+        return
     }
+
+    try {
+        const response = await fetch('http://localhost:2000/api/login/aluno', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rm: parseInt(rm), senha })
+        })
+
+        const data = await response.json()
+
+        if (!response.ok) {
+            alert(data.error || 'Erro ao fazer login')
+            return
+        }
+
+        // Salva o token e dados do aluno
+        localStorage.setItem('token', data.token)
+        localStorage.setItem('aluno', JSON.stringify(data.aluno))
+
+        navigate('/home')
+
+    } catch (error) {
+        alert('Erro ao conectar com o servidor')
+    }
+}
 
     return (
         <div className="login-page">
@@ -24,7 +47,7 @@ function Login() {
 
             {/* Login form */}
             <div className="form-box login">
-                <form>
+                <form onSubmit={(e) => e.preventDefault()} >
                     <h1>Login aluno</h1>
                     <div className="input-box">
                         <input type="text" placeholder="RM" id="inputRM" maxLength={11} required />
@@ -37,7 +60,7 @@ function Login() {
                     <div className="forgot-link">
                         <a href="#">Não se lembra da senha?</a>
                     </div>
-                    <button className="btn" id="btnLogin" onClick={handleLogin}>Entrar</button>
+                    <button type="submit" className="btn">Entrar</button>
                     <p>Or login with social platforms</p>
                     <div className="social-icons">
                         <a href="#"><i className="fa-brands fa-google"></i></a>
@@ -50,7 +73,7 @@ function Login() {
 
             {/* Register form */}
             <div className="form-box register">
-                <form>
+                <form onSubmit={(e) => e.preventDefault()}>
                     <h1>Login cantina</h1>
                     <div className="input-box">
                         <input type="text" placeholder="CPF" maxLength="14" required />
@@ -64,7 +87,7 @@ function Login() {
                         <input type="password" placeholder="Senha" required />
                         <i className="fa-solid fa-lock"></i>
                     </div>
-                    <button className="btn">Entrar</button>
+                    <button type="submit"className="btn">Entrar</button>
                     <p>Or register with social platforms</p>
                     <div className="social-icons">
                         <a href="#"><i className="fa-brands fa-google"></i></a>
