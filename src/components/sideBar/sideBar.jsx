@@ -11,17 +11,19 @@ import {
   LogOut,
   ChevronFirst,
   ChevronLast,
+  ScrollText,
 } from 'lucide-react'
 
 const items = [
-  { href: '/', label: 'Home', icon: Home },
-  { href: '/messages', label: 'Messages', icon: MessageCircle },
-  { href: '/statistics', label: 'Statistics', icon: BarChart3 },
-  { href: '/security', label: 'Security', icon: Shield },
-  { href: '/devices', label: 'Devices', icon: TabletSmartphone },
-  { href: '/profile', label: 'Profile', icon: UserRound },
-  { href: '/signin', label: 'Signin', icon: LogIn },
-  { href: '/logout', label: 'Logout', icon: LogOut },
+  { href: '/home', label: 'Home', icon: Home },
+  { href: '/historico', label: "Histórico", icon: ScrollText },
+  { href: '/profile', label: 'Perfil', icon: UserRound },
+  { href: '#', label: 'Messages', icon: MessageCircle },
+  { href: '#', label: 'Statistics', icon: BarChart3 },
+  { href: '#', label: 'Security', icon: Shield },
+  { href: '#', label: 'Devices', icon: TabletSmartphone },
+  { href: '#', label: 'Signin', icon: LogIn },
+  { href: '/', label: 'Logout', icon: LogOut },
 ]
 
 function Sidebar() {
@@ -89,12 +91,6 @@ function Sidebar() {
         </ul>
       </nav>
 
-      {/* Rodapé com dica */}
-      <div className="px-3 pb-5 pt-2">
-        <div className="rounded-2xl bg-white/10 p-3">
-          <p className="text-xs leading-5">{open ? 'Gerenciando sua cantina com segurança.' : 'Dica'}</p>
-        </div>
-      </div>
     </aside>
   )
 }
