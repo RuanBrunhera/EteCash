@@ -47,7 +47,7 @@ function Login() {
 
             {/* Login form */}
             <div className="form-box login">
-                <form onSubmit={(e) => e.preventDefault()} >
+                <form onSubmit={handleLogin} >
                     <h1>Login aluno</h1>
                     <div className="input-box">
                         <input type="text" placeholder="RM" id="inputRM" maxLength={11} required />
@@ -73,7 +73,7 @@ function Login() {
 
             {/* Register form */}
             <div className="form-box register">
-                <form onSubmit={(e) => e.preventDefault()}>
+                <form onSubmit={handleLogin}>
                     <h1>Login cantina</h1>
                     <div className="input-box">
                         <input type="text" placeholder="CPF" maxLength="14" required />

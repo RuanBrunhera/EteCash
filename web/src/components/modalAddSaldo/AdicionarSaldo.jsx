@@ -29,7 +29,25 @@ function AdicionarSaldoModal({ isOpen, onClose }) {
   };
 
   const handleSave = () => {
-    // Seu desafio: validar campos e salvar no localStorage
+    if (!nome || !cpf || !email || !valor || !selectedFlag) {
+      alert('Preencha todos os campos!')
+      return
+    }
+
+    const newItem = {
+      id: Date.now(),
+      tipo: 'crédito',
+      formaPagamento: selectedFlag,
+      valor: parseFloat(valor.replace(/\D/g, '')) / 100,
+      data: new Date().toLocaleDateString('pt-BR'),
+    }
+
+    const stored = localStorage.getItem('historico')
+    const list = stored ? JSON.parse(stored) : []
+    localStorage.setItem('historico', JSON.stringify([...list, newItem]))
+
+    alert('Depósito registrado com sucesso!')
+    onClose()
   };
 
   if (!isOpen) return null; // se fechado, não renderiza nada
