@@ -2,17 +2,12 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   Home,
-  MessageCircle,
   BarChart3,
-  Shield,
-  TabletSmartphone,
   UserRound,
-  LogIn,
   LogOut,
   ChevronFirst,
   ChevronLast,
   ScrollText,
-  BarChart,
 } from 'lucide-react'
 
 const items = [
@@ -20,11 +15,7 @@ const items = [
   { href: '/historico', label: "Histórico", icon: ScrollText },
   { href: '/profile', label: 'Perfil', icon: UserRound },
   { href: '/statistics', label: 'Estatísticas', icon: BarChart3 },
-  { href: '#', label: 'Messages', icon: MessageCircle },
-  { href: '#', label: 'Security', icon: Shield },
-  { href: '#', label: 'Devices', icon: TabletSmartphone },
-  { href: '#', label: 'Signin', icon: LogIn },
-  { href: '/', label: 'Logout', icon: LogOut },
+  { href: '/', label: 'Sair', icon: LogOut },
 ]
 
 function Sidebar() {

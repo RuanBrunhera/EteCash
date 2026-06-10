@@ -1,3 +1,5 @@
+import etecashLogo from '../../assets/etecash_logo.png'
+
 function WelcomeCard() {
   const aluno = JSON.parse(localStorage.getItem('aluno')) || { nome: 'Aluno', saldo: 0 }
 
@@ -23,7 +25,12 @@ function WelcomeCard() {
 
         {/* Lado direito - decorativo */}
         <div className="relative lg:w-2/5 flex items-center justify-center">
-          <div className="text-8xl opacity-20">🏫</div>
+          <div className="text-8xl">
+            <img 
+            src={etecashLogo} 
+            alt=""
+            />
+          </div>
         </div>
       </div>
 

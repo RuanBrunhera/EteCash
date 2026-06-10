@@ -1,9 +1,11 @@
 import Layout from './components/layout/layout'
-import Home from './pages/home/Home'
-import Historico from './pages/historico/Historico'
+import Home from './pages/aluno/home/Home'
+import Historico from './pages/aluno/historico/Historico'
 import Login from './pages/login/Login'
-import Profile from './pages/profile/Profile'
-import Statistics from './pages/statistics/Statistics'
+import Profile from './pages/aluno/profile/Profile'
+import Statistics from './pages/aluno/statistics/Statistics'
+import LayoutCantina from './components/cantina/layoutCantina';
+import HomeCantina from './pages/cantina/home/HomeCantina'
 import FloatingButton from "./components/floatingButton/floatingButton"
 import { Routes, Route, useLocation } from 'react-router-dom'
 
@@ -23,6 +25,7 @@ function App() {
       <Route path="/historico" element={<Layout><Historico /></Layout>} />
       <Route path="/profile" element={<Layout><Profile /></Layout>}/>
       <Route path="/statistics" element={<Layout><Statistics /></Layout>}/>
+      <Route path="/cantina/home" element={<LayoutCantina><HomeCantina /></LayoutCantina>} />
     </Routes>
 
     {location.pathname !== "/" && <FloatingButton />}

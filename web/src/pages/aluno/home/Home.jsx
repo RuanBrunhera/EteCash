@@ -1,4 +1,4 @@
-import WelcomeCard from "../../components/dashboard/welcomeCard.jsx"
+import WelcomeCard from "../../../components/dashboard/welcomeCard.jsx"
 import { Wallet, ShoppingBag, TrendingDown } from "lucide-react"
 
 // Dados mockados do mês atual
