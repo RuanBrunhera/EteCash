@@ -34,7 +34,7 @@ function Login() {
         localStorage.setItem('token', data.token)
         localStorage.setItem('aluno', JSON.stringify(data.aluno))
 
-        navigate('/home')
+        navigate('/aluno/home')
 
     } catch (error) {
         alert('Erro ao conectar com o servidor')
