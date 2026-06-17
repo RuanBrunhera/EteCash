@@ -11,10 +11,10 @@ import {
 } from 'lucide-react'
 
 const items = [
-  { href: '/home', label: 'Home', icon: Home },
-  { href: '/historico', label: "Histórico", icon: ScrollText },
-  { href: '/profile', label: 'Perfil', icon: UserRound },
-  { href: '/statistics', label: 'Estatísticas', icon: BarChart3 },
+  { href: '/aluno/home', label: 'Home', icon: Home },
+  { href: '/aluno/historico', label: "Histórico", icon: ScrollText },
+  { href: '/aluno/profile', label: 'Perfil', icon: UserRound },
+  { href: '/aluno/statistics', label: 'Estatísticas', icon: BarChart3 },
   { href: '/', label: 'Sair', icon: LogOut },
 ]
 
