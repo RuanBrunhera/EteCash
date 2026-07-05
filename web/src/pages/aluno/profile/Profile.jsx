@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Camera } from "lucide-react";
-import quandale from "../../assets/knpgsvnouo191.jpg";
+import quandale from "../../../assets/knpgsvnouo191.jpg";
 
 //temporário
 const alunoMock = {
