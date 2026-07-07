@@ -43,3 +43,14 @@ type FuncionarioLogin struct {
 	Telefone string `json:"telefone" validate:"required,min=10,max=20"`
 	Senha    string `json:"senha" validate:"required,min=6"`
 }
+
+func (f *Funcionario) ToResponse() FuncionarioResponse {
+	return FuncionarioResponse{
+		ID:			f.ID,
+		Nome:		f.Nome,
+		DataNasc:	f.DataNasc,
+		Telefone:	f.Telefone,
+		CreatedAt: 	f.CreatedAt,
+		UpdatedAt: 	f.UpdatedAt,
+	}
+}

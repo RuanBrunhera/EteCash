@@ -6,7 +6,9 @@ import (
 	"os"
 	"time"
 
+	"github.com/RuanBrunhera/Etecash/model"
 	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -133,9 +135,9 @@ func migrate() error {
 	return DB.AutoMigrate(
 		&model.Aluno{},
 		&model.Funcionario{},
-		&model.Admin{},
 		&model.Produto{},
 		&model.Transacao{},
 		&model.ItemTransacao{},
+		&model.Historico{},
 	)
 }
