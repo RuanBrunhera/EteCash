@@ -29,7 +29,7 @@ services:
   db:
     image: postgres:18
     container_name: etecash_db
-    restart: always
+    restart: always 
     environment:
       POSTGRES_DB: etecash
       POSTGRES_USER: postgres
