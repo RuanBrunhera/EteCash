@@ -6,6 +6,9 @@ function Login() {
     const navigate = useNavigate()
     const [isActive, setIsActive] = useState(false)
 
+    //variavel para o localhost do docker
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000'
+
     const handleLogin = async (e) => {
     e.preventDefault()
     const rm = document.getElementById('inputRM').value
@@ -17,7 +20,7 @@ function Login() {
     }
 
     try {
-        const response = await fetch('http://localhost:2000/api/login/aluno', {
+        const response = await fetch(`${API_URL}/api/login/aluno`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ rm: parseInt(rm), senha })
