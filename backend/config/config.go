@@ -132,12 +132,28 @@ func Conn() {
 }
 
 func migrate() error {
-	return DB.AutoMigrate(
-		&model.Aluno{},
-		&model.Funcionario{},
-		&model.Produto{},
-		&model.Transacao{},
-		&model.ItemTransacao{},
-		&model.Historico{},
-	)
+    DB.Exec(`
+        DO $$ BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'tipo_pagamento') 
+            THEN CREATE TYPE tipo_pagamento AS ENUM ('credito', 'debito');
+            END IF;
+        END $$;
+    `)
+
+    DB.Exec(`
+        DO $$ BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'forma_pagamento') 
+            THEN CREATE TYPE forma_pagamento AS ENUM ('pix', 'boleto');
+            END IF;
+        END $$;
+    `)
+
+    return DB.AutoMigrate(
+        &model.Aluno{},
+        &model.Funcionario{},
+        &model.Produto{},
+        &model.Transacao{},
+        &model.ItemTransacao{},
+        &model.Historico{},
+    )
 }
