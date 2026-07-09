@@ -1,7 +1,7 @@
 # 🏫 EteCash
 
 **EteCash** é um sistema de pagamentos digitais desenvolvido para uso interno em escolas, facilitando a compra de produtos na cantina pelos alunos sem a necessidade de dinheiro em espécie ou cartões.  
-O projeto foi desenvolvido como **Trabalho de Conclusão de Curso (TCC)** do curso técnico.
+O projeto foi desenvolvido como **Trabalho de Conclusão de Curso (TCC)** do curso técnico de Desenvolvimento de Sistemas da ETEC.
 
 ---
 
@@ -11,27 +11,36 @@ O projeto foi desenvolvido como **Trabalho de Conclusão de Curso (TCC)** do cur
 Facilitar o pagamento de produtos na cantina escolar, garantindo **praticidade** e **segurança** para alunos e funcionários.
 
 ### Objetivos Específicos
-- Permitir que alunos adicionem saldo em suas contas digitais.
-- Registrar e processar pagamentos realizados na cantina.
-- Manter histórico de transações para consulta de alunos e funcionários.
-- Fornecer controle de estoque e preços dos produtos.
-- Garantir segurança e integridade das transações.
+- Permitir que alunos adicionem saldo em suas contas digitais
+- Registrar e processar pagamentos realizados na cantina
+- Manter histórico de transações para consulta de alunos e funcionários
+- Fornecer controle de estoque e preços dos produtos
+- Garantir segurança e integridade das transações via JWT
 
 ---
 
 ## 🛠 Tecnologias Utilizadas
 
-### Frontend
-- React Native (Aplicativo Mobile)
-- HTML, CSS, JavaScript (Web)
+### Frontend Web
+- React + Vite
+- Tailwind CSS
+- React Router DOM
+- Recharts (gráficos)
+
+### Frontend Mobile
+- React Native + Expo
 
 ### Backend
-- Node.js ou Golang
-- API REST para comunicação entre frontend e banco de dados
+- Go + Gin (framework HTTP)
+- GORM (ORM)
+- JWT para autenticação
+- SHA-256 para hash de senhas
 
 ### Banco de Dados
-- PostgreSQL (relacional)
-- Estrutura de tabelas normalizada, com histórico de transações e saldo dos alunos
+- PostgreSQL
+
+### Infraestrutura
+- Docker + Docker Compose
 
 ---
 
@@ -50,108 +59,90 @@ EteCash/ <br>
 
 ---
 
-## 💾 Banco de Dados
+## 🚀 Como iniciar o sistema
 
-O banco de dados foi projetado para:
+### Pré-requisitos
+- [Docker](https://www.docker.com/) instalado
+- [Docker Compose](https://docs.docker.com/compose/) instalado
 
-- Alunos (RM, nome, série, saldo)  
-- Funcionários da cantina  
-- Produtos e itens de transação  
-- Histórico de pagamentos e estoque  
-
-**Execução:**
-
-# Criar banco
-```bash
-CREATE DATABASE etecash;
-```
-
-# Acessar banco
-```bash
-\c etecash
-```
-
-# Executar arquivos SQL
-```bash
-\i schema.sql
-\i seed.sql
-```
-
-📌 Importante:
-O schema.sql deve ser executado antes do seed.sql.
-
----
-
-🔐 Segurança e Permissões
-Tipos de Usuário
-- Aluno
-
-• Adicionar saldo
-
-• Realizar pagamentos
-
-• Consultar saldo e histórico de compras
-
-- Cantina
-
-• Processar pagamentos
-
-• Gerenciar produtos (preço, estoque)
-
-• Consultar histórico de vendas
-
-- Administrador
-
-• Controle total do sistema, incluindo usuários, saldo e produtos
-
-**Observações de Segurança**
-• Login com senha para todos os usuários
-
-• Controle de acesso por tipo de usuário
-
-• Logs de transações e erros para auditoria
-
----
-
-## ⚙️ Instalação e Configuração
-### Clone o repositório:
-
+### 1. Clone o repositório
 ```bash
 git clone https://github.com/RuanBrunhera/EteCash.git
+cd EteCash
 ```
 
-• Configure o banco de dados PostgreSQL (database/schema.sql e database/seed.sql)
+### 2. Suba os containers
+```bash
+docker-compose up -d
+```
 
-• Configure o backend (Node.js ou Golang) e a API
+### 3. Verifique se os containers estão rodando
+```bash
+docker ps
+```
 
-• Configure o frontend (React Native) e/ou web
+Você deve ver:
+| Container | Porta |
+|-----------|-------|
+| `etecash_api` | 3000 |
+| `etecash_db` | 5432 |
+| `etecash_web` | 5173 |
+| `etecash_mobile` | 8081 |
 
-• Teste o sistema adicionando saldo e realizando pagamentos simulados
+### 4. Acesse o sistema
+- **Frontend Web:** http://localhost:5173
+- **API:** http://localhost:3000
+- **Health check:** http://localhost:3000/health
+
+### 5. Para parar o sistema
+```bash
+# Mantém os dados do banco
+docker-compose down
+
+# Apaga os dados do banco também
+docker-compose down -v
+```
+
+---
+
+## 👤 Credenciais de teste
+
+| Tipo | Campo | Valor |
+|------|-------|-------|
+| Aluno | RM | `123456` |
+| Aluno | Senha | `password` |
+
+---
+
+## 💾 Banco de Dados
+
+Estrutura principal:
+- **aluno** — RM, nome, série, saldo, senha
+- **funcionario** — nome, telefone, senha
+- **produto** — nome, descrição, preço, estoque
+- **transacao** — registro de vendas
+- **historico** — depósitos e débitos do aluno
+
+---
+
+## 🔐 Tipos de Usuário
+
+| Perfil | Permissões |
+|--------|-----------|
+| **Aluno** | Adicionar saldo, consultar saldo e histórico |
+| **Funcionário** | Registrar vendas, gerenciar produtos |
+
+---
+
+## 📈 Futuras melhorias
+
+- Transferência de saldo entre alunos
+- Notificações de transações
+- Relatórios avançados de estoque
+- Autenticação com bcrypt
 
 ---
 
 ## 🎓 Contexto Acadêmico
-Este projeto integra conceitos de:
 
-• Modelagem de dados
-
-• Banco de dados relacional
-
-• Desenvolvimento fullstack (frontend e backend)
-
-• Boas práticas de programação e segurança
-
----
-
-## 📌 Observações Finais
-• Sistema desenvolvido para uso interno escolar, mas pode ser expandido para outras instituições.
-
-• Valores financeiros no ambiente de teste são simulados.
-
-## 📈 Futuras melhorias podem incluir:
-
-• Transferência de saldo entre alunos
-
-• Notificações
-
-• Controle avançado de estoque
+Este projeto integra conceitos de modelagem de dados, banco de dados relacional, desenvolvimento fullstack e boas práticas de segurança e programação.
