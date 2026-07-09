@@ -3,7 +3,7 @@ import { Wallet, ShoppingBag, TrendingDown } from "lucide-react"
 
 // Dados mockados do mês atual
 const resumoMes = {
-  totalGasto: 89.50,
+  totalGasto: 2.00,
   totalDepositos: 150.00,
   numeroPedidos: 12,
   mes: new Date().toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
