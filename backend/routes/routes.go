@@ -29,6 +29,7 @@ func SetupRoutes(r *gin.Engine) {
 	authAluno.Use(middleware.AuthMiddleware("aluno"))
 	{
 		authAluno.GET("/perfil", controller.GetPerfilAluno)
+		authAluno.GET("/historico", controller.GetHistoricoAluno)
 		authAluno.POST("/saldo", controller.AdicionarSaldo)
 	}
 }
