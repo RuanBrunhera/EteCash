@@ -19,7 +19,7 @@ func LoginAluno(c *gin.Context) {
 
 	// Busca o aluno pelo RM
 	var aluno model.Aluno
-	if err := config.DB.Where("rm = ?", login.RM).First(&aluno).Error; err != nil {
+	if err := config.DB.Preload("Curso").Where("rm = ?", login.RM).First(&aluno).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "RM inválido"})
 		return
 	}
@@ -31,7 +31,7 @@ func LoginAluno(c *gin.Context) {
 	}
 
 	// Gera o token JWT
-	token, err := utils.GenerateToken(uint(aluno.RM), "aluno", 24*time.Hour)
+	token, err := utils.GenerateToken(uint64(aluno.RM), "aluno", 24*time.Hour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao gerar token"})
 		return
@@ -41,7 +41,6 @@ func LoginAluno(c *gin.Context) {
 		"token": token,
 		"aluno": aluno.ToResponse(),
 	})
-
 }
 
 // Cadastrar um aluno novo no banco
@@ -52,7 +51,7 @@ func CadastrarAluno(c *gin.Context) {
 		return
 	}
 
-	//Verifica se o RM já existe
+	// Verifica se o RM já existe
 	var count int64
 	config.DB.Model(&model.Aluno{}).Where("rm = ?", create.RM).Count(&count)
 	if count > 0 {
@@ -60,15 +59,23 @@ func CadastrarAluno(c *gin.Context) {
 		return
 	}
 
-	//Hash da senha
+	// Verifica se o curso_id existe e está ativo
+	var curso model.Curso
+	if err := config.DB.Where("id = ? AND ativo = ?", create.CursoID, true).First(&curso).Error; err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Curso inválido ou indisponível"})
+		return
+	}
+
+	// Hash da senha
 	hashed := utils.HashSHA256(create.Senha)
 
 	aluno := model.Aluno{
-		RM:    create.RM,
-		Nome:  create.Nome,
-		Serie: create.Serie,
-		Saldo: create.Saldo,
-		Senha: hashed,
+		RM:      create.RM,
+		Nome:    create.Nome,
+		Serie:   create.Serie,
+		CursoID: create.CursoID,
+		Saldo:   create.Saldo,
+		Senha:   hashed,
 	}
 
 	if err := config.DB.Create(&aluno).Error; err != nil {
@@ -87,10 +94,10 @@ func GetPerfilAluno(c *gin.Context) {
 		return
 	}
 
-	rm := int(userID.(uint))
+	rm := int64(userID.(uint64))
 
 	var aluno model.Aluno
-	if err := config.DB.Where("rm = ?", rm).First(&aluno).Error; err != nil {
+	if err := config.DB.Preload("Curso").Where("rm = ?", rm).First(&aluno).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
 		return
 	}

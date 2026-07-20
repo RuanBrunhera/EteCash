@@ -10,13 +10,13 @@ import (
 var SecretKey = []byte("etec") // Em produção deve vir do env / config
 
 type Claims struct {
-	ID   uint   `json:"id"`
+	ID   uint64   `json:"id"`
 	Role string `json:"role"` // "aluno" ou "funcionario"
 	jwt.RegisteredClaims
 }
 
 // GenerateToken cria um token JWT válido para um usuário.
-func GenerateToken(id uint, role string, duration time.Duration) (string, error) {
+func GenerateToken(id uint64, role string, duration time.Duration) (string, error) {
 	claims := Claims{
 		ID:   id,
 		Role: role,

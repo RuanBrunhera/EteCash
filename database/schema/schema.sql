@@ -6,10 +6,19 @@ CREATE DATABASE etecash;
 CREATE TYPE tipo_pagamento AS ENUM ('credito', 'debito');
 CREATE TYPE forma_pagamento AS ENUM ('pix', 'boleto');
 
+CREATE TABLE curso (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(20) NOT NULL,
+    periodo VARCHAR(10) NOT NULL CHECK (periodo IN ('manha', 'tarde', 'noite')),
+    ativo BOOLEAN NOT NULL DEFAULT TRUE,
+    UNIQUE (nome, periodo)
+);
+
 CREATE TABLE aluno (
-    rm INT PRIMARY KEY,
+    rm BIGINT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     serie CHAR(1) NOT NULL,
+    curso_id INT NOT NULL REFERENCES curso(id),
     saldo NUMERIC(10,2) NOT NULL DEFAULT 0,
     senha VARCHAR(64) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -39,7 +48,7 @@ CREATE TABLE produto (
 
 CREATE TABLE transacao (
     id SERIAL PRIMARY KEY,
-    aluno_rm INT NOT NULL,
+    aluno_rm BIGINT NOT NULL,
     funcionario_id INT NOT NULL,
     valor_total NUMERIC(10,2) NOT NULL,
     data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -59,7 +68,7 @@ CREATE TABLE item_transacao (
 
 CREATE TABLE historico (
     id SERIAL PRIMARY KEY,
-    aluno_rm INT NOT NULL,
+    aluno_rm BIGINT NOT NULL,
     tipo tipo_pagamento NOT NULL,
     forma_pagamento forma_pagamento NOT NULL,
     valor NUMERIC(10,2) NOT NULL,

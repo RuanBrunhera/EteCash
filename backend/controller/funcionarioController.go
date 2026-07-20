@@ -38,7 +38,7 @@ func LoginFuncionario(c *gin.Context) {
 	}
 
 	//Gera o token JWT
-	token, err := utils.GenerateToken(funcionario.ID, "funcionario", 24*time.Hour)
+	token, err := utils.GenerateToken(uint64(funcionario.ID), "funcionario", 24*time.Hour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Erro ao gerar token JWT",

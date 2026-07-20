@@ -4,7 +4,7 @@ import "time"
 
 type Transacao struct {
 	ID            uint            `json:"id"             gorm:"primaryKey"`
-	AlunoRM       int             `json:"aluno_rm"       gorm:"not null;column:aluno_rm"      validate:"required"`
+	AlunoRM       int64           `json:"aluno_rm"       gorm:"not null;column:aluno_rm"      validate:"required"`
 	FuncionarioID uint            `json:"funcionario_id" gorm:"not null;column:funcionario_id" validate:"required"`
 	ValorTotal    float64         `json:"valor_total"    gorm:"type:numeric(10,2);not null"    validate:"required,gt=0"`
 	DataHora      time.Time       `json:"data_hora"      gorm:"column:data_hora;default:CURRENT_TIMESTAMP"`
@@ -31,7 +31,7 @@ func (ItemTransacao) TableName() string {
 }
 
 type TransacaoCreate struct {
-	AlunoRM       int                   `json:"aluno_rm"       validate:"required"`
+	AlunoRM       int64                 `json:"aluno_rm"       validate:"required"`
 	FuncionarioID uint                  `json:"funcionario_id" validate:"required"`
 	Itens         []ItemTransacaoCreate `json:"itens"          validate:"required,min=1,dive"`
 }
@@ -50,7 +50,7 @@ type ItemTransacaoResponse struct {
 
 type TransacaoResponse struct {
 	ID            uint                    `json:"id"`
-	AlunoRM       int                     `json:"aluno_rm"`
+	AlunoRM       int64                   `json:"aluno_rm"`
 	FuncionarioID uint                    `json:"funcionario_id"`
 	ValorTotal    float64                 `json:"valor_total"`
 	DataHora      time.Time               `json:"data_hora"`

@@ -13,6 +13,7 @@ func SetupRoutes(r *gin.Engine) {
 	api.POST("/login/aluno", controller.LoginAluno)
 	api.POST("/login/funcionario", controller.LoginFuncionario)
 	api.POST("/aluno/cadastrar", controller.CadastrarAluno)
+	api.GET("/cursos", controller.ListarCursos)
 
 	// Rotas exclusivas de Funcionários
 	authFunc := api.Group("/func")
