@@ -14,7 +14,7 @@ func EfetuarTransacao(c *gin.Context) {
 
 func AdicionarSaldo(c *gin.Context) {
 	var body struct {
-		RM             int     `json:"rm"`
+		RM             int64   `json:"rm"`
 		Valor          float64 `json:"valor"           validate:"required,gt=0"`
 		FormaPagamento string  `json:"forma_pagamento" validate:"required,oneof=pix boleto"`
 	}
@@ -30,7 +30,7 @@ func AdicionarSaldo(c *gin.Context) {
 		return
 	}
 
-	userIDUint, ok := userID.(uint)
+	userIDUint, ok := userID.(uint64)
 	if !ok {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "ID do usuário inválido"})
 		return
@@ -39,7 +39,7 @@ func AdicionarSaldo(c *gin.Context) {
 	rm := body.RM
 	userRole, _ := c.Get("userRole")
 	if userRole == "aluno" {
-		rm = int(userIDUint)
+		rm = int64(userIDUint)
 	}
 
 	if rm == 0 {
@@ -48,7 +48,7 @@ func AdicionarSaldo(c *gin.Context) {
 	}
 
 	var aluno model.Aluno
-	if err := config.DB.Where("rm = ?", rm).First(&aluno).Error; err != nil {
+	if err := config.DB.Preload("Curso").Where("rm = ?", rm).First(&aluno).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
 		return
 	}

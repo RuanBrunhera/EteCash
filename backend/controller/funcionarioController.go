@@ -22,9 +22,9 @@ func LoginFuncionario(c *gin.Context) {
 
 	//Busca o funcionário pelo telefone
 	var funcionario model.Funcionario
-	if err := config.DB.Where("telefone = ?", login.Telefone).First(&funcionario).Error; err != nil {
+	if err := config.DB.Where("cpf = ?", login.CPF).First(&funcionario).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Telefone inválido",
+			"error": "CPF inválido",
 		})
 		return
 	}

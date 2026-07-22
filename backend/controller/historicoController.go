@@ -15,7 +15,7 @@ func GetHistoricoAluno(c *gin.Context) {
 		return
 	}
 
-	rm := int(userID.(uint))
+	rm := int64(userID.(uint64))
 
 	var historico []model.Historico
 	if err := config.DB.Where("aluno_rm = ?", rm).Order("data_hora DESC").Find(&historico).Error; err != nil {
