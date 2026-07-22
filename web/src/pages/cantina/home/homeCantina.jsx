@@ -1,15 +1,11 @@
+import { useEffect, useState } from 'react'
 import {
   DollarSign,
   ShoppingBag,
   Trophy,
 } from 'lucide-react'
 import WelcomeCardCantina from '../../../components/cantina/welcomeCardCantina'
-
-const resumoDia = {
-  faturamento: 245.99,
-  numeroVendas: 18,
-  produtoMaisVendido: 'Coxinha',
-}
+import { API_URL } from '../../../config/api'
 
 function ResumoCardCantina({ title, value, icon: Icon, color }) {
   const colors = {
@@ -28,31 +24,64 @@ function ResumoCardCantina({ title, value, icon: Icon, color }) {
 }
 
 export default function HomeCantina() {
+  const [resumo, setResumo] = useState({
+    faturamento: 0,
+    numero_vendas: 0,
+    produto_mais_vendido: '—',
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      setLoading(false)
+      return
+    }
+
+    fetch(`${API_URL}/api/func/resumo-dia`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        setResumo({
+          faturamento: data.faturamento || 0,
+          numero_vendas: data.numero_vendas || 0,
+          produto_mais_vendido: data.produto_mais_vendido || '—',
+        })
+      })
+      .catch((err) => console.error('Erro ao buscar resumo do dia:', err))
+      .finally(() => setLoading(false))
+  }, [])
+
   return (
     <div className='p-8 space-y-6'>
       <div>
         <WelcomeCardCantina />
         <h2 className='text-white font-semibold mb-4 mt-6'>Resumo de hoje</h2>
-        <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
-          <ResumoCardCantina
-            title="Faturamento"
-            value={`R$ ${resumoDia.faturamento.toFixed(2)}`}
-            icon={DollarSign}
-            color="green"
-          />
-          <ResumoCardCantina
-            title="Numero de vendas"
-            value={resumoDia.numeroVendas}
-            icon={ShoppingBag}
-            color="blue"
-          />
-          <ResumoCardCantina
-            title="Produto mais vendido"
-            value={resumoDia.produtoMaisVendido}
-            icon={Trophy}
-            color="red"
-          />
-        </div>
+        {loading ? (
+          <p className="text-zinc-400">Carregando...</p>
+        ) : (
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
+            <ResumoCardCantina
+              title="Faturamento"
+              value={`R$ ${resumo.faturamento.toFixed(2)}`}
+              icon={DollarSign}
+              color="green"
+            />
+            <ResumoCardCantina
+              title="Numero de vendas"
+              value={resumo.numero_vendas}
+              icon={ShoppingBag}
+              color="blue"
+            />
+            <ResumoCardCantina
+              title="Produto mais vendido"
+              value={resumo.produto_mais_vendido}
+              icon={Trophy}
+              color="red"
+            />
+          </div>
+        )}
       </div>
     </div>
   )
