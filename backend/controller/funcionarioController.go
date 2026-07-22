@@ -10,6 +10,24 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+func GetPerfilFuncionario(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	id := userID.(uint64)
+
+	var funcionario model.Funcionario
+	if err := config.DB.Where("id = ?", id).First(&funcionario).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Funcionário não encontrado"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"funcionario": funcionario.ToResponse()})
+}
+
 func LoginFuncionario(c *gin.Context) {
 	var login model.FuncionarioLogin
 	if err := c.ShouldBindJSON(&login); err != nil {

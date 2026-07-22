@@ -6,6 +6,7 @@ type Funcionario struct {
 	ID        uint       `json:"id"         gorm:"primaryKey"`
 	Nome      string     `json:"nome"       gorm:"not null;column:nome"      validate:"required,min=3,max=100"`
 	CPF       string     `json:"cpf"        gorm:"not null;unique;column:cpf" validate:"required,len=11"`
+	Email     *string    `json:"email"      gorm:"column:email"               validate:"omitempty,email"`
 	DataNasc  *time.Time `json:"data_nasc"  gorm:"column:data_nasc"`
 	Telefone  *string    `json:"telefone"   gorm:"column:telefone"            validate:"omitempty,min=10,max=20"`
 	Senha     string     `json:"-"          gorm:"not null;column:senha"`
@@ -20,6 +21,7 @@ func (Funcionario) TableName() string {
 type FuncionarioCreate struct {
 	Nome     string     `json:"nome" validate:"required,min=3,max=100"`
 	CPF      string     `json:"cpf" validate:"required,len=11"`
+	Email    *string    `json:"email" validate:"omitempty,email"`
 	DataNasc *time.Time `json:"data_nasc"`
 	Telefone *string    `json:"telefone" validate:"omitempty,min=10,max=20"`
 	Senha    string     `json:"senha" validate:"required,min=6"`
@@ -28,6 +30,7 @@ type FuncionarioCreate struct {
 type FuncionarioUpdate struct {
 	Nome     *string    `json:"nome" validate:"omitempty,min=3,max=100"`
 	CPF      *string    `json:"cpf" validate:"omitempty,len=11"`
+	Email    *string    `json:"email" validate:"omitempty,email"`
 	DataNasc *time.Time `json:"data_nasc"`
 	Telefone *string    `json:"telefone" validate:"omitempty,min=10,max=20"`
 	Senha    *string    `json:"senha" validate:"omitempty,min=6"`
@@ -37,6 +40,7 @@ type FuncionarioResponse struct {
 	ID        uint       `json:"id"`
 	Nome      string     `json:"nome"`
 	CPF       string     `json:"cpf"`
+	Email     *string    `json:"email,omitempty"`
 	DataNasc  *time.Time `json:"data_nasc,omitempty"`
 	Telefone  *string    `json:"telefone,omitempty"`
 	CreatedAt time.Time  `json:"created_at"`
@@ -53,6 +57,7 @@ func (f *Funcionario) ToResponse() FuncionarioResponse {
 		ID:        f.ID,
 		Nome:      f.Nome,
 		CPF:       f.CPF,
+		Email:     f.Email,
 		DataNasc:  f.DataNasc,
 		Telefone:  f.Telefone,
 		CreatedAt: f.CreatedAt,

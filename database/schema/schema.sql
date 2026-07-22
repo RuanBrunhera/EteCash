@@ -29,6 +29,7 @@ CREATE TABLE funcionario (
     id SERIAL PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
     cpf VARCHAR(11) NOT NULL UNIQUE,
+    email VARCHAR(150),
     data_nasc DATE,
     telefone VARCHAR(20),
     senha VARCHAR(64) NOT NULL,

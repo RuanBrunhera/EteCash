@@ -9,9 +9,12 @@ down:
 	docker compose down
 
 # Aplica o schema.sql (dropa e recria o banco do zero)
+# Para o container da API antes, porque ele mantém conexão aberta que impede o DROP DATABASE
 schema:
+	docker compose stop api
 	docker cp database/schema/schema.sql etecash_db:/schema.sql
 	docker exec -it etecash_db psql -U postgres -d postgres -f /schema.sql
+	docker compose start api
 
 # Roda todos os seeds, na ordem certa (por causa das FKs)
 seeds: seed-curso seed-aluno seed-funcionario seed-produto seed-transacao seed-item-transacao

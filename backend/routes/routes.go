@@ -19,6 +19,7 @@ func SetupRoutes(r *gin.Engine) {
 	authFunc := api.Group("/func")
 	authFunc.Use(middleware.AuthMiddleware("funcionario"))
 	{
+		authFunc.GET("/perfil", controller.GetPerfilFuncionario)
 		authFunc.POST("/produto", controller.CriarProduto)
 		authFunc.GET("/produtos", controller.ListarProdutos)
 		authFunc.PUT("/produto/:id", controller.AtualizarProduto)

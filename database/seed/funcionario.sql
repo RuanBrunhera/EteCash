@@ -1,3 +1,3 @@
-INSERT INTO funcionario (nome, cpf, data_nasc, telefone, senha) VALUES
-('Carlos Pereira', '11122233344', '1985-06-12', '11987654321', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'), -- senha: "password"
-('Ana Costa', '55566677788', '1990-09-25', '11991234567', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'); -- senha: "password"
+INSERT INTO funcionario (nome, cpf, email, data_nasc, telefone, senha) VALUES
+('Carlos Pereira', '11122233344', 'carlos.pereira@etec.sp.gov.br', '1985-06-12', '11987654321', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'), -- senha: "password"
+('Ana Costa', '55566677788', 'ana.costa@etec.sp.gov.br', '1990-09-25', '11991234567', '5e884898da28047151d0e56f8dc6292773603d0d6aabbdd62a11ef721d1542d8'); -- senha: "password"
