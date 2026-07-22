@@ -1,20 +1,15 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Camera } from "lucide-react";
 import quandale from "../../../assets/knpgsvnouo191.jpg";
-import { API_URL } from "../../../config/api"
+import { API_URL } from "../../../config/api";
 
-function ProfileInfoCard({
-  titulo,
-  info,
-  cor = "bg-gray-800",
-  borda = "border-red-500 ",
-}) {
+function ProfileInfoCard({ titulo, info }) {
   return (
-    <div className={`rounded-2xl ${cor} text-white p-4 border-2 ${borda}`}>
-      <div className="text-xs text-white/70 pb-2 mb-2 border-b border-white/20">
+    <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-4">
+      <div className="text-xs text-zinc-500 pb-2 mb-2 border-b border-zinc-800">
         {titulo}
       </div>
-      <p className="font-semibold">{info}</p>
+      <p className="font-semibold text-white">{info}</p>
     </div>
   );
 }
@@ -22,8 +17,8 @@ function ProfileInfoCard({
 const PERIODOS = {
   manha: "Manhã",
   tarde: "Tarde",
-  noite: "Noturno",
-}
+  noite: "Noite",
+};
 
 export default function Profile() {
   const [aluno, setAluno] = useState(
@@ -48,29 +43,28 @@ export default function Profile() {
     fetch(`${API_URL}/api/aluno/perfil`, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.aluno) {
-        setAluno(data.aluno);
-        localStorage.setItem("aluno", JSON.stringify(data.aluno));
-      } else {
-        setErro("Não foi possível carregar o perfil.");
-      }
-    })
-    .catch((err) => {
-      console.error("Erro ao buscar o perfil:", err);
-      setErro("Erro ao conectar com o servidor")
-    })
-    .finally(() => setLoading(false));
-  },[])
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.aluno) {
+          setAluno(data.aluno);
+          localStorage.setItem("aluno", JSON.stringify(data.aluno));
+        } else {
+          setErro("Não foi possível carregar o perfil.");
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar perfil:", err);
+        setErro("Erro ao conectar com o servidor.");
+      })
+      .finally(() => setLoading(false));
+  }, []);
 
   const handleFotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // transformar o arquivo em URL usando: URL.createObjectURL(file)
       const objectUrl = URL.createObjectURL(file);
       setFoto(objectUrl);
-      // quando existir endpoint de upload de foto, enviar o `file` pro backend aqui
+      // TODO: quando existir endpoint de upload de foto, enviar o `file` pro backend aqui
     }
   };
 
@@ -83,7 +77,7 @@ export default function Profile() {
     .toUpperCase();
 
   const formatarCurso = (aluno) => {
-    if (!aluno.curso || !aluno.curso.nome) return "-";
+    if (!aluno.curso || !aluno.curso.nome) return "—";
     const periodo = PERIODOS[aluno.curso.periodo] || aluno.curso.periodo;
     return `${aluno.serie}º ${aluno.curso.nome} - ${periodo}`;
   };
@@ -98,9 +92,9 @@ export default function Profile() {
 
   return (
     <div className="max-w-md mx-auto mt-10">
-      <div className="bg-white rounded-3xl shadow-sm ring-1 ring-gray-100 p-8">
+      <div className="bg-zinc-950 rounded-3xl shadow-sm ring-1 ring-zinc-800 p-8">
         {erro && (
-          <p className="text-red-600 text-sm text-center mb-4">{erro}</p>
+          <p className="text-red-400 text-sm text-center mb-4">{erro}</p>
         )}
 
         {/* Foto / Avatar */}
@@ -110,15 +104,15 @@ export default function Profile() {
               <img
                 src={foto}
                 alt="Foto do aluno"
-                className="w-24 h-24 rounded-full object-cover"
+                className="w-24 h-24 rounded-full object-cover ring-2 ring-zinc-800"
               />
             ) : (
-              <div className="w-24 h-24 rounded-full bg-blue-600 text-white flex items-center justify-center text-2xl font-bold">
+              <div className="w-24 h-24 rounded-full bg-red-600 text-white flex items-center justify-center text-2xl font-bold">
                 {iniciais}
               </div>
             )}
 
-            <label className="absolute bottom-0 right-0 bg-blue-600 rounded-full p-1.5 cursor-pointer hover:bg-blue-700">
+            <label className="absolute bottom-0 right-0 bg-red-600 rounded-full p-1.5 cursor-pointer hover:bg-red-700 transition-colors">
               <Camera size={14} className="text-white" />
               <input
                 type="file"
