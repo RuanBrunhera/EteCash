@@ -1,15 +1,150 @@
 package controller
 
 import (
+	"errors"
+	"fmt"
 	"net/http"
 
 	"github.com/RuanBrunhera/Etecash/config"
 	"github.com/RuanBrunhera/Etecash/model"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
+// Erros sentinela: variáveis fixas que representam situações de negócio específicas,
+// permitindo identificar exatamente qual regra falhou (em vez de comparar strings de texto)
+
+var ErrEstoqueInsuficiente = errors.New("estoque insuficiente")
+var ErrSaldoInsuficiente = errors.New("saldo insuficiente")
+
 func EfetuarTransacao(c *gin.Context) {
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "Em desenvolvimento"})
+	// 1 Faz o bind do JSON pro model.TransacaoCreate
+	var create model.TransacaoCreate
+	if err := c.ShouldBindJSON(&create); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Dados inválidos",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// 2 Busca o aluno pelo RM
+	var aluno model.Aluno
+	if err := config.DB.Preload("Curso").Where("rm = ?", create.AlunoRM).First(&aluno).Error; err != nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "RM inválido"})
+		return
+	}
+
+	// 3 Dentro de config.DB.Transaction(func(tx *gorm.DB) error { ... }): itera pelos itens, busca cada produto, valida estoque, soma o total
+	var valorTotal float64
+
+	err := config.DB.Transaction(func(tx *gorm.DB) error {
+		for _, item := range create.Itens {
+			var produto model.Produto
+			if err := tx.Where("id = ?", item.ProdutoID).First(&produto).Error; err != nil {
+				return err
+			}
+			valorTotal += produto.Preco * float64(item.Quantidade)
+		}
+		return nil
+	})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar itens da compra"})
+		return
+	}
+
+	// 4 Valida saldo suficiente
+	if aluno.Saldo < valorTotal {
+		err := ErrSaldoInsuficiente
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	// 5. Debita saldo, diminui estoque, cria Transacao + ItemTransacao, cria Historico
+	var transacao model.Transacao
+
+	err = config.DB.Transaction(func(tx *gorm.DB) error {
+		// 5.1 — Debita o saldo do aluno
+		aluno.Saldo -= valorTotal
+		if err := tx.Save(&aluno).Error; err != nil {
+			return err
+		}
+
+		// 5.2 — Cria o registro de Transacao (ainda sem os itens)
+		transacao = model.Transacao{
+			AlunoRM:       aluno.RM,
+			FuncionarioID: create.FuncionarioID,
+			ValorTotal:    valorTotal,
+		}
+		if err := tx.Create(&transacao).Error; err != nil {
+			return err
+		}
+
+		// 5.3 — Para cada item do carrinho:
+		//   a) buscar o produto de novo (dentro da transação, usando `tx`)
+		//   b) verificar se `produto.Estoque >= item.Quantidade` (senão, retornar erro)
+		//   c) diminuir `produto.Estoque` e salvar com `tx.Save(&produto)`
+		//   d) criar o ItemTransacao correspondente (TransacaoID, ProdutoID, Quantidade, PrecoUnitario)
+
+		for _, item := range create.Itens {
+			var produto model.Produto
+
+			if err := tx.Where("id = ?", item.ProdutoID).First(&produto).Error; err != nil {
+				return err
+			}
+
+			if produto.Estoque < item.Quantidade {
+				return fmt.Errorf("%w: %s", ErrEstoqueInsuficiente, produto.Nome)
+			}
+
+			produto.Estoque -= item.Quantidade
+			if err := tx.Save(&produto).Error; err != nil {
+				return err
+			}
+
+			itemTransacao := model.ItemTransacao{
+				TransacaoID:   transacao.ID,
+				ProdutoID:     produto.ID,
+				Quantidade:    item.Quantidade,
+				PrecoUnitario: produto.Preco,
+			}
+			if err := tx.Create(&itemTransacao).Error; err != nil {
+				return err
+			}
+		}
+
+		// 5.4 — Cria o registro em Historico (tipo "debito", forma_pagamento "saldo")
+		historico := model.Historico{
+			AlunoRM:        aluno.RM,
+			Tipo:           "debito",
+			FormaPagamento: "saldo",
+			Valor:          valorTotal,
+		}
+		if err := tx.Create(&historico).Error; err != nil {
+			return err
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		switch {
+		case errors.Is(err, ErrEstoqueInsuficiente):
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		case errors.Is(err, ErrSaldoInsuficiente):
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao processar a compra", "details": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":     "Transação realizada com sucesso",
+		"transacao":   transacao,
+		"valor_total": valorTotal,
+	})
+
 }
 
 func AdicionarSaldo(c *gin.Context) {

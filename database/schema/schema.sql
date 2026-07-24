@@ -4,7 +4,7 @@ CREATE DATABASE etecash;
 \c etecash
 
 CREATE TYPE tipo_pagamento AS ENUM ('credito', 'debito');
-CREATE TYPE forma_pagamento AS ENUM ('pix', 'boleto');
+CREATE TYPE forma_pagamento AS ENUM ('pix', 'boleto', 'saldo');
 
 CREATE TABLE curso (
     id SERIAL PRIMARY KEY,
