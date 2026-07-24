@@ -14,7 +14,7 @@ function ProfileInfoCard({ titulo, info }) {
 }
 
 export default function ProfileCantina() {
-  const [funcionario, setFuncionario] = useSZZate(
+  const [funcionario, setFuncionario] = useState(
     JSON.parse(localStorage.getItem("funcionario")) || {
       nome: "Funcionário",
       cpf: "",
