@@ -1,9 +1,24 @@
-// src/pages/cantina/produtos/produtosCantina.jsx
 import { useEffect, useState } from 'react'
 import { Plus, Pencil, X, Package } from 'lucide-react'
 import { API_URL } from '../../../config/api'
 
+function getEstoqueStatus(estoque) {
+  if (estoque === 0) return 'esgotado'
+  if (estoque <= 10) return 'baixo'
+  return 'normal'
+}
+
+function getEstoqueCor(status) {
+  if (status === 'esgotado') return 'text-red-400'
+  if (status === 'baixo') return 'text-yellow-400'
+  return 'text-zinc-500'
+}
+
 function ProdutoCard({ produto, onEdit }) {
+
+  const status = getEstoqueStatus(produto.estoque)
+  const estoqueLabel = getEstoqueCor(status)
+
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-5 flex flex-col gap-3">
       <div className="flex items-start justify-between">
@@ -31,7 +46,7 @@ function ProdutoCard({ produto, onEdit }) {
       <div className="flex items-center justify-between mt-auto pt-3 border-t border-zinc-800">
         <div>
           <p className="text-white font-bold text-lg">R$ {produto.preco.toFixed(2)}</p>
-          <p className="text-xs text-zinc-500">Estoque: {produto.estoque}</p>
+          <p className={`text-xs ${estoqueLabel}`}>Estoque: {produto.estoque}</p>
         </div>
         <button
           onClick={() => onEdit(produto)}
@@ -73,13 +88,20 @@ function ProdutoModal({ produto, onClose, onSave }) {
 
     setSalvando(true)
     try {
-      await onSave({
+      const payload = {
         nome: form.nome,
-        descricao: form.descricao || null,
+        descricao:form.descricao || null,
         preco: parseFloat(form.preco),
-        estoque: parseInt(form.estoque, 10) || 0,
         ativo: form.ativo,
-      })
+      }
+
+      const estoqueTexto = String(form.estoque).trim()
+      if (estoqueTexto !== '') {
+        payload.estoque = parseInt(estoqueTexto, 10)
+      }
+
+      await onSave(payload)
+
     } catch (err) {
       setErro(err.message || 'Erro ao salvar produto.')
     } finally {
@@ -192,12 +214,106 @@ function ProdutoModal({ produto, onClose, onSave }) {
   )
 }
 
+function ReceberCargaModal({ produtos, onClose, onConfirm }) {
+  const [quantidades, setQuantidades] = useState({})
+  const [salvando, setSalvando] = useState(false)
+  const [erro, setErro] = useState(null)
+
+  const handleQuantidadeChange = (produtoId, valor) => {
+    setQuantidades((prev) => ({...prev, [produtoId]: valor}))
+  }
+
+  const handleConfirmar = async () => {
+    setErro(null)
+    setSalvando(true)
+
+    try {
+      const entradasEstoque = Object.entries(quantidades)
+      .filter(([produtoId, quantidadeRecebida]) => Number(quantidadeRecebida) > 0)
+      .map(([produtoId, quantidadeRecebida]) => ({
+        produtoId, 
+        quantidadeRecebida: Number(quantidadeRecebida),
+      }))
+
+      await onConfirm(entradasEstoque)
+      onClose()
+    }catch (err) {
+      setErro(err.message || 'Erro ao registrar entrada de estoque.')
+    } finally {
+      setSalvando(false)
+    }
+  }
+
+  return (
+    <div
+      className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4'
+      onClick={onClose}
+    >
+      <div
+        className='bg-zinc-900 border border-zinc-800 rounded-3xl p-6 w-full max-w-lg shadow-xl max-h-[80vh] flex flex-col'
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className='flex items-center justify-between mb-4'>
+          <h3 className='text-white font-semibold text-lg'>Receber carga</h3>
+          <button
+            onClick={onClose}
+            className='rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-white transition-colors'
+          >
+            <X className='size-4'/>
+          </button>
+        </div>
+
+        {erro && <p className='text-red-400 text-sm mb-3'>{erro}</p>}
+
+        <div className='space-y-2 overflow-y-auto flex-1'>
+          {produtos.map((p) => (
+  <div key={p.id} className="bg-zinc-800 rounded-lg p-4">
+    <div className="flex items-center justify-between">
+      <div>
+        <h4 className="text-white font-semibold">{p.nome}</h4>
+        <p className="text-zinc-400 text-sm">Estoque atual: {p.estoque}</p>
+      </div>
+      <input
+        type="number"
+        min="0"
+        value={quantidades[p.id] || ''}
+        onChange={(e) => handleQuantidadeChange(p.id, e.target.value)}
+        className="w-20 rounded-lg bg-zinc-700 border border-zinc-600 px-2 py-1 text-white text-sm focus:outline-none focus:border-red-600"
+      />
+    </div>
+  </div>
+))}
+        </div>
+
+        <div className='flex gap-3 pt-4 mt-4 border-t border-zinc-800'>
+          <button 
+            onClick={onClose}
+            className='flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors'
+            >
+            Cancelar
+          </button>
+          <button
+            onClick={handleConfirmar}
+            disabled={salvando}
+            className='flex-1 rounded-xl bg-red-600 text-white text-sm font-medium py-2.5 hover:bg-red-700 transition-colors disabled:opacity-50'
+          >
+            {salvando ? 'Salvando...' : 'Confirmar entrada'}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+
+}
+
 export default function ProdutosCantina() {
   const [produtos, setProdutos] = useState([])
   const [loading, setLoading] = useState(true)
   const [erro, setErro] = useState(null)
   const [produtoEmEdicao, setProdutoEmEdicao] = useState(null)
-  const [modalAberto, setModalAberto] = useState(false)
+  const [modalProdutoAberto, setModalProdutoAberto] = useState(false)
+  const [modalReceberCargaAberto, setModalReceberCargaAberto] = useState(false)
+  const [filtroEstoque, setFiltroEstoque] = useState('todos') //pode ser "todos", "baixo" ou "esgotado"
 
   const token = localStorage.getItem('token')
 
@@ -225,16 +341,16 @@ export default function ProdutosCantina() {
 
   const abrirNovoProduto = () => {
     setProdutoEmEdicao(null)
-    setModalAberto(true)
+    setModalProdutoAberto(true)
   }
 
   const abrirEdicao = (produto) => {
     setProdutoEmEdicao(produto)
-    setModalAberto(true)
+    setModalProdutoAberto(true)
   }
 
   const fecharModal = () => {
-    setModalAberto(false)
+    setModalProdutoAberto(false)
     setProdutoEmEdicao(null)
   }
 
@@ -264,42 +380,137 @@ export default function ProdutosCantina() {
     buscarProdutos()
   }
 
+  const confirmarCarga = async (entradasEstoque) => {
+    try {
+      await Promise.all(
+        entradasEstoque.map(async ({produtoId, quantidadeRecebida}) => {
+          const produto = produtos.find(p => p.id === Number(produtoId))
+          if (!produto) {
+            throw new Error(`Produto com ID ${produtoId} não encontrado.`)
+          }
+
+          const novoEstoque = produto.estoque + quantidadeRecebida
+
+          const response = await fetch(`${API_URL}/api/func/produto/${produtoId}`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({estoque: novoEstoque}),
+          })
+
+          if (!response.ok) {
+            const data = await response.json()
+            throw new Error(data.error || `Erro ao atualizar estoque do produto ${produto.nome}`)
+          }
+        })
+      )
+      buscarProdutos()
+    } catch (err) {
+      console.error('Erro ao registrar entrada de estoque:', err)
+      setErro('Erro ao registrar entrada de estoque.')
+    }
+  }
+
+  const produtosFiltrado = produtos.filter((p) => {
+    const status = getEstoqueStatus(p.estoque)
+    return filtroEstoque === 'todos' || status === filtroEstoque
+  })
+
   return (
     <div className="p-8 space-y-6">
       <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-semibold text-white">Produtos</h2>
-          <p className="text-zinc-400 text-sm mt-1">Gerencie o catálogo da cantina</p>
-        </div>
-        <button
-          onClick={abrirNovoProduto}
-          className="flex items-center gap-2 rounded-xl bg-red-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-red-700 transition-colors"
-        >
-          <Plus size={18} />
-          Novo produto
-        </button>
-      </div>
+  <div>
+    <h2 className="text-2xl font-semibold text-white">Produtos</h2>
+    <p className="text-zinc-400 text-sm mt-1">Gerencie o catálogo da cantina</p>
+  </div>
+
+  <div className="flex gap-3">
+    <button
+      onClick={() => setModalReceberCargaAberto(true)}
+      className="flex items-center gap-2 rounded-xl bg-zinc-800 text-white text-sm font-medium px-4 py-2.5 hover:bg-zinc-700 transition-colors"
+    >
+      Adicionar carga
+    </button>
+    <button
+      onClick={abrirNovoProduto}
+      className="flex items-center gap-2 rounded-xl bg-red-600 text-white text-sm font-medium px-4 py-2.5 hover:bg-red-700 transition-colors"
+    >
+      <Plus size={18} />
+      Novo produto
+    </button>
+  </div>
+</div>
 
       {erro && <p className="text-red-400 text-sm">{erro}</p>}
 
       {loading ? (
-        <p className="text-zinc-400">Carregando...</p>
-      ) : produtos.length === 0 ? (
-        <p className="text-zinc-400">Nenhum produto cadastrado ainda.</p>
+        <p className="text-zinc-400">Carregando produtos...</p>
       ) : (
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {produtos.map((p) => (
-            <ProdutoCard key={p.id} produto={p} onEdit={abrirEdicao} />
-          ))}
-        </div>
+        <>
+          {/* Botões de filtro */}
+          <div className='flex gap-2'>
+            <button
+              onClick={() => setFiltroEstoque('todos')}
+              className={`text-sm px-4 py-2 rounded-xl transition-colors ${
+                filtroEstoque === 'todos'
+                ? 'bg-red-600 text-white'
+                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+              }`}
+              >
+                Todos os produtos
+            </button>
+            <button
+              onClick={() => setFiltroEstoque('baixo')}
+              className={`text-sm px-4 py-2 rounded-xl transition-colors ${
+                filtroEstoque === 'baixo'
+                ? 'bg-yellow-500 text-black'
+                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+              }`}
+            >
+              Estoque baixo
+            </button>
+            <button
+              onClick={() => setFiltroEstoque('esgotado')}
+              className={`text-sm px-4 py-2 rounded-xl transition-colors ${
+                filtroEstoque === 'esgotado'
+                ? 'bg-red-500 text-white'
+                : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+              }`}
+            >
+              Fora de estoque
+            </button>
+          </div>
+
+              {/* Lista única já filtrada */}
+              {produtosFiltrado.length === 0 ? (
+                <p className='text-zinc-400'>Nenhum produto encontrado</p>
+              ): (
+                <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+                  {produtosFiltrado.map((p) => (
+                    <ProdutoCard key={p.id} produto={p} onEdit={abrirEdicao}/>
+                  ))}
+                </div>
+              )}
+
+        </>
       )}
 
-      {modalAberto && (
+      {modalProdutoAberto && (
         <ProdutoModal
           produto={produtoEmEdicao}
           onClose={fecharModal}
           onSave={salvarProduto}
         />
+      )}
+    
+      {modalReceberCargaAberto && (
+        <ReceberCargaModal
+          produtos={produtos}
+          onClose={() => setModalReceberCargaAberto(false)}
+          onConfirm={confirmarCarga}
+          />
       )}
     </div>
   )

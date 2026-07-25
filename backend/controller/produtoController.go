@@ -107,8 +107,8 @@ func AtualizarProduto(c *gin.Context) {
 	}
 
 	//OBSERVAÇÃO: o estoque realmente pode estar zerado, ai aplica quando tiver um valor diferente do atual
-	if update.Estoque != 0 {
-		produto.Estoque = update.Estoque
+	if update.Estoque != nil {
+		produto.Estoque = *update.Estoque
 	}
 
 	if update.Ativo != nil {
