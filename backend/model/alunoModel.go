@@ -10,6 +10,7 @@ type Aluno struct {
 	Curso      Curso       `json:"curso" gorm:"foreignKey:CursoID"`
 	Saldo      float64     `json:"saldo"  gorm:"type:numeric(10,2);default:0"   validate:"min=0"`
 	Senha      string      `json:"-"      gorm:"not null;column:senha"`
+	PIN        string      `json:"-" gorm:"not null;column:pin"`
 	Transacoes []Transacao `json:"transacoes,omitempty" gorm:"foreignKey:AlunoRM;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
 	CreatedAt  time.Time   `json:"created_at"`
 	UpdatedAt  time.Time   `json:"updated_at"`
@@ -34,6 +35,17 @@ type AlunoResponse struct {
 	Serie     string    `json:"serie"`
 	Curso     Curso     `json:"curso"`
 	Saldo     float64   `json:"saldo"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type AlunoCadastroResponse struct {
+	RM        int64     `json:"rm"`
+	Nome      string    `json:"nome"`
+	Serie     string    `json:"serie"`
+	Curso     Curso     `json:"curso"`
+	Saldo     float64   `json:"saldo"`
+	PIN       string    `json:"pin"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }

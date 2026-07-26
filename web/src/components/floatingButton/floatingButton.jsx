@@ -1,26 +1,46 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom"
 import "./styles.css"
 import AdicionarSaldoModal from "../modalAddSaldo/AdicionarSaldo";
 
-const options = [
-  { emoji: "💲", label: "Adicionar saldo" }
+const allOptions = [
+  { emoji: "💲", label: "Adicionar saldo", contexto: "aluno", key: "saldo" },
+  { emoji: "🛒", label: "Efetuar venda", contexto: "cantina", key: "venda"},
 ];
 
 export default function FloatingButton() {
   const [open, setOpen] = useState(false);
-  const [isModalOpen, setModalOpen] = useState(false);
+  const [modalAberto, setModalAberto] = useState(null); //guarda null ou a key, que é a chave para saber se é "venda" (parte do carrinho da cantina) ou "saldo" (parte do adicionar saldo do aluno)
+
+  const location = useLocation();
+  const pathname = location?.pathname || "";
+
+  //determino o contexto a partir da rota
+  const context = pathname.includes("/cantina") ? "cantina" : "aluno"
+  
+  //filtra as opções pelo contexto atual
+  const options = allOptions.filter((o) => o.contexto === contexto);
+
+  function abrirModal(key) {
+    setModalAberto(key)
+    setOpen(false)
+  }
+
+  function fecharModal() {
+    setModalAberto(null)
+  }
 
   return (
     <>
-      <div className="fab-wrapper">
-        {open && (
-          <div className="fab-menu">
-            {options.map((opt, i) => (
-              <div key={i} className={`fab-option ${open ? "visible" : ""}`}>
-                <span className="fab-label">{opt.label}</span>
-                <button
-                  className="fab-option-btn"
-                  onClick={() => setModalOpen(true)}
+      <div className='fab-wrapper'>
+        {open && options.length > 0 && (
+          <div className='fab-menu'>
+            {options.map((opt) => (
+              <div key={opt.key} className={`fab-option ${open ? "visible" : ""}`}>
+                <span className='fab-label'>{opt.label}</span>
+                <button 
+                  className='fab-option-btn'
+                  onClick={() => abrirModal(opt.key)}
                   title={opt.label}
                 >
                   {opt.emoji}
@@ -31,7 +51,7 @@ export default function FloatingButton() {
         )}
 
         <button
-          className="fab-main"
+          className='fab-main'
           onClick={() => setOpen((prev) => !prev)}
           aria-label={open ? "Fechar menu" : "Abrir menu"}
         >
@@ -39,13 +59,17 @@ export default function FloatingButton() {
         </button>
       </div>
 
-      {isModalOpen && (
-        <AdicionarSaldoModal
-          isOpen={isModalOpen}
-          onClose={() => setModalOpen(false)
-          }
-        />
-      )}
+        {modalAberto === 'saldo' && (
+          <AdicionarSaldoModal 
+            isOpen={true}
+            onClose={fecharModal}
+          />
+        )}
+
+        {modalAberto === 'venda' && (
+          <div>Carrinho ainda não implementado</div>
+        )}
+
     </>
   );
 }
