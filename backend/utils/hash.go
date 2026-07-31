@@ -15,3 +15,7 @@ func HashSHA256(password string) string {
 func CheckPasswordHash(password, hash string) bool {
 	return HashSHA256(password) == hash
 }
+
+func CheckPINHash(pin, hash string) bool {
+	return HashSHA256(pin) == hash
+}

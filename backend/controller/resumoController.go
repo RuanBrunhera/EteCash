@@ -44,3 +44,32 @@ func GetResumoDia(c *gin.Context) {
 		"produto_mais_vendido": produtoMaisVendido,
 	})
 }
+
+func GetResumoMensalAluno(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	rm := int64(userID.(uint64))
+
+	var totais struct {
+		TotalDepositos float64
+		TotalGasto     float64
+		NumeroPedidos  int64
+	}
+
+	config.DB.Model(&model.Historico{}).
+		Where("aluno_rm = ? AND data_hora >= date_trunc('month', CURRENT_DATE) AND data_hora < date_trunc('month', CURRENT_DATE) + interval '1 month'", rm).
+		Select("COALESCE(SUM(CASE WHEN tipo = 'credito' THEN valor ELSE 0 END), 0) AS total_depositos, " +
+			"COALESCE(SUM(CASE WHEN tipo = 'debito' THEN valor ELSE 0 END), 0) AS total_gasto, " +
+			"COALESCE(COUNT(CASE WHEN tipo = 'debito' THEN 1 END), 0) AS numero_pedidos").
+		Scan(&totais)
+
+	c.JSON(http.StatusOK, gin.H{
+		"totalDepositos": totais.TotalDepositos,
+		"totalGasto":     totais.TotalGasto,
+		"numeroPedidos":  totais.NumeroPedidos,
+	})
+}

@@ -33,6 +33,7 @@ func SetupRoutes(r *gin.Engine) {
 	{
 		authAluno.GET("/perfil", controller.GetPerfilAluno)
 		authAluno.GET("/historico", controller.GetHistoricoAluno)
+		authAluno.GET("/resumo-mes", controller.GetResumoMensalAluno)
 		authAluno.POST("/saldo", controller.AdicionarSaldo)
 	}
 }

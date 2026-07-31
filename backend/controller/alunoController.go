@@ -66,6 +66,10 @@ func CadastrarAluno(c *gin.Context) {
 		return
 	}
 
+	// Cria hash do PIN do aluno
+	pinGerado := utils.GerarPin()
+	hashedPin := utils.HashSHA256(pinGerado)
+
 	// Hash da senha
 	hashed := utils.HashSHA256(create.Senha)
 
@@ -76,6 +80,7 @@ func CadastrarAluno(c *gin.Context) {
 		CursoID: create.CursoID,
 		Saldo:   create.Saldo,
 		Senha:   hashed,
+		PIN:     hashedPin,
 	}
 
 	if err := config.DB.Create(&aluno).Error; err != nil {
@@ -83,7 +88,17 @@ func CadastrarAluno(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{"aluno": aluno.ToResponse()})
+	resposta := model.AlunoCadastroResponse{
+		RM:        aluno.RM,
+		Nome:      aluno.Nome,
+		Serie:     aluno.Serie,
+		Curso:     curso,
+		Saldo:     aluno.Saldo,
+		PIN:       pinGerado,
+		CreatedAt: aluno.CreatedAt,
+		UpdatedAt: aluno.UpdatedAt,
+	}
+	c.JSON(http.StatusCreated, gin.H{"aluno": resposta})
 }
 
 func GetPerfilAluno(c *gin.Context) {
@@ -104,3 +119,5 @@ func GetPerfilAluno(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"aluno": aluno.ToResponse()})
 }
+
+
