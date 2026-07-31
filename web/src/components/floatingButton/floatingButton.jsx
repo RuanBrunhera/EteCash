@@ -19,7 +19,7 @@ export default function FloatingButton() {
   const context = pathname.includes("/cantina") ? "cantina" : "aluno"
   
   //filtra as opções pelo contexto atual
-  const options = allOptions.filter((o) => o.contexto === contexto);
+  const options = allOptions.filter((o) => o.contexto === context);
 
   function abrirModal(key) {
     setModalAberto(key)

@@ -1,13 +1,7 @@
+import { useState, useEffect } from "react"
 import WelcomeCard from "../../../components/dashboard/welcomeCard.jsx"
 import { Wallet, ShoppingBag, TrendingDown } from "lucide-react"
-
-// Dados mockados do mês atual
-const resumoMes = {
-  totalGasto: 2.00,
-  totalDepositos: 150.00,
-  numeroPedidos: 12,
-  mes: new Date().toLocaleString('pt-BR', { month: 'long', year: 'numeric' })
-}
+import { API_URL } from "../../../config/api.js"  
 
 function ResumoCard({ title, value, icon: Icon, color }) {
   const colors = {
@@ -29,37 +23,71 @@ function ResumoCard({ title, value, icon: Icon, color }) {
 }
 
 export default function Home() {
+  const [resumo, setResumo] = useState({
+    totalDepositos: 0,
+    totalGasto: 0,
+    numeroPedidos: 0,
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const token = localStorage.getItem('token')
+    if (!token) {
+      setLoading(false)
+      return
+    }
+
+    fetch(`${API_URL}/api/aluno/resumo-mes`, {
+      headers: { Authorization : `Bearer ${token}` },
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      setResumo({
+        totalDepositos: data.totalDepositos || 0,
+        totalGasto: data.totalGasto || 0,
+        numeroPedidos: data.numeroPedidos || 0,
+      })
+    })
+    .catch((err) => console.error('Erro ao buscar resumo do mês:', err))
+    .finally(() => setLoading(false))
+  }, [])
+  
+  const mes = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
+
   return (
     <main className="flex-1 overflow-auto p-8">
       <div className="space-y-6">
-
         <WelcomeCard />
 
         {/* Resumo do mês */}
         <div>
           <h2 className="text-white font-semibold mb-4">
-            Resumo de {resumoMes.mes}
+            Resumo de {mes}
           </h2>
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            <ResumoCard
-              title="Total depositado"
-              value={`R$ ${resumoMes.totalDepositos.toFixed(2)}`}
-              icon={Wallet}
-              color="green"
-            />
-            <ResumoCard
-              title="Total gasto"
-              value={`R$ ${resumoMes.totalGasto.toFixed(2)}`}
-              icon={TrendingDown}
-              color="red"
-            />
-            <ResumoCard
-              title="Pedidos realizados"
-              value={resumoMes.numeroPedidos}
-              icon={ShoppingBag}
-              color="blue"
-            />
-          </div>
+          {loading ? (
+            <p className="text-zinc-400">Carregando resumo do mês...</p>
+          ): (
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <ResumoCard 
+                title="Total Depositado"
+                value={`R$ ${resumo.totalDepositos.toFixed(2)}`}
+                icon={Wallet}
+                color="green"
+              />
+               <ResumoCard 
+                title="Total gasto"
+                value={`R$ ${resumo.totalGasto.toFixed(2)}`}
+                icon={TrendingDown}
+                color="red"
+              /> 
+              <ResumoCard 
+                title="Pedidos realizados"
+                value={`${resumo.numeroPedidos}`}
+                icon={ShoppingBag}
+                color="blue"
+              />
+            </div>
+          )}
         </div>
 
       </div>

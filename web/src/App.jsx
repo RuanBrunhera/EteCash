@@ -37,7 +37,7 @@ function App() {
       <Route path="/cantina/relatorios" element={<LayoutCantina><RelatoriosCantina /></LayoutCantina>}/>
       <Route path="/cantina/vendas" element={<LayoutCantina><VendasCantina /></LayoutCantina>}/>
     </Routes>
-      {(location.pathname.startsWith("/aluno") || localtion.pathname.startsWith("/cantina")) && <FloatingButton />}
+      {(location.pathname.startsWith("/aluno") || location.pathname.startsWith("/cantina")) && <FloatingButton />}
     </>
   )
 }

@@ -59,7 +59,7 @@ export default function HomeCantina() {
         <WelcomeCardCantina />
         <h2 className='text-white font-semibold mb-4 mt-6'>Resumo de hoje</h2>
         {loading ? (
-          <p className="text-zinc-400">Carregando...</p>
+          <p className="text-zinc-400">Carregando resumo...</p>
         ) : (
           <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
             <ResumoCardCantina
