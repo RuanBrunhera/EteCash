@@ -9,28 +9,69 @@ import {
     ShoppingBasket,
     ScrollText,
     Landmark,
+    X,
 } from 'lucide-react'
 
 const items = [
-      // Seu desafio: monta os itens com href, label e icon
-  // Dashboard -> /cantina/home
   {href: '/cantina/home', label: 'Home', icon: Home},
-  // Registrar venda -> /cantina/vendas
   {href: '/cantina/vendas', label: 'Vendas', icon: HandCoins},
-  // Produtos -> /cantina/produtos
   {href: '/cantina/produtos', label: 'Produtos', icon: ShoppingBasket},
-  // Relatórios -> /cantina/relatorios
   {href: '/cantina/relatorios', label: 'Relatório', icon: ScrollText},
-  // Perfil -> /cantina/profile
-  {href: '/cantina/profile', label: 'Info. cantina', icon: Landmark},
-  // Logout -> /
-  {href: '/', label: 'Sair', icon: LogOut},
+  {href: '/cantina/profile', label: 'Info func.', icon: Landmark},
 ]
 
+
+function LogoutModal({ onConfirm, onCancel }) {
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+      onClick={onCancel}
+    >
+      <div
+        className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6 w-full max-w-sm shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between mb-4">
+          <div className="size-12 rounded-2xl bg-red-600/10 grid place-items-center">
+            <LogOut className="size-6 text-red-500" />
+          </div>
+          <button
+            onClick={onCancel}
+            aria-label="Fechar"
+            className="rounded-lg p-1.5 text-zinc-500 hover:bg-zinc-800 hover:text-white transition-colors"
+          >
+            <X className="size-4"/>
+          </button>
+        </div>
+
+        <h3 className='text-white font-semibold text-lg mb-1'>Sair da conta?</h3>
+        <p className='text-zinc-400 text-sm mb-6'>
+          Você precisará fazer login novamente para acessar sua conta.
+        </p>
+
+      <div className='flex gap-3'>
+        <button
+          onClick={onCancel}
+          className='flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors'
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={onConfirm}
+          className='flex-1 rounded-xl bg-red-600 text-white text-sm font-medium py-2.5 hover:bg-red-700 transition-colors'
+        >
+          Sair
+        </button>
+      </div>
+
+      </div>
+    </div>
+  )
+}
+
 function SidebarCantina(){
- // Seu desafio: copia a lógica da Sidebar do aluno (open, navigate, location, useEffect do localStorage)
-  // Dica: usa uma chave diferente no localStorage, tipo 'sidebar-cantina-open', para não conflitar com a do aluno
     const [open, setOpen] = useState(true)
+    const [showLogoutModal, setShowLogoutModal] = useState(false)
     const navigate = useNavigate()
     const location = useLocation()
   
@@ -42,6 +83,13 @@ function SidebarCantina(){
     useEffect(() => {
       localStorage.setItem('sidebar-cantina-open', open ? '1' : '0')
     }, [open])
+
+    const handleLogout = () => {
+      localStorage.removeItem('token')
+      localStorage.removeItem('funcionario')
+      setShowLogoutModal(false)
+      navigate('/')
+    }
   
     return (
       <aside
@@ -95,14 +143,22 @@ function SidebarCantina(){
         </nav>
   
         {/* Rodapé */}
-        <div className="px-3 pb-5 pt-2 border-t border-zinc-800">
-          <div className={`rounded-2xl bg-zinc-800 p-3 ${!open && 'hidden'}`}>
-            <p className="text-xs text-zinc-400 leading-5">
-              Gerencie seus pagamentos com segurança.
-            </p>
-          </div>
+        <div className='px-3 pb-5 pt-2 border-t border-zinc-800 space-y-3'>
+          <button
+            onClick={() => setShowLogoutModal(true)}
+            className='w-full flex items-center gap-3 rounded-xl px-3 py-3 text-zinc-400 hover:bg-red-600/10 hover:text-red-400 transition-colors'
+          >
+            <LogOut className='size-5 '/>
+            <span className={`${open ? 'block' : 'hidden'} text-sm`}>Sair</span>
+          </button>
         </div>
   
+        {showLogoutModal && (
+          <LogoutModal 
+            onConfirm={handleLogout}
+            onCancel={() => setShowLogoutModal(false)}
+          />
+        )}
       </aside>
     )
 }
