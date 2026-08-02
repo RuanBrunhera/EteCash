@@ -50,6 +50,11 @@ type AlunoCadastroResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type AlunoBuscaRmResponse struct {
+	RM    int64  `json:"rm"`
+	Nome  string `json:"nome"`
+}
+
 type AlunoLogin struct {
 	RM    int64  `json:"rm" validate:"required"`
 	Senha string `json:"senha" validate:"required"`
@@ -64,5 +69,12 @@ func (a *Aluno) ToResponse() AlunoResponse {
 		Saldo:     a.Saldo,
 		CreatedAt: a.CreatedAt,
 		UpdatedAt: a.UpdatedAt,
+	}
+}
+
+func (a *Aluno) ToBuscaRmResponse() AlunoBuscaRmResponse {
+	return AlunoBuscaRmResponse{
+		RM: a.RM,
+		Nome: a.Nome,
 	}
 }

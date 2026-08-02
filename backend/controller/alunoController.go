@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/RuanBrunhera/Etecash/config"
@@ -120,4 +121,20 @@ func GetPerfilAluno(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"aluno": aluno.ToResponse()})
 }
 
+func BuscarAlunoPorRM(c *gin.Context) {
+	rmStr := c.Param("rm")
+	rm, err := strconv.ParseUint(rmStr, 10, 64)
 
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "RM inválido"})
+		return
+	}
+
+	var aluno model.Aluno
+	if err := config.DB.Where("rm = ?", rm).First(&aluno).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Aluno não encontrado"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"aluno": aluno.ToBuscaRmResponse()})
+}

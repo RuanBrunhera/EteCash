@@ -25,6 +25,7 @@ func SetupRoutes(r *gin.Engine) {
 		authFunc.PUT("/produto/:id", controller.AtualizarProduto)
 		authFunc.POST("/transacao", controller.EfetuarTransacao)
 		authFunc.GET("/resumo-dia", controller.GetResumoDia)
+		authFunc.GET("/aluno/:rm", controller.BuscarAlunoPorRM)
 	}
 
 	// Rotas exclusivas de Alunos
