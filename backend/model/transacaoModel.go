@@ -32,6 +32,7 @@ func (ItemTransacao) TableName() string {
 
 type TransacaoCreate struct {
 	AlunoRM       int64                 `json:"aluno_rm"       validate:"required"`
+	AlunoPIN      string                `json:"aluno_pin" validate:"required,len=4,numeric"`
 	FuncionarioID uint                  `json:"funcionario_id" validate:"required"`
 	Itens         []ItemTransacaoCreate `json:"itens"          validate:"required,min=1,dive"`
 }

@@ -7,6 +7,7 @@ import (
 
 	"github.com/RuanBrunhera/Etecash/config"
 	"github.com/RuanBrunhera/Etecash/model"
+	"github.com/RuanBrunhera/Etecash/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -28,10 +29,15 @@ func EfetuarTransacao(c *gin.Context) {
 		return
 	}
 
-	// 2 Busca o aluno pelo RM
+	// 2 Busca o aluno pelo RM e verifica o PIN
 	var aluno model.Aluno
 	if err := config.DB.Preload("Curso").Where("rm = ?", create.AlunoRM).First(&aluno).Error; err != nil {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "RM inválido"})
+		return
+	}
+
+	if !utils.CheckPINHash(create.AlunoPIN, aluno.PIN) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "PIN inválido"})
 		return
 	}
 
@@ -82,9 +88,6 @@ func EfetuarTransacao(c *gin.Context) {
 
 		// 5.3 — Para cada item do carrinho:
 		//   a) buscar o produto de novo (dentro da transação, usando `tx`)
-		//   b) verificar se `produto.Estoque >= item.Quantidade` (senão, retornar erro)
-		//   c) diminuir `produto.Estoque` e salvar com `tx.Save(&produto)`
-		//   d) criar o ItemTransacao correspondente (TransacaoID, ProdutoID, Quantidade, PrecoUnitario)
 
 		for _, item := range create.Itens {
 			var produto model.Produto
@@ -93,15 +96,18 @@ func EfetuarTransacao(c *gin.Context) {
 				return err
 			}
 
+			//   b) verificar se `produto.Estoque >= item.Quantidade` (senão, retornar erro)
 			if produto.Estoque < item.Quantidade {
 				return fmt.Errorf("%w: %s", ErrEstoqueInsuficiente, produto.Nome)
 			}
 
+			//   c) diminuir `produto.Estoque` e salvar com `tx.Save(&produto)`
 			produto.Estoque -= item.Quantidade
 			if err := tx.Save(&produto).Error; err != nil {
 				return err
 			}
 
+			//   d) criar o ItemTransacao correspondente (TransacaoID, ProdutoID, Quantidade, PrecoUnitario)
 			itemTransacao := model.ItemTransacao{
 				TransacaoID:   transacao.ID,
 				ProdutoID:     produto.ID,
@@ -140,11 +146,19 @@ func EfetuarTransacao(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"message":     "Transação realizada com sucesso",
-		"transacao":   transacao,
-		"valor_total": valorTotal,
+		"message": "Transação realizada com sucesso",
+		"transacao": gin.H{
+			"id":             transacao.ID,
+			"aluno_rm":       transacao.AlunoRM,
+			"funcionario_id": transacao.FuncionarioID,
+			"valor_total":    transacao.ValorTotal,
+			"data_hora":      transacao.DataHora,
+		},
+		"aluno": gin.H{
+			"nome":  aluno.Nome,
+			"saldo": aluno.Saldo,
+		},
 	})
-
 }
 
 func AdicionarSaldo(c *gin.Context) {
