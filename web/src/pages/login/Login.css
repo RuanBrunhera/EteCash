@@ -215,7 +215,7 @@ form {
 
 .toggle-panel .btn {
     width: 160px;
-    height: 46px;
+    height: 50px;
     background: transparent;
     border: 2px solid var(--color-text);
     box-shadow: none;
