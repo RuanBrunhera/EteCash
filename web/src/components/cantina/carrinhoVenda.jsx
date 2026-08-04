@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { API_URL } from "../../config/api" 
+import ModalSucesso from "../common/ModalSucesso"
 
 export default function CarrinhoVenda({ onClose }) {
   const [etapa, setEtapa] = useState('buscar-aluno')
@@ -14,6 +15,9 @@ export default function CarrinhoVenda({ onClose }) {
   const [produtos, setProdutos] = useState([])
   const [carregandoProdutos, setCarregandoProdutos] = useState(false)
   const [erroProdutos, setErroProdutos] = useState('')
+  const [finalizando, setFinalizando] = useState(false)
+  const [erroFinalizar, setErroFinalizar] = useState('')
+  const [vendaConcluida, setVendaConcluida] = useState(false)
 
   function buscarAluno() {
     const token = localStorage.getItem('token')
@@ -69,6 +73,11 @@ export default function CarrinhoVenda({ onClose }) {
     .finally(() => setCarregandoProdutos(false))
   }, [etapa])
 
+  useEffect(() => {
+      if (etapa !== 'confirmar-pin') return
+      setDadosVenda((prevDadosVenda) => ({  ...prevDadosVenda, pin: '' }))
+  }, [etapa])
+
   function quantidadeDoProduto(produtoId) {
     const item = dadosVenda.itens.find((item) => item.produto_id === produtoId)
     return item ? item.quantidade : 0
@@ -113,6 +122,50 @@ export default function CarrinhoVenda({ onClose }) {
       }
       return total
     }, 0)
+  }
+
+  function finalizarVenda() {
+    const token = localStorage.getItem('token')
+
+    if (!token) {
+      setErroFinalizar('Token de autenticação não encontrado. Faça login novamente.')
+      return
+    }
+
+    const payload = {
+      aluno_rm: dadosVenda.aluno.rm,
+      aluno_pin: dadosVenda.pin,
+      itens: dadosVenda.itens
+    }
+
+    setErroFinalizar('')
+    setFinalizando(true)
+
+    fetch(`${API_URL}/api/func/transacao`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    })
+
+    .then(res => res.json())
+    .then(data => {
+      if (data.transacao) {
+        setVendaConcluida(true)
+      } else {
+        setErroFinalizar(data.error || 'Erro ao finalizar a venda')
+        setDadosVenda((prevDadosVenda) => ({ ...prevDadosVenda, pin: '' }))
+      }
+    })
+
+  .catch((err) => {
+    console.error('Erro ao finalizar a venda:', err)
+    setErroFinalizar('Erro ao finalizar a venda. Tente novamente mais tarde.')
+  })
+
+  .finally(() => setFinalizando(false))
   }
 
   return (
@@ -219,6 +272,86 @@ export default function CarrinhoVenda({ onClose }) {
         </button>
         </div>
       )}
+
+      {etapa === 'confirmar-pin' && (
+        <div className="space-y-4">
+    <h2 className="text-white font-semibold text-lg">Confirmar com PIN</h2>
+
+    {/* TODO 1: mostra o total da compra, reaproveitando totalParcial() 
+        que você já escreveu na etapa 2 */}
+
+        <p className='text-white font-semibold'>Total da compra: R$ {totalParcial().toFixed(2)}</p>
+
+    {/* TODO 2: input controlado pro PIN —
+        value={dadosVenda.pin}
+        onChange atualizando dadosVenda via spread (mesmo padrão
+        que você já usa pra outros campos desse objeto)
+        Dica de UX: pensa em usar type="password" já que é um PIN,
+        e maxLength={4} já que o backend só aceita 4 dígitos */}
+
+        <input 
+          value={dadosVenda.pin}
+          onChange={(e) => setDadosVenda((prevDadosVenda) => ({ ...prevDadosVenda, pin: e.target.value}))}
+          type="password"
+          maxLength={4}
+          placeholder="Digite o PIN do aluno"
+          autoComplete="new-password"
+        />
+
+    {/* TODO 3: botão "Finalizar" chamando finalizarVenda(),
+        desabilitado quando finalizando === true
+        (mesmo padrão do botão "Buscar aluno") */}
+
+      <button
+        onClick={finalizarVenda}
+        disabled={finalizando}
+        className={`px-4 py-2 rounded ${finalizando ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+      >
+        Finalizar
+      </button>
+
+    {/* TODO 4: se erroFinalizar não for vazio, mostra a mensagem
+        (mesmo padrão dos outros erros) */}
+      {erroFinalizar && (
+        <p className='text-red-600'>{erroFinalizar}</p>
+      )}
+
+    {/* TODO 5 (opcional): um botão "Voltar" pra etapa 'produtos',
+        caso o funcionário queira revisar o carrinho antes de finalizar */}
+        <button
+          onClick={() => setEtapa('produtos')}
+          className='px-4 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white'
+        >
+          Voltar
+        </button>
+  </div>
+      )}
+
+      {/* TODO 6: renderize o ModalSucesso condicionalmente aqui,
+    fora de todos os blocos de etapa (ele deve aparecer por cima
+    de tudo, independente de qual etapa estiver ativa) —
+    só quando vendaConcluida === true.
+    No onFechar, resete TODOS os estados: dadosVenda de volta pro
+    inicial, rmInput vazio, produtos, erros, vendaConcluida false,
+    e etapa de volta pra 'buscar-aluno' */}
+
+      {vendaConcluida && (
+        <ModalSucesso 
+          titulo="Venda concluída com sucesso!"
+          mensagem="A transação foi registrada com sucesso."
+          onFechar={() => {
+            setDadosVenda({ aluno: null, itens: [], pin: '' })
+            setRmInput('')
+            setProdutos([])
+            setErroAluno('')
+            setErroProdutos('')
+            setErroFinalizar('')
+            setVendaConcluida(false)
+            setEtapa('buscar-aluno')
+          }}
+        />
+      )}
+
     </div>
   )
 }
