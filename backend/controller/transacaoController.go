@@ -19,15 +19,32 @@ var ErrEstoqueInsuficiente = errors.New("estoque insuficiente")
 var ErrSaldoInsuficiente = errors.New("saldo insuficiente")
 
 func EfetuarTransacao(c *gin.Context) {
+	
+	// TODO 1: c.Get("userID") — se não existir, 401 e return
+	// TODO 2: type assertion pra uint64 — se falhar, 500 e return
+	// TODO 3: converta pra uint (tipo que Transacao.FuncionarioID espera),
+	// guarde numa variável tipo `funcionarioID`
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	userIDUint, ok := userID.(uint64)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "ID do usuário inválido"})
+		return
+	}
+
+	funcionarioID := uint(userIDUint)
+
 	// 1 Faz o bind do JSON pro model.TransacaoCreate
 	var create model.TransacaoCreate
 	if err := c.ShouldBindJSON(&create); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Dados inválidos",
-			"details": err.Error(),
-		})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
 		return
 	}
+
 
 	// 2 Busca o aluno pelo RM e verifica o PIN
 	var aluno model.Aluno
@@ -79,7 +96,7 @@ func EfetuarTransacao(c *gin.Context) {
 		// 5.2 — Cria o registro de Transacao (ainda sem os itens)
 		transacao = model.Transacao{
 			AlunoRM:       aluno.RM,
-			FuncionarioID: create.FuncionarioID,
+			FuncionarioID: funcionarioID,
 			ValorTotal:    valorTotal,
 		}
 		if err := tx.Create(&transacao).Error; err != nil {
