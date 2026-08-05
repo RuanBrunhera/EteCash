@@ -16,7 +16,7 @@ const items = [
   {href: '/cantina/home', label: 'Home', icon: Home},
   {href: '/cantina/vendas', label: 'Vendas', icon: HandCoins},
   {href: '/cantina/produtos', label: 'Produtos', icon: ShoppingBasket},
-  {href: '/cantina/relatorios', label: 'Relatório', icon: ScrollText},
+  {href: '/cantina/historico', label: 'Histórico de vendas', icon: ScrollText},
   {href: '/cantina/profile', label: 'Info func.', icon: Landmark},
 ]
 

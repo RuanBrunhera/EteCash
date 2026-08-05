@@ -19,7 +19,7 @@ var ErrEstoqueInsuficiente = errors.New("estoque insuficiente")
 var ErrSaldoInsuficiente = errors.New("saldo insuficiente")
 
 func EfetuarTransacao(c *gin.Context) {
-	
+
 	// TODO 1: c.Get("userID") — se não existir, 401 e return
 	// TODO 2: type assertion pra uint64 — se falhar, 500 e return
 	// TODO 3: converta pra uint (tipo que Transacao.FuncionarioID espera),
@@ -44,7 +44,6 @@ func EfetuarTransacao(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
 		return
 	}
-
 
 	// 2 Busca o aluno pelo RM e verifica o PIN
 	var aluno model.Aluno
@@ -237,4 +236,45 @@ func AdicionarSaldo(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"aluno": aluno.ToResponse()})
+}
+
+func ListarTransacoes(c *gin.Context) {
+	var transacoes []model.Transacao
+
+	if err := config.DB.
+		Preload("Aluno").
+		Preload("Itens.Produto").
+		Order("data_hora DESC").
+		Find(&transacoes).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar transações"})
+		return
+	}
+
+	resultado := make([]gin.H, 0, len(transacoes))
+	for _, t := range transacoes {
+		itens := make([]gin.H, 0, len(t.Itens))
+		for _, item := range t.Itens {
+			itens = append(itens, gin.H{
+				"id":             item.ID,
+				"produto_id":     item.ProdutoID,
+				"produto_nome":   item.Produto.Nome,
+				"quantidade":     item.Quantidade,
+				"preco_unitario": item.PrecoUnitario,
+				"subtotal":       item.PrecoUnitario * float64(item.Quantidade),
+			})
+		}
+
+		resultado = append(resultado, gin.H{
+			"id":          t.ID,
+			"data_hora":   t.DataHora,
+			"valor_total": t.ValorTotal,
+			"aluno_rm":    t.AlunoRM,
+			"aluno": gin.H{
+				"nome": t.Aluno.Nome,
+			},
+			"itens": itens,
+		})
+	}
+
+	c.JSON(http.StatusOK, gin.H{"transacoes": resultado})
 }
