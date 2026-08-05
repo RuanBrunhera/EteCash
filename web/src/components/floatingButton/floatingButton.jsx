@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import "./styles.css"
-import AdicionarSaldoModal from "../modalAddSaldo/AdicionarSaldo";
+import AdicionarSaldoModal from "../modalAddSaldo/AdicionarSaldo"
+import CarrinhoVenda from "../cantina/carrinhoVenda";
 
 const allOptions = [
   { emoji: "💲", label: "Adicionar saldo", contexto: "aluno", key: "saldo" },
@@ -13,6 +14,7 @@ export default function FloatingButton() {
   const [modalAberto, setModalAberto] = useState(null); //guarda null ou a key, que é a chave para saber se é "venda" (parte do carrinho da cantina) ou "saldo" (parte do adicionar saldo do aluno)
 
   const location = useLocation();
+  const navigate = useNavigate();
   const pathname = location?.pathname || "";
 
   //determino o contexto a partir da rota
@@ -22,9 +24,9 @@ export default function FloatingButton() {
   const options = allOptions.filter((o) => o.contexto === context);
 
   function abrirModal(key) {
-    setModalAberto(key)
     setOpen(false)
-  }
+    setModalAberto(key)
+    }
 
   function fecharModal() {
     setModalAberto(null)
@@ -67,7 +69,17 @@ export default function FloatingButton() {
         )}
 
         {modalAberto === 'venda' && (
-          <div>Carrinho ainda não implementado</div>
+          <div 
+            className='fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4'
+            onClick={fecharModal}
+          >
+            <div 
+              className='bg-zinc-900 border border-zinc-800 rounded-3xl w-full max-w-lg max-h-[90vh] overflow-y-auto shadow-xl'
+              onClick={(e) => e.stopPropagation()}
+            >
+              <CarrinhoVenda onClose={fecharModal} />
+            </div>
+          </div>
         )}
 
     </>

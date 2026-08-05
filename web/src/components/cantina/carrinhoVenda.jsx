@@ -276,18 +276,7 @@ export default function CarrinhoVenda({ onClose }) {
       {etapa === 'confirmar-pin' && (
         <div className="space-y-4">
     <h2 className="text-white font-semibold text-lg">Confirmar com PIN</h2>
-
-    {/* TODO 1: mostra o total da compra, reaproveitando totalParcial() 
-        que você já escreveu na etapa 2 */}
-
         <p className='text-white font-semibold'>Total da compra: R$ {totalParcial().toFixed(2)}</p>
-
-    {/* TODO 2: input controlado pro PIN —
-        value={dadosVenda.pin}
-        onChange atualizando dadosVenda via spread (mesmo padrão
-        que você já usa pra outros campos desse objeto)
-        Dica de UX: pensa em usar type="password" já que é um PIN,
-        e maxLength={4} já que o backend só aceita 4 dígitos */}
 
         <input 
           value={dadosVenda.pin}
@@ -298,10 +287,6 @@ export default function CarrinhoVenda({ onClose }) {
           autoComplete="new-password"
         />
 
-    {/* TODO 3: botão "Finalizar" chamando finalizarVenda(),
-        desabilitado quando finalizando === true
-        (mesmo padrão do botão "Buscar aluno") */}
-
       <button
         onClick={finalizarVenda}
         disabled={finalizando}
@@ -309,15 +294,9 @@ export default function CarrinhoVenda({ onClose }) {
       >
         Finalizar
       </button>
-
-    {/* TODO 4: se erroFinalizar não for vazio, mostra a mensagem
-        (mesmo padrão dos outros erros) */}
       {erroFinalizar && (
         <p className='text-red-600'>{erroFinalizar}</p>
       )}
-
-    {/* TODO 5 (opcional): um botão "Voltar" pra etapa 'produtos',
-        caso o funcionário queira revisar o carrinho antes de finalizar */}
         <button
           onClick={() => setEtapa('produtos')}
           className='px-4 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white'
@@ -326,14 +305,6 @@ export default function CarrinhoVenda({ onClose }) {
         </button>
   </div>
       )}
-
-      {/* TODO 6: renderize o ModalSucesso condicionalmente aqui,
-    fora de todos os blocos de etapa (ele deve aparecer por cima
-    de tudo, independente de qual etapa estiver ativa) —
-    só quando vendaConcluida === true.
-    No onFechar, resete TODOS os estados: dadosVenda de volta pro
-    inicial, rmInput vazio, produtos, erros, vendaConcluida false,
-    e etapa de volta pra 'buscar-aluno' */}
 
       {vendaConcluida && (
         <ModalSucesso 
