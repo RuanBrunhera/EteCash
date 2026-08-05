@@ -1,0 +1,43 @@
+# TODO / Backlog — EteCash
+
+## Funcionalidades pendentes
+
+- [ ] **Editar dados de perfil (aluno)**
+  - Trocar e-mail (depende do item "e-mail no aluno" abaixo)
+  - Trocar senha (exigir senha atual antes de aceitar a nova)
+  - Trocar PIN (exigir PIN atual antes; decidir se o novo PIN é escolhido pelo aluno ou gerado aleatoriamente como no cadastro)
+
+- [ ] **Editar dados de perfil (funcionário)**
+  - Trocar e-mail, telefone, senha
+
+- [ ] **Recuperação de senha via e-mail** (aluno + funcionário)
+  - Precisa de infraestrutura de envio de e-mail real
+
+- [ ] **Role "admin"**
+  - Cadastro de aluno/funcionário deveria ser restrito a administradores (hoje `CadastrarAluno` é rota pública)
+
+- [ ] **Campo de e-mail no Aluno**
+  - Hoje só `Funcionario` tem e-mail
+  - Pré-requisito para recuperação de senha do aluno
+
+- [ ] **QR Code como forma alternativa de confirmação de compra**
+  - Além do PIN
+
+- [ ] **Refresh tokens**
+  - Hoje o JWT expira em 24h fixas, sem mecanismo de renovação sem novo login
+
+- [ ] **Relatório de vendas "de verdade"**
+  - Estilo `Statistics.jsx` do aluno — dados agregados, gráficos
+  - Rota `/cantina/relatorios` está livre pra isso (não confundir com o histórico, que já existe em `/cantina/historico`)
+
+## Dívida técnica / organização
+
+- [ ] **Organizar estrutura de pastas do projeto**
+  - Padronizar convenções (hoje há inconsistência entre pastas/arquivos)
+
+- [ ] **Comentar o código**
+  - Muitas partes do projeto ainda não têm comentários explicativos
+
+## Ajustes visuais
+
+- [ ] Revisar visual de outras telas que ainda não passaram por polimento (o carrinho de vendas já foi todo estilizado)
