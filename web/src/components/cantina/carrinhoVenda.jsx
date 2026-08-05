@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import { API_URL } from "../../config/api" 
 import ModalSucesso from "../common/ModalSucesso"
+import { Search } from 'lucide-react'
 
 export default function CarrinhoVenda({ onClose }) {
   const [etapa, setEtapa] = useState('buscar-aluno')
@@ -18,6 +19,9 @@ export default function CarrinhoVenda({ onClose }) {
   const [finalizando, setFinalizando] = useState(false)
   const [erroFinalizar, setErroFinalizar] = useState('')
   const [vendaConcluida, setVendaConcluida] = useState(false)
+  const [buscaProduto, setBuscaProduto] = useState('')
+
+  const produtosFiltrados = produtos.filter(produto => produto.nome.toLowerCase().includes(buscaProduto.toLocaleLowerCase()))
 
   function buscarAluno() {
     const token = localStorage.getItem('token')
@@ -171,140 +175,182 @@ export default function CarrinhoVenda({ onClose }) {
   return (
     <div className="p-6">
       {etapa === 'buscar-aluno' && (
-        <div className="space-y-4">
-          <h2 className="text-white font-semibold text-lg">
-            {dadosVenda.aluno ? 'Confirmar aluno' : 'Buscar aluno'}
-          </h2>
+  <div className="max-w-md space-y-4">
+    <h2 className="text-white font-semibold text-lg">
+      {dadosVenda.aluno ? 'Confirmar aluno' : 'Buscar aluno'}
+    </h2>
 
-          {!dadosVenda.aluno ? (
-            <>
-              <input
-                type="text"
-                value={rmInput}
-                onChange={(e) => setRmInput(e.target.value)}
-                placeholder="Digite o RM do aluno"
-              />
-              <button onClick={buscarAluno} disabled={buscandoAluno}>
-                {buscandoAluno ? 'Buscando...' : 'Buscar aluno'}
-              </button>
-              {erroAluno && <p className="text-red-500">{erroAluno}</p>}
-            </>
-          ) : (
-            <div className="space-y-3">
-              <p className="text-white">
-                Aluno encontrado: <strong>{dadosVenda.aluno.nome}</strong>
-              </p>
-              <p className="text-zinc-400 text-sm">RM: {dadosVenda.aluno.rm}</p>
-
-              <div className="flex gap-3">
-                <button onClick={() => setEtapa('produtos')}>Confirmar</button>
-                <button
-                  onClick={() =>
-                    setDadosVenda((prevDadosVenda) => {
-                      return { ...prevDadosVenda, aluno: null }
-                    })
-                  }
-                >
-                  Trocar aluno
-                </button>
-              </div>
-            </div>
-          )}
+    {!dadosVenda.aluno ? (
+      <>
+        <input
+          type="text"
+          value={rmInput}
+          onChange={(e) => setRmInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') buscarAluno()
+          }}
+          placeholder="Digite o RM do aluno"
+          className="w-full rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-red-600 transition-colors"
+          maxLength={11}
+        />
+        <button
+          onClick={buscarAluno}
+          disabled={buscandoAluno}
+          className="w-full rounded-xl bg-red-600 text-white text-sm font-medium py-2.5 hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {buscandoAluno ? 'Buscando...' : 'Buscar aluno'}
+        </button>
+        {erroAluno && <p className="text-red-500 text-sm">{erroAluno}</p>}
+      </>
+    ) : (
+      <div className="space-y-3">
+        <div className="rounded-2xl bg-zinc-800 border border-zinc-700 p-4">
+          <p className="text-white font-semibold">{dadosVenda.aluno.nome}</p>
+          <p className="text-zinc-400 text-sm">RM: {dadosVenda.aluno.rm}</p>
         </div>
-      )}
+
+        <div className="flex gap-3">
+  <button
+    onClick={() =>
+      setDadosVenda((prevDadosVenda) => ({ ...prevDadosVenda, aluno: null }))
+    }
+    className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors"
+  >
+    Trocar aluno
+  </button>
+  <button
+    onClick={() => setEtapa('produtos')}
+    className="flex-1 rounded-xl bg-red-600 text-white text-sm font-medium py-2.5 hover:bg-red-700 transition-colors"
+  >
+    Confirmar
+  </button>
+</div>
+      </div>
+    )}
+  </div>
+)}
 
       {etapa === 'produtos' && (
-        <div className='space-y-4'>
-          <h2 className='text-white font-semibold text-lg'>Selecionar produtos</h2>
+  <div className="max-w-2xl space-y-4">
+    <h2 className="text-white font-semibold text-lg">Selecionar produtos</h2>
 
-            {carregandoProdutos && <p className='text-white'>Carregando produtos...</p>}
+    <div className="relative">
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-zinc-500" />
+      <input 
+        type="text"
+        value={buscaProduto}
+        onChange={(e) => setBuscaProduto(e.target.value)}
+        placeholder="Buscar produto..."
+        className="w-full rounded-xl bg-zinc-800 border border-zinc-700 pl-10 pr-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-red-600 transition-colors"
+      />
+    </div>
 
-          {erroProdutos && <p className='text-red-500'>{erroProdutos}</p>}
-    
-        {produtos.map((produto) => {
-          const quantidade = quantidadeDoProduto(produto.id)
-          return (
-            <div key={produto.id} className='flex items-center justify-between bg-zinc-800 p-3 rounded'>
-              <div>
-                <p className='text-white font-semibold'>{produto.nome}</p>
-                <p className='text-zinc-400'>R$ {produto.preco.toFixed(2)}</p>
-                </div>
-                <div className='flex items-center gap-2'>
-                  <button
-                    onClick={() => alterarQuantidade(produto.id, -1)}
-                    disabled={quantidade === 0}
-                    className='bg-red-600 text-white px-2 py-1 rounded disabled:opacity-50'
-                    >
-                      -
-                    </button>
-                    <span className='text-white'>{quantidade}</span>
-                    <button
-                      onClick={() => alterarQuantidade(produto.id, 1)}
-                      className='bg-green-600 text-white px-2 py-1 rounded'
-                      >
-                        +
-                        </button>
-                        </div>
-                        </div>
-        )})}
+    <div className="border-t border-zinc-800 pt-4 space-y-3">
+      {carregandoProdutos && <p className="text-zinc-400">Carregando produtos...</p>}
+      {erroProdutos && <p className="text-red-500 text-sm">{erroProdutos}</p>}
 
-        {dadosVenda.itens.length > 0 && (
-          <p className='text-white font-semibold'>Total parcial: R$ {totalParcial().toFixed(2)}</p>
-        )}
+      {produtosFiltrados.map((produto) => {
+        const quantidade = quantidadeDoProduto(produto.id)
+        return (
+          <div
+            key={produto.id}
+            className="flex items-center justify-between rounded-2xl bg-zinc-800 border border-zinc-700 p-4"
+          >
+            <div>
+              <p className="text-white font-semibold">{produto.nome}</p>
+              <p className="text-zinc-400 text-sm">R$ {produto.preco.toFixed(2)}</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => alterarQuantidade(produto.id, -1)}
+                disabled={quantidade === 0}
+                className="size-8 rounded-lg bg-zinc-700 text-white font-semibold hover:bg-zinc-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                -
+              </button>
+              <span className="text-white font-medium w-4 text-center">{quantidade}</span>
+              <button
+                onClick={() => alterarQuantidade(produto.id, 1)}
+                className="size-8 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors"
+              >
+                +
+              </button>
+            </div>
+          </div>
+        )
+      })}
+    </div>
 
-        <button
-          onClick={() => setEtapa('confirmar-pin')}
-          disabled={dadosVenda.itens.length === 0}
-          className={`px-4 py-2 rounded ${dadosVenda.itens.length === 0 ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'}`}
-        >
-          Continuar
-        </button>
+    <div className="rounded-2xl bg-zinc-800 border border-zinc-700 p-4">
+      <p className="text-white font-semibold">
+        Total parcial: <span className="text-emerald-400">R$ {totalParcial().toFixed(2)}</span>
+      </p>
+    </div>
 
-        <button
-          onClick={() => {
-            setDadosVenda({ aluno: null, itens: [], pin: '' })
-            setRmInput('')
-            setEtapa('buscar-aluno')
-          }}
-          className='px-4 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white'
-        >
-          Voltar
-        </button>
-        </div>
-      )}
+    <div className="flex gap-3">
+      <button
+        onClick={() => {
+          setDadosVenda({ aluno: null, itens: [], pin: '' })
+          setRmInput('')
+          setEtapa('buscar-aluno')
+        }}
+        className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors"
+      >
+        Voltar
+      </button>
+      <button
+        onClick={() => setEtapa('confirmar-pin')}
+        disabled={dadosVenda.itens.length === 0}
+        className="flex-1 rounded-xl bg-red-600 text-white text-sm font-medium py-2.5 hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Continuar
+      </button>
+    </div>
+  </div>
+)}
 
       {etapa === 'confirmar-pin' && (
-        <div className="space-y-4">
+  <div className="max-w-2xl space-y-4">
     <h2 className="text-white font-semibold text-lg">Confirmar com PIN</h2>
-        <p className='text-white font-semibold'>Total da compra: R$ {totalParcial().toFixed(2)}</p>
 
-        <input 
-          value={dadosVenda.pin}
-          onChange={(e) => setDadosVenda((prevDadosVenda) => ({ ...prevDadosVenda, pin: e.target.value}))}
-          type="password"
-          maxLength={4}
-          placeholder="Digite o PIN do aluno"
-          autoComplete="new-password"
-        />
+    <div className="rounded-2xl bg-zinc-800 border border-zinc-700 p-4">
+      <p className="text-white font-semibold">
+        Total da compra: <span className="text-emerald-400">R$ {totalParcial().toFixed(2)}</span>
+      </p>
+    </div>
 
+    <input
+      value={dadosVenda.pin}
+      onChange={(e) => setDadosVenda((prevDadosVenda) => ({ ...prevDadosVenda, pin: e.target.value }))}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter') finalizarVenda()
+      }}
+      type="password"
+      maxLength={4}
+      placeholder="Digite o PIN do aluno"
+      autoComplete="new-password"
+      className="w-full rounded-xl bg-zinc-800 border border-zinc-700 px-4 py-2.5 text-white placeholder-zinc-500 focus:outline-none focus:border-red-600 transition-colors"
+    />
+
+    {erroFinalizar && <p className="text-red-500 text-sm">{erroFinalizar}</p>}
+
+    <div className="flex gap-3">
+      <button
+        onClick={() => setEtapa('produtos')}
+        className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors"
+      >
+        Voltar
+      </button>
       <button
         onClick={finalizarVenda}
         disabled={finalizando}
-        className={`px-4 py-2 rounded ${finalizando ? 'bg-gray-500 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'}`}
+        className="flex-1 rounded-xl bg-red-600 text-white text-sm font-medium py-2.5 hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Finalizar
+        {finalizando ? 'Finalizando...' : 'Finalizar'}
       </button>
-      {erroFinalizar && (
-        <p className='text-red-600'>{erroFinalizar}</p>
-      )}
-        <button
-          onClick={() => setEtapa('produtos')}
-          className='px-4 py-2 rounded bg-gray-600 hover:bg-gray-700 text-white'
-        >
-          Voltar
-        </button>
+    </div>
   </div>
-      )}
+)}
 
       {vendaConcluida && (
         <ModalSucesso 
