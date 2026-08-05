@@ -143,7 +143,7 @@ function Login() {
 
         {/* Toggle Left */}
         <div className="toggle-panel toggle-left">
-          <h1>Bem vindo etequiano!</h1>
+          <h1>Bem vindo, etequiano!</h1>
           <p>É dono de uma cantina?</p>
           <button className="btn" onClick={() => setIsActive(true)}>
             Entrar como funcionário
@@ -152,7 +152,7 @@ function Login() {
 
         {/* Toggle Right */}
         <div className="toggle-panel toggle-right">
-          <h1>Bem vindo funcionário!</h1>
+          <h1>Bem vindo, funcionário!</h1>
           <p>É um(a) etequiano?</p>
           <button className="btn" onClick={() => setIsActive(false)}>
             Entrar como aluno
