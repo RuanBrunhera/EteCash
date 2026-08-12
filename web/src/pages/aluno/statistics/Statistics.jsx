@@ -38,11 +38,11 @@ function agruparGastosPorMes(historico) {
   }
 
   historico
-    .filter((h) => h.tipo === 'debito')
+    .filter((h) => h.tipo === 'credito')
     .forEach((h) => {
       const data = new Date(h.data_hora)
       const alvo = meses.find(
-        (mn) => m.mesIndex === data.getMonth() && m.ano === daa.getFullYear()
+        (m) => m.mesIndex === data.getMonth() && m.ano === data.getFullYear()
       )
       if (alvo) alvo.valor += h.valor
     })
@@ -50,12 +50,12 @@ function agruparGastosPorMes(historico) {
     return meses.map(({ mes, valor }) => ({ mes, valor }))
 }
 
-// Conta só os debitos por forma de pagamento
+// Conta só os creditos por forma de pagamento
 function agruparMetodosPagamento(historico) {
   const contagem = { pix: 0, boleto: 0 }
 
   historico
-    .filter((h) => h.tipo === 'debito')
+    .filter((h) => h.tipo === 'credito')
     .forEach((h) => {
       if (contagem[h.forma_pagamento] !== undefined) {
         contagem[h.forma_pagamento]++
@@ -100,7 +100,7 @@ export default function Statistics() {
 
     const gastosPorMes = agruparGastosPorMes(historico)
     const metodosPagamento = agruparMetodosPagamento(historico)
-    const semGastos = historico.filter((h) => h.tipo === 'debito').lenght === 0
+    const semDepositos = historico.filter((h) => h.tipo === 'credito').length === 0
 
     if (loading) {
       return (
@@ -135,8 +135,8 @@ export default function Statistics() {
 
       {/* Gráfico de pizza - Métodos de pagamento */}
       <div className='bg-zinc-900 border border-zinc-800 rounded-3xl p-6'>
-        <h3 className='text-white font-semibol mb-6'>Métodos de pagamento</h3>
-        {semGastos ? (
+        <h3 className='text-white font-semibol mb-6'>Formas de débito na sua conta</h3>
+        {semDepositos ? (
           <p>
             Nenhum gasto registrado ainda.
           </p>
