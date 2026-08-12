@@ -2,6 +2,10 @@
 
 ## Funcionalidades pendentes
 
+- [ ] **Bug no confirmar pin que caso aperte enter enquanto o modal de confirmação aparece, repete a compra**
+  - Substituir esse ENTER e deixar para seguir processo apenas no mouse
+  - Ou travar tela/botões listeners enquanto o modal estiver aberto/em exibição
+
 - [ ] **Editar dados de perfil (aluno)**
   - Trocar e-mail (depende do item "e-mail no aluno" abaixo)
   - Trocar senha (exigir senha atual antes de aceitar a nova)
@@ -26,7 +30,7 @@
 - [ ] **Refresh tokens**
   - Hoje o JWT expira em 24h fixas, sem mecanismo de renovação sem novo login
 
-- [ ] **Relatório de vendas "de verdade"**
+- [X] **Relatório de vendas "de verdade"**
   - Estilo `Statistics.jsx` do aluno — dados agregados, gráficos
   - Rota `/cantina/relatorios` está livre pra isso (não confundir com o histórico, que já existe em `/cantina/historico`)
 
