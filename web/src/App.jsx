@@ -12,6 +12,7 @@ import HomeCantina from './pages/cantina/home/homeCantina'
 import ProdutosCantina from './pages/cantina/produtos/produtosCantina'
 import ProfileCantina from './pages/cantina/profile/profileCantina'
 import HistoricoCantina from './pages/cantina/historico/historicoCantina'
+import RelatorioCantina from './pages/cantina/relatorios/relatoriosCantina'
 import VendasCantina from './pages/cantina/vendas/vendasCantina'
 import { Routes, Route, useLocation } from 'react-router-dom'
 
@@ -35,6 +36,7 @@ function App() {
       <Route path="/cantina/produtos" element={<LayoutCantina><ProdutosCantina /></LayoutCantina>}/>
       <Route path="/cantina/profile" element={<LayoutCantina><ProfileCantina /></LayoutCantina>}/>
       <Route path="/cantina/historico" element={<LayoutCantina><HistoricoCantina /></LayoutCantina>}/>
+      <Route path="/cantina/relatorios" element={<LayoutCantina><RelatorioCantina /></LayoutCantina>}/>
       <Route path="/cantina/vendas" element={<LayoutCantina><VendasCantina /></LayoutCantina>}/>
     </Routes>
       {(location.pathname.startsWith("/aluno") || location.pathname.startsWith("/cantina")) && <FloatingButton />}

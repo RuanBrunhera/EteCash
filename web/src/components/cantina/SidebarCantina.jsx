@@ -10,6 +10,7 @@ import {
     ScrollText,
     Landmark,
     X,
+    ChartNoAxesCombined,
 } from 'lucide-react'
 
 const items = [
@@ -17,6 +18,7 @@ const items = [
   {href: '/cantina/vendas', label: 'Vendas', icon: HandCoins},
   {href: '/cantina/produtos', label: 'Produtos', icon: ShoppingBasket},
   {href: '/cantina/historico', label: 'Histórico de vendas', icon: ScrollText},
+  {href: '/cantina/relatorios', label: 'Relatório', icon: ChartNoAxesCombined},
   {href: '/cantina/profile', label: 'Info func.', icon: Landmark},
 ]
 
