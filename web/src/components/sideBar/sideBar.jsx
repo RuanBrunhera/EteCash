@@ -14,8 +14,8 @@ import {
 const items = [
   { href: '/aluno/home', label: 'Home', icon: Home },
   { href: '/aluno/historico', label: "Histórico", icon: ScrollText },
-  { href: '/aluno/profile', label: 'Perfil', icon: UserRound },
   { href: '/aluno/statistics', label: 'Estatísticas', icon: BarChart3 },
+  { href: '/aluno/profile', label: 'Perfil', icon: UserRound },
 ]
 
 function LogoutModal({ onConfirm, onCancel }) {
