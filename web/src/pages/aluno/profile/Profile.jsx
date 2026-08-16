@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, Pencil } from "lucide-react";
 import quandale from "../../../assets/knpgsvnouo191.jpg";
 import { API_URL } from "../../../config/api";
 import ModalEditarCampo from "../../../components/common/ModalEditarCampo";
@@ -16,6 +16,12 @@ const camposPin = [
   { chave: "novoPIN", label: "Novo PIN", tipo: "pin" },
   { chave: "confirmarNovoPIN", label: "Confirmar novo PIN", tipo: "pin" },
 ];
+
+const PERIODOS = {
+  manha: "Manhã",
+  tarde: "Tarde",
+  noite: "Noturno",
+}
 
 function ProfileInfoCard({ titulo, info }) {
   return (
@@ -43,6 +49,12 @@ export default function Profile() {
   const [modalAberto, setModalAberto] = useState(null)
   const [sucessoAberto, setSucessoAberto] = useState(false)
   const [mensagemSucesso, setMensagemSucesso] = useState("")
+
+  const formatarCurso = (aluno) => {
+    if (!aluno.curso || !aluno.curso.nome) return "—"
+    const periodo = PERIODOS[aluno.curso.periodo] || aluno.curso.periodo
+    return `${aluno.serie}º ${aluno.curso.nome} - ${periodo}`
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("token")
@@ -143,42 +155,29 @@ export default function Profile() {
         <div className="space-y-3">
           <ProfileInfoCard titulo="RM" info={aluno.rm || "—"} />
           <ProfileInfoCard titulo="Nome" info={aluno.nome} />
-          <ProfileInfoCard titulo="Curso" info={aluno.curso?.nome || "—"} />
+          <ProfileInfoCard titulo="Curso" info={formatarCurso(aluno)} />
         </div>
 
-        {/* TODO 4: nova seção "Segurança" com os dois botões
-            - "Alterar senha" -> setModalAberto("senha")
-            - "Alterar PIN" -> setModalAberto("pin")
-            pensa no estilo visual: pode ser dois botões simples,
-            estilo secundário (zinc-800), abaixo dos ProfileInfoCard */}
             <div className="mt-6 pt-6 border-t border-zinc-800">
               <p className="text-xs text-zinc-500 mb-3 font-semibold">SEGURANÇA</p>
                 <div className="flex gap-3">
                   <button
                     onClick={() => setModalAberto("senha")}
-                    className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors"
+                    className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2"
                   >
+                    <Pencil size={14}/>
                     Alterar senha
                   </button>
                   <button
                     onClick={() => setModalAberto("pin")}
-                    className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors"
+                    className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2"
                   >
+                    <Pencil size={14}/>
                     Alterar PIN
                   </button>
                 </div>
             </div>
       </div>
-
-      {/* TODO 5: renderizar o ModalEditarCampo condicionalmente
-          - isOpen={modalAberto === "senha"}, com titulo, campos=camposSenha,
-            endpoint="/api/aluno/senha", onClose, onSuccess
-          - o mesmo pra "pin", trocando titulo/campos/endpoint
-
-          dica: dá pra usar UM ModalEditarCampo só, calculando as props
-          dinamicamente com base em `modalAberto`, ou DOIS <ModalEditarCampo>
-          (um pra cada), cada um controlando seu próprio isOpen.
-          pense em qual é mais simples de entender e manter */}
 
         {modalProps && (
           <ModalEditarCampo 
@@ -195,8 +194,6 @@ export default function Profile() {
           />
         )}
 
-      {/* TODO 6: renderizar o ModalSucesso condicionalmente,
-          igual o carrinho já faz */}
           {sucessoAberto && (
             <ModalSucesso 
               titulo="Sucesso!"
