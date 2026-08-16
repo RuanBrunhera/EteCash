@@ -2,11 +2,11 @@
 
 ## Funcionalidades pendentes
 
-- [ ] **Bug no confirmar pin que caso aperte enter enquanto o modal de confirmação aparece, repete a compra**
+- [X] **Bug no confirmar pin que caso aperte enter enquanto o modal de confirmação aparece, repete a compra**
   - Substituir esse ENTER e deixar para seguir processo apenas no mouse
   - Ou travar tela/botões listeners enquanto o modal estiver aberto/em exibição
 
-- [ ] **Editar dados de perfil (aluno)**
+- [X] **Editar dados de perfil (aluno)**
   - Trocar e-mail (depende do item "e-mail no aluno" abaixo)
   - Trocar senha (exigir senha atual antes de aceitar a nova)
   - Trocar PIN (exigir PIN atual antes; decidir se o novo PIN é escolhido pelo aluno ou gerado aleatoriamente como no cadastro)
@@ -33,6 +33,12 @@
 - [X] **Relatório de vendas "de verdade"**
   - Estilo `Statistics.jsx` do aluno — dados agregados, gráficos
   - Rota `/cantina/relatorios` está livre pra isso (não confundir com o histórico, que já existe em `/cantina/historico`)
+
+- [ ] **Rejeitar PIN óbvios**
+  - Rejeitar PINs óbvios (0000, 1234, sequências repetidas) na troca de PIN
+
+- [ ] **Migrar Hash da senha**
+  - Migrar hash de senha/PIN de SHA-256 puro pra algo com salt (bcrypt/argon2)
 
 ## Dívida técnica / organização
 

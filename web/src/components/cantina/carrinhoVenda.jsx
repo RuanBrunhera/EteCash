@@ -129,6 +129,9 @@ export default function CarrinhoVenda({ onClose }) {
   }
 
   function finalizarVenda() {
+
+    if (finalizando || vendaConcluida) return
+
     const token = localStorage.getItem('token')
 
     if (!token) {
@@ -325,6 +328,7 @@ export default function CarrinhoVenda({ onClose }) {
       onKeyDown={(e) => {
         if (e.key === 'Enter') finalizarVenda()
       }}
+      disabled={vendaConcluida}
       type="password"
       maxLength={4}
       placeholder="Digite o PIN do aluno"
@@ -356,7 +360,7 @@ export default function CarrinhoVenda({ onClose }) {
         <ModalSucesso 
           titulo="Venda concluída com sucesso!"
           mensagem="A transação foi registrada com sucesso."
-          onFechar={() => {
+          onClose={() => {
             setDadosVenda({ aluno: null, itens: [], pin: '' })
             setRmInput('')
             setProdutos([])
