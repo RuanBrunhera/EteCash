@@ -138,3 +138,94 @@ func BuscarAlunoPorRM(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"aluno": aluno.ToBuscaRmResponse()})
 }
+
+func AtualizarSenhaAluno(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	rm := int64(userID.(uint64))
+
+	var update model.AlunoAtualizarSenha
+	if err := c.ShouldBindJSON(&update); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
+		return
+	}
+
+	if update.NovaSenha != update.ConfirmarSenhaNova {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "As senhas não conferem"})
+		return
+	}
+
+	var aluno model.Aluno
+	if err := config.DB.Where("rm = ?", rm).First(&aluno).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
+		return
+	}
+
+	if !utils.CheckPasswordHash(update.SenhaAtual, aluno.Senha) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Senha atual incorreta"})
+		return
+	}
+
+	if update.SenhaAtual == update.NovaSenha {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Senha nova é igual à senha atual"})
+		return
+	}
+
+	aluno.Senha = utils.HashSHA256(update.NovaSenha)
+	if err := config.DB.Save(&aluno).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar senha"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Senha atualizada com sucesso"})
+
+}
+
+func AtualizarPINAluno(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	rm := int64(userID.(uint64))
+
+	var update model.AlunoAtualizarPIN
+	if err := c.ShouldBindJSON(&update); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
+		return
+	}
+
+	if update.NovoPIN != update.ConfirmarNovoPIN {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Os códigos PIN não conferem"})
+		return
+	}
+
+	var aluno model.Aluno
+	if err := config.DB.Where("rm = ?", rm).First(&aluno).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
+		return
+	}
+
+	if !utils.CheckPINHash(update.PINAtual, aluno.PIN) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "PIN atual incorreto"})
+		return
+	}
+
+	if update.PINAtual == update.NovoPIN {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "PIN novo é igual ao PIN atual"})
+		return
+	}
+
+	aluno.PIN = utils.HashSHA256(update.NovoPIN)
+	if err := config.DB.Save(&aluno).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar PIN"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "PIN atualizado com sucesso"})
+}

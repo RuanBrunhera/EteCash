@@ -51,13 +51,25 @@ type AlunoCadastroResponse struct {
 }
 
 type AlunoBuscaRmResponse struct {
-	RM    int64  `json:"rm"`
-	Nome  string `json:"nome"`
+	RM   int64  `json:"rm"`
+	Nome string `json:"nome"`
 }
 
 type AlunoLogin struct {
 	RM    int64  `json:"rm" validate:"required"`
 	Senha string `json:"senha" validate:"required"`
+}
+
+type AlunoAtualizarSenha struct {
+	SenhaAtual         string `json:"senhaAtual"`
+	NovaSenha          string `json:"novaSenha"`
+	ConfirmarSenhaNova string `json:"confirmarSenhaNova"`
+}
+
+type AlunoAtualizarPIN struct {
+	PINAtual         string `json:"pinAtual"`
+	NovoPIN          string `json:"novoPin"`
+	ConfirmarNovoPIN string `json:"confirmarNovoPIN"`
 }
 
 func (a *Aluno) ToResponse() AlunoResponse {
@@ -74,7 +86,7 @@ func (a *Aluno) ToResponse() AlunoResponse {
 
 func (a *Aluno) ToBuscaRmResponse() AlunoBuscaRmResponse {
 	return AlunoBuscaRmResponse{
-		RM: a.RM,
+		RM:   a.RM,
 		Nome: a.Nome,
 	}
 }
