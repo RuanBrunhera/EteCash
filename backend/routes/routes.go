@@ -28,6 +28,8 @@ func SetupRoutes(r *gin.Engine) {
 		authFunc.GET("/aluno/:rm", controller.BuscarAlunoPorRM)
 		authFunc.GET("/transacoes", controller.ListarTransacoes)
 		authFunc.GET("/relatorio-vendas", controller.GetRelatorioVendas)
+		authFunc.PATCH("/perfil", controller.AtualizarPerfilFuncionario)
+		authFunc.PATCH("/senha", controller.AtualizarSenhaFuncionario)
 	}
 
 	// Rotas exclusivas de Alunos

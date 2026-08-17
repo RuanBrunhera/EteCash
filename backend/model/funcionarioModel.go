@@ -29,11 +29,15 @@ type FuncionarioCreate struct {
 
 type FuncionarioUpdate struct {
 	Nome     *string    `json:"nome" validate:"omitempty,min=3,max=100"`
-	CPF      *string    `json:"cpf" validate:"omitempty,len=11"`
 	Email    *string    `json:"email" validate:"omitempty,email"`
 	DataNasc *time.Time `json:"data_nasc"`
 	Telefone *string    `json:"telefone" validate:"omitempty,min=10,max=20"`
-	Senha    *string    `json:"senha" validate:"omitempty,min=6"`
+}
+
+type FuncionarioAtualizarSenha struct {
+	SenhaAtual         string `json:"senhaAtual"`
+	NovaSenha          string `json:"novaSenha"`
+	ConfirmarSenhaNova string `json:"confirmarSenhaNova"`
 }
 
 type FuncionarioResponse struct {
