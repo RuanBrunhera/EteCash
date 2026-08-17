@@ -1,6 +1,43 @@
-import { useState, useEffect } from 'react';
-import { Camera } from 'lucide-react';
-import { API_URL } from '../../../config/api'
+import { useState, useEffect } from "react";
+import { Camera, Pencil } from "lucide-react";
+import { API_URL } from "../../../config/api";
+import ModalEditarCampo from "../../../components/common/ModalEditarCampo";
+import ModalSucesso from "../../../components/common/ModalSucesso";
+
+const camposEmail = [{ chave: "email", label: "Novo e-mail", tipo: "text" }];
+const camposTelefone = [
+  { chave: "telefone", label: "Novo telefone", tipo: "text" },
+];
+const camposSenha = [
+  { chave: "senhaAtual", label: "Senha atual", tipo: "password" },
+  { chave: "novaSenha", label: "Nova senha", tipo: "password" },
+  {
+    chave: "confirmarSenhaNova",
+    label: "Confirmar nova senha",
+    tipo: "password",
+  },
+];
+
+const MODAIS = {
+  email: {
+    titulo: "Alterar e-mail",
+    campos: camposEmail,
+    endpoint: "/api/func/perfil",
+    mensagemSucesso: "E-mail alterado com sucesso!",
+  },
+  telefone: {
+    titulo: "Alterar telefone",
+    campos: camposTelefone,
+    endpoint: "/api/func/perfil",
+    mensagemSucesso: "Telefone alterado com sucesso!",
+  },
+  senha: {
+    titulo: "Alterar senha",
+    campos: camposSenha,
+    endpoint: "/api/func/senha",
+    mensagemSucesso: "Senha alterada com sucesso!",
+  },
+};
 
 function ProfileInfoCard({ titulo, info }) {
   return (
@@ -20,36 +57,39 @@ export default function ProfileCantina() {
       cpf: "",
       email: null,
       telefone: null,
-    }
+    },
   );
-  const [foto, setFoto] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [erro, setErro] = useState(null)
+  const [foto, setFoto] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState(null);
+  const [modalAberto, setModalAberto] = useState(null);
+  const [sucessoAberto, setSucessoAberto] = useState(false);
+  const [mensagemSucesso, setMensagemSucesso] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
+    const token = localStorage.getItem("token");
     if (!token) {
-      setLoading(false)
+      setLoading(false);
       return;
     }
 
     fetch(`${API_URL}/api/func/perfil`, {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.funcionario) {
-        setFuncionario(data.funcionario);
-        localStorage.setItem("funcionario", JSON.stringify(data.funcionario));
-      } else {
-        setErro("Não foi possível carregar o perfil.");
-      }
-    })
-    .catch((err) => {
-      console.error("Erro ao buscar o perfil:", err);
-      setErro("Erro ao conectar com o servidor.");
-    })
-    .finally(() => setLoading(false));
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.funcionario) {
+          setFuncionario(data.funcionario);
+          localStorage.setItem("funcionario", JSON.stringify(data.funcionario));
+        } else {
+          setErro("Não foi possível carregar o perfil.");
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar o perfil:", err);
+        setErro("Erro ao conectar com o servidor.");
+      })
+      .finally(() => setLoading(false));
   }, []);
 
   const handleFotoChange = (e) => {
@@ -66,20 +106,30 @@ export default function ProfileCantina() {
   };
 
   const iniciais = (funcionario.nome || "Funcionário")
-  .split(" ")
-  .filter(Boolean)
-  .map((n) => n[0])
-  .join("")
-  .slice(0,2)
-  .toUpperCase()
+    .split(" ")
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+  const handleSuccess = (mensagem) => {
+    setModalAberto(null);
+    setMensagemSucesso(mensagem);
+    setSucessoAberto(true);
+  };
+
+  const getModalProps = () => MODAIS[modalAberto] || null;
 
   if (loading) {
     return (
-      <div className='max-w-md mx-auto mt-10 text-center text-zinc-400'>
+      <div className="max-w-md mx-auto mt-10 text-center text-zinc-400">
         Carregando perfil...
       </div>
-    )
+    );
   }
+
+  const modalProps = getModalProps();
 
   return (
     <div className="max-w-md mx-auto mt-10">
@@ -120,9 +170,57 @@ export default function ProfileCantina() {
           <ProfileInfoCard titulo="Nome" info={funcionario.nome} />
           <ProfileInfoCard titulo="CPF" info={formatarCPF(funcionario.cpf)} />
           <ProfileInfoCard titulo="E-mail" info={funcionario.email || "-"} />
-          <ProfileInfoCard titulo="Telefone" info={funcionario.telefone || "-"} />
+          <ProfileInfoCard
+            titulo="Telefone"
+            info={funcionario.telefone || "-"}
+          />
+        </div>
+        <div className="mt-6 pt-6 border-t border-zinc-800">
+          <p className="text-xs text-zinc-500 mb-3 font-semibold">SEGURANÇA</p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setModalAberto("email")}
+              className="flex-1 min-w-0 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 px-2 hover:bg-zinc-700 transition-colors flex flex-col items-center justify-center gap-1 text-center"
+            >
+              <Pencil size={14} />
+              <span className="leading-tight">Alterar e-mail</span>
+            </button>
+            <button
+              onClick={() => setModalAberto("telefone")}
+              className="flex-1 min-w-0 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 px-2 hover:bg-zinc-700 transition-colors flex flex-col items-center justify-center gap-1 text-center"
+            >
+              <Pencil size={14} />
+              <span className="leading-tight">Alterar telefone</span>
+            </button>
+            <button
+              onClick={() => setModalAberto("senha")}
+              className="flex-1 min-w-0 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 px-2 hover:bg-zinc-700 transition-colors flex flex-col items-center justify-center gap-1 text-center"
+            >
+              <Pencil size={14} />
+              <span className="leading-tight">Alterar senha</span>
+            </button>
+          </div>
         </div>
       </div>
+
+      {modalProps && (
+        <ModalEditarCampo
+          isOpen={modalAberto !== null}
+          onClose={() => setModalAberto(null)}
+          titulo={modalProps.titulo}
+          campos={modalProps.campos}
+          endpoint={modalProps.endpoint}
+          onSuccess={() => handleSuccess(modalProps.mensagemSucesso)}
+        />
+      )}
+
+      {sucessoAberto && (
+        <ModalSucesso
+          titulo="Sucesso!"
+          mensagem={mensagemSucesso}
+          onClose={() => setSucessoAberto(false)}
+        />
+      )}
     </div>
   );
 }
