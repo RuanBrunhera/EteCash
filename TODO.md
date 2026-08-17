@@ -11,7 +11,7 @@
   - Trocar senha (exigir senha atual antes de aceitar a nova)
   - Trocar PIN (exigir PIN atual antes; decidir se o novo PIN é escolhido pelo aluno ou gerado aleatoriamente como no cadastro)
 
-- [ ] **Editar dados de perfil (funcionário)**
+- [X] **Editar dados de perfil (funcionário)**
   - Trocar e-mail, telefone, senha
 
 - [ ] **Recuperação de senha via e-mail** (aluno + funcionário)
