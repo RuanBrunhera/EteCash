@@ -3,9 +3,11 @@ package config
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
-	"github.com/RuanBrunhera/Etecash/model"
+	"github.com/RuanBrunhera/Etecash/internal/model"
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -46,22 +48,24 @@ type RateLimitConfig struct {
 }
 
 func LoadConfig() *Config {
+	godotenv.Load()
+
 	config := &Config{
 		Server: ServerConfig{
-			Port:         "9000",
+			Port:         getEnv("BACKEND_PORT", "2000"),
 			ReadTimeOut:  15 * time.Second,
 			WriteTimeOut: 15 * time.Second,
 		},
 		Database: DatabaseConfig{
-			Host:     "localhost",
-			Port:     "5432",
-			User:     "api_etecash",
-			Password: "123456",
-			DBName:   "DB_etecash",
-			SSLMode:  "disable",
+			Host:     getEnv("DB_HOST", "localhost"),
+			Port:     getEnv("DB_PORT", "5432"),
+			User:     getEnv("DB_USER", "api_etecash"),
+			Password: getEnv("DB_PASSWORD", "123456"),
+			DBName:   getEnv("DB_NAME", "DB_etecash"),
+			SSLMode:  getEnv("DB_SSLMODE", "disable"),
 		},
 		JWT: JWTConfig{
-			SecretKey: "etec",
+			SecretKey: getEnv("JWT_SECRET", "etec"),
 			Duration:  24 * time.Hour,
 		},
 		RateLimit: RateLimitConfig{
@@ -81,6 +85,13 @@ func LoadConfig() *Config {
 	return config
 }
 
+func getEnv(key, fallback string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return fallback
+}
+
 func Conn() {
 	config := LoadConfig()
 
@@ -94,16 +105,55 @@ func Conn() {
 	)
 
 	var err error
+
 	DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Info),
 	})
+
 	if err != nil {
 		log.Fatalf("Falha ao conectar com o banco de dados: %v", err)
 	}
 
-	if err := DB.AutoMigrate(&model.Aluno{}, &model.Funcionario{}, &model.Produto{}, &model.Transacao{}, &model.ItemTransacao{}); err != nil {
-		log.Fatalf("Falha ao criar tabelas: %v", err)
+	sqlDB, err := DB.DB()
+
+	if err != nil {
+		log.Fatalf("Falha ao conectar ao banco de dados: %v", err)
 	}
 
-	log.Println("Conexão com o banco de dados estabelecida com sucesso")
+	sqlDB.SetMaxOpenConns(25)
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetConnMaxLifetime(5 * time.Minute)
+
+	if err := migrate(); err != nil {
+		log.Fatalf("Falha ao executar os migrations: %v", err)
+	}
+
+	log.Printf("Conexão com o banco de dados estabelecida com sucesso")
+}
+
+func migrate() error {
+	DB.Exec(`
+        DO $$ BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'tipo_pagamento') 
+            THEN CREATE TYPE tipo_pagamento AS ENUM ('credito', 'debito');
+            END IF;
+        END $$;
+    `)
+
+	DB.Exec(`
+        DO $$ BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'forma_pagamento') 
+            THEN CREATE TYPE forma_pagamento AS ENUM ('pix', 'boleto');
+            END IF;
+        END $$;
+    `)
+
+	return DB.AutoMigrate(
+		&model.Aluno{},
+		&model.Funcionario{},
+		&model.Produto{},
+		&model.Transacao{},
+		&model.ItemTransacao{},
+		&model.Historico{},
+	)
 }

@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/RuanBrunhera/Etecash/utils"
+	"github.com/RuanBrunhera/Etecash/internal/security"
 	"github.com/gin-gonic/gin"
 )
 
@@ -17,7 +17,7 @@ func AuthMiddleware(roles ...string) gin.HandlerFunc {
 		}
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
-		claims, err := utils.ValidateToken(tokenStr)
+		claims, err := security.ValidateToken(tokenStr)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"erro": "Token inválido/expirado"})
 			return

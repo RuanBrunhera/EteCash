@@ -1,4 +1,4 @@
-package utils
+package security
 
 import (
 	"errors"
@@ -10,7 +10,7 @@ import (
 var SecretKey = []byte("etec") // Em produção deve vir do env / config
 
 type Claims struct {
-	ID   uint64   `json:"id"`
+	ID   uint64 `json:"id"`
 	Role string `json:"role"` // "aluno" ou "funcionario"
 	jwt.RegisteredClaims
 }

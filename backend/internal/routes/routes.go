@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/RuanBrunhera/Etecash/controller"
-	"github.com/RuanBrunhera/Etecash/middleware"
+	"github.com/RuanBrunhera/Etecash/internal/controller"
+	"github.com/RuanBrunhera/Etecash/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 

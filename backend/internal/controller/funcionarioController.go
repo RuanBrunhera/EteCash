@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/RuanBrunhera/Etecash/config"
-	"github.com/RuanBrunhera/Etecash/model"
-	"github.com/RuanBrunhera/Etecash/utils"
+	"github.com/RuanBrunhera/Etecash/internal/config"
+	"github.com/RuanBrunhera/Etecash/internal/model"
+	"github.com/RuanBrunhera/Etecash/internal/security"
 	"github.com/gin-gonic/gin"
 )
 
@@ -48,7 +48,7 @@ func LoginFuncionario(c *gin.Context) {
 	}
 
 	//Verifica a senha
-	if !utils.CheckPasswordHash(login.Senha, funcionario.Senha) {
+	if !security.CheckPasswordHash(login.Senha, funcionario.Senha) {
 		c.JSON(http.StatusUnauthorized, gin.H{
 			"error": "Senha inválida",
 		})
@@ -62,7 +62,7 @@ func LoginFuncionario(c *gin.Context) {
 	}
 
 	//Gera o token JWT
-	token, err := utils.GenerateToken(uint64(funcionario.ID), role, 24*time.Hour)
+	token, err := security.GenerateToken(uint64(funcionario.ID), role, 24*time.Hour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Erro ao gerar token JWT",
@@ -150,7 +150,7 @@ func AtualizarSenhaFuncionario(c *gin.Context) {
 		return
 	}
 
-	if !utils.CheckPasswordHash(update.SenhaAtual, funcionario.Senha) {
+	if !security.CheckPasswordHash(update.SenhaAtual, funcionario.Senha) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Senha atual incorreta"})
 		return
 	}
@@ -160,7 +160,7 @@ func AtualizarSenhaFuncionario(c *gin.Context) {
 		return
 	}
 
-	funcionario.Senha = utils.HashSHA256(update.NovaSenha)
+	funcionario.Senha = security.HashSHA256(update.NovaSenha)
 	if err := config.DB.Save(&funcionario).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar senha"})
 		return
@@ -193,22 +193,22 @@ func CadastrarFuncionario(c *gin.Context) {
 		return
 	}
 
-	// TODO 3: gerar a senha temporária com utils.GerarSenhaTemporaria()
-	//         e o hash dela com utils.HashSHA256()
+	// TODO 3: gerar a senha temporária com security.GerarSenhaTemporaria()
+	//         e o hash dela com security.HashSHA256()
 	//         (equivalente ao bloco de GerarPin()/HashSHA256() do CadastrarAluno,
 	//         mas aqui não tem PIN nem Senha vindo do FuncionarioCreate pro admin
 	//         digitar — pensa: o FuncionarioCreate ainda tem campo Senha? Se tiver,
 	//         faz sentido continuar aceitando isso, já que decidimos gerar
 	//         senha temporária em vez do admin digitar?)
 
-	senhaTemporaria := utils.GerarSenhaTemporaria()
+	senhaTemporaria := security.GerarSenhaTemporaria()
 	funcionario := model.Funcionario{
 		Nome:     create.Nome,
 		CPF:      create.CPF,
 		Email:    create.Email,
 		DataNasc: create.DataNasc,
 		Telefone: create.Telefone,
-		Senha:    utils.HashSHA256(senhaTemporaria),
+		Senha:    security.HashSHA256(senhaTemporaria),
 	}
 
 	// TODO 4: montar o model.Funcionario com os dados do create + hash da senha gerada

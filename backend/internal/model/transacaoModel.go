@@ -31,9 +31,9 @@ func (ItemTransacao) TableName() string {
 }
 
 type TransacaoCreate struct {
-	AlunoRM       int64                 `json:"aluno_rm"       validate:"required"`
-	AlunoPIN      string                `json:"aluno_pin" validate:"required,len=4,numeric"`
-	Itens         []ItemTransacaoCreate `json:"itens"          validate:"required,min=1,dive"`
+	AlunoRM  int64                 `json:"aluno_rm"       validate:"required"`
+	AlunoPIN string                `json:"aluno_pin" validate:"required,len=4,numeric"`
+	Itens    []ItemTransacaoCreate `json:"itens"          validate:"required,min=1,dive"`
 }
 
 type ItemTransacaoCreate struct {

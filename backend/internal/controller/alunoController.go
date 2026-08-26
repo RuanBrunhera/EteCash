@@ -5,9 +5,9 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/RuanBrunhera/Etecash/config"
-	"github.com/RuanBrunhera/Etecash/model"
-	"github.com/RuanBrunhera/Etecash/utils"
+	"github.com/RuanBrunhera/Etecash/internal/config"
+	"github.com/RuanBrunhera/Etecash/internal/model"
+	"github.com/RuanBrunhera/Etecash/internal/security"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,13 +26,13 @@ func LoginAluno(c *gin.Context) {
 	}
 
 	// Verifica a senha
-	if !utils.CheckPasswordHash(login.Senha, aluno.Senha) {
+	if !security.CheckPasswordHash(login.Senha, aluno.Senha) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "RM ou senha inválidos"})
 		return
 	}
 
 	// Gera o token JWT
-	token, err := utils.GenerateToken(uint64(aluno.RM), "aluno", 24*time.Hour)
+	token, err := security.GenerateToken(uint64(aluno.RM), "aluno", 24*time.Hour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao gerar token"})
 		return
@@ -68,11 +68,11 @@ func CadastrarAluno(c *gin.Context) {
 	}
 
 	// Cria hash do PIN do aluno
-	pinGerado := utils.GerarPin()
-	hashedPin := utils.HashSHA256(pinGerado)
+	pinGerado := security.GerarPin()
+	hashedPin := security.HashSHA256(pinGerado)
 
 	// Hash da senha
-	hashed := utils.HashSHA256(create.Senha)
+	hashed := security.HashSHA256(create.Senha)
 
 	aluno := model.Aluno{
 		RM:      create.RM,
@@ -165,7 +165,7 @@ func AtualizarSenhaAluno(c *gin.Context) {
 		return
 	}
 
-	if !utils.CheckPasswordHash(update.SenhaAtual, aluno.Senha) {
+	if !security.CheckPasswordHash(update.SenhaAtual, aluno.Senha) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Senha atual incorreta"})
 		return
 	}
@@ -175,7 +175,7 @@ func AtualizarSenhaAluno(c *gin.Context) {
 		return
 	}
 
-	aluno.Senha = utils.HashSHA256(update.NovaSenha)
+	aluno.Senha = security.HashSHA256(update.NovaSenha)
 	if err := config.DB.Save(&aluno).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar senha"})
 		return
@@ -211,7 +211,7 @@ func AtualizarPINAluno(c *gin.Context) {
 		return
 	}
 
-	if !utils.CheckPINHash(update.PINAtual, aluno.PIN) {
+	if !security.CheckPINHash(update.PINAtual, aluno.PIN) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "PIN atual incorreto"})
 		return
 	}
@@ -221,7 +221,7 @@ func AtualizarPINAluno(c *gin.Context) {
 		return
 	}
 
-	aluno.PIN = utils.HashSHA256(update.NovoPIN)
+	aluno.PIN = security.HashSHA256(update.NovoPIN)
 	if err := config.DB.Save(&aluno).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar PIN"})
 		return

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/RuanBrunhera/Etecash/config"
-	"github.com/RuanBrunhera/Etecash/model"
-	"github.com/RuanBrunhera/Etecash/utils"
+	"github.com/RuanBrunhera/Etecash/internal/config"
+	"github.com/RuanBrunhera/Etecash/internal/model"
+	"github.com/RuanBrunhera/Etecash/internal/security"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -52,7 +52,7 @@ func EfetuarTransacao(c *gin.Context) {
 		return
 	}
 
-	if !utils.CheckPINHash(create.AlunoPIN, aluno.PIN) {
+	if !security.CheckPINHash(create.AlunoPIN, aluno.PIN) {
 		c.JSON(http.StatusForbidden, gin.H{"error": "PIN inválido"})
 		return
 	}

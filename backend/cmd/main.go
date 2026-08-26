@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/RuanBrunhera/Etecash/config"
-	"github.com/RuanBrunhera/Etecash/routes"
+	"github.com/RuanBrunhera/Etecash/internal/config"
+	"github.com/RuanBrunhera/Etecash/internal/routes"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )

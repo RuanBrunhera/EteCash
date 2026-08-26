@@ -28,7 +28,7 @@ type ProdutoUpdate struct {
 	Nome      string  `json:"nome"      validate:"omitempty,min=3,max=100"`
 	Descricao *string `json:"descricao" validate:"omitempty,max=255"`
 	Preco     float64 `json:"preco"     validate:"omitempty,gt=0"`
-	Estoque   *int     `json:"estoque"   validate:"omitempty,min=0"`
+	Estoque   *int    `json:"estoque"   validate:"omitempty,min=0"`
 	Ativo     *bool   `json:"ativo"     validate:"omitempty"`
 }
 

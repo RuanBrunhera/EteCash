@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/RuanBrunhera/Etecash/config"
-	"github.com/RuanBrunhera/Etecash/model"
+	"github.com/RuanBrunhera/Etecash/internal/config"
+	"github.com/RuanBrunhera/Etecash/internal/model"
 	"github.com/gin-gonic/gin"
 )
 
