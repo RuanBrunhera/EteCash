@@ -15,19 +15,26 @@ func SetupRoutes(r *gin.Engine) {
 	api.POST("/aluno/cadastrar", controller.CadastrarAluno)
 	api.GET("/cursos", controller.ListarCursos)
 
+	// Rotas exclusivas de Admins
+	authAdmin := api.Group("/admin")
+	authAdmin.Use(middleware.AuthMiddleware("admin"))
+	{
+		authAdmin.POST("/funcionario", controller.CadastrarFuncionario)
+	}
+
 	// Rotas exclusivas de Funcionários
 	authFunc := api.Group("/func")
-	authFunc.Use(middleware.AuthMiddleware("funcionario"))
+	authFunc.Use(middleware.AuthMiddleware("funcionario", "admin"))
 	{
 		authFunc.GET("/perfil", controller.GetPerfilFuncionario)
-		authFunc.POST("/produto", controller.CriarProduto)
 		authFunc.GET("/produtos", controller.ListarProdutos)
-		authFunc.PUT("/produto/:id", controller.AtualizarProduto)
-		authFunc.POST("/transacao", controller.EfetuarTransacao)
-		authFunc.GET("/resumo-dia", controller.GetResumoDia)
-		authFunc.GET("/aluno/:rm", controller.BuscarAlunoPorRM)
 		authFunc.GET("/transacoes", controller.ListarTransacoes)
+		authFunc.GET("/aluno/:rm", controller.BuscarAlunoPorRM)
 		authFunc.GET("/relatorio-vendas", controller.GetRelatorioVendas)
+		authFunc.GET("/resumo-dia", controller.GetResumoDia)
+		authFunc.POST("/produto", controller.CriarProduto)
+		authFunc.POST("/transacao", controller.EfetuarTransacao)
+		authFunc.PUT("/produto/:id", controller.AtualizarProduto)
 		authFunc.PATCH("/perfil", controller.AtualizarPerfilFuncionario)
 		authFunc.PATCH("/senha", controller.AtualizarSenhaFuncionario)
 	}
