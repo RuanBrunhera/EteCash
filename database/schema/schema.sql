@@ -34,6 +34,7 @@ CREATE TABLE funcionario (
     data_nasc DATE,
     telefone VARCHAR(20),
     senha VARCHAR(64) NOT NULL,
+    is_admin BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

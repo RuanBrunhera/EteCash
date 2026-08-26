@@ -10,6 +10,7 @@ type Funcionario struct {
 	DataNasc  *time.Time `json:"data_nasc"  gorm:"column:data_nasc"`
 	Telefone  *string    `json:"telefone"   gorm:"column:telefone"            validate:"omitempty,min=10,max=20"`
 	Senha     string     `json:"-"          gorm:"not null;column:senha"`
+	IsAdmin   bool       `json:"-"          gorm:"not null;column:is_admin;default:false"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
 }
@@ -24,7 +25,6 @@ type FuncionarioCreate struct {
 	Email    *string    `json:"email" validate:"omitempty,email"`
 	DataNasc *time.Time `json:"data_nasc"`
 	Telefone *string    `json:"telefone" validate:"omitempty,min=10,max=20"`
-	Senha    string     `json:"senha" validate:"required,min=6"`
 }
 
 type FuncionarioUpdate struct {
@@ -49,6 +49,16 @@ type FuncionarioResponse struct {
 	Telefone  *string    `json:"telefone,omitempty"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
+}
+
+type FuncionarioCadastroResponse struct {
+	ID        uint       `json:"id"`
+	Nome      string     `json:"nome"`
+	CPF       string     `json:"cpf"`
+	Email     *string    `json:"email"`
+	Telefone  *string    `json:"telefone"`
+	DataNasc  *time.Time `json:"data_nasc"`
+	SenhaTemp string     `json:"senha_temp"`
 }
 
 type FuncionarioLogin struct {

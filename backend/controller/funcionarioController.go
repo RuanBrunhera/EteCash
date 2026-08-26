@@ -55,8 +55,14 @@ func LoginFuncionario(c *gin.Context) {
 		return
 	}
 
+	// Decide a role com base em funcionario.IsAdmin
+	role := "funcionario"
+	if funcionario.IsAdmin {
+		role = "admin"
+	}
+
 	//Gera o token JWT
-	token, err := utils.GenerateToken(uint64(funcionario.ID), "funcionario", 24*time.Hour)
+	token, err := utils.GenerateToken(uint64(funcionario.ID), role, 24*time.Hour)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Erro ao gerar token JWT",
@@ -71,23 +77,6 @@ func LoginFuncionario(c *gin.Context) {
 }
 
 func AtualizarPerfilFuncionario(c *gin.Context) {
-	// TODO 1: extrair userID do contexto, 401 com return se !exists
-	//         (repara: aqui não precisa de cast pra int64 como no aluno,
-	//         GetPerfilFuncionario usa direto userID.(uint64) — segue esse padrão)
-
-	// TODO 2: bind do JSON pro model.FuncionarioUpdate, 400 com return se erro
-
-	// TODO 3: buscar o Funcionario no banco pelo ID, 404 com return se não achar
-
-	// TODO 4: aplicar os campos que vieram preenchidos (não-nil) no funcionário
-	//         pensa: como você sabe se um campo *string veio ou não veio na
-	//         requisição? (dica: é exatamente o motivo de ser ponteiro —
-	//         compara com nil antes de aplicar, campo por campo)
-	//         ex: if update.Nome != nil { funcionario.Nome = *update.Nome }
-
-	// TODO 5: salvar com Save(), 500 com return se erro
-
-	// TODO 6: retornar 200 com funcionario.ToResponse() atualizado
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
