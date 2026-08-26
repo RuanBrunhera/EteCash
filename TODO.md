@@ -14,6 +14,12 @@
 - [X] **Editar dados de perfil (funcionário)**
   - Trocar e-mail, telefone, senha
 
+- [X] **Relatório de vendas "de verdade"**
+  - Estilo `Statistics.jsx` do aluno — dados agregados, gráficos
+  - Rota `/cantina/relatorios` está livre pra isso (não confundir com o histórico, que já existe em `/cantina/historico`)
+
+  - [ ] Botão "ver detalhes da compra" no histórico do aluno (mesmo padrão do ModalProdutosComprados que a cantina já usa)
+
 - [ ] **Recuperação de senha via e-mail** (aluno + funcionário)
   - Precisa de infraestrutura de envio de e-mail real
 
@@ -29,10 +35,6 @@
 
 - [ ] **Refresh tokens**
   - Hoje o JWT expira em 24h fixas, sem mecanismo de renovação sem novo login
-
-- [X] **Relatório de vendas "de verdade"**
-  - Estilo `Statistics.jsx` do aluno — dados agregados, gráficos
-  - Rota `/cantina/relatorios` está livre pra isso (não confundir com o histórico, que já existe em `/cantina/historico`)
 
 - [ ] **Rejeitar PIN óbvios**
   - Rejeitar PINs óbvios (0000, 1234, sequências repetidas) na troca de PIN
