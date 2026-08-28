@@ -187,7 +187,7 @@ export default function RelatoriosCantina() {
             Top 10 produtos mais vendidos
           </h3>
           {topProdutos.length === 0 ? (
-            <p>Nenhuma venda registrada esse mês ainda...</p>
+            <p className="text-zinc-400 text-sm mt-1">Nenhuma venda registrada esse mês ainda...</p>
           ) : (
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
               {topProdutos.map((produto, index) => (

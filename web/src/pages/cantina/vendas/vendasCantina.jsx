@@ -1,4 +1,4 @@
-import CarrinhoVenda from '../../../components/cantina/carrinhoVenda'
+import CarrinhoVenda from '../../../components/cantina/CarrinhoVenda'
 
 export default function VendasCantina() {
   return ( 

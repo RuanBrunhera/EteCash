@@ -4,7 +4,7 @@ import {
   ShoppingBag,
   Trophy,
 } from 'lucide-react'
-import WelcomeCardCantina from '../../../components/cantina/welcomeCardCantina'
+import WelcomeCardCantina from '../../../components/cantina/WelcomeCardCantina'
 import { API_URL } from '../../../config/api'
 
 function ResumoCardCantina({ title, value, icon: Icon, color }) {

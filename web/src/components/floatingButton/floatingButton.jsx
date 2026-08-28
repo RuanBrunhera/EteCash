@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom"
 import "./styles.css"
 import AdicionarSaldoModal from "../modalAddSaldo/AdicionarSaldo"
-import CarrinhoVenda from "../cantina/carrinhoVenda";
+import CarrinhoVenda from "../cantina/CarrinhoVenda";
 
 const allOptions = [
   { emoji: "💲", label: "Adicionar saldo", contexto: "aluno", key: "saldo" },
