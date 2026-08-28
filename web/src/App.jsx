@@ -8,12 +8,12 @@ import Statistics from './pages/aluno/statistics/Statistics'
 import FloatingButton from "./components/FloatingButton/FloatingButton"
 // Imports cantina
 import LayoutCantina from './components/layout/layoutCantina'
-import HomeCantina from './pages/cantina/home/homeCantina'
-import ProdutosCantina from './pages/cantina/produtos/produtosCantina'
-import ProfileCantina from './pages/cantina/profile/profileCantina'
-import HistoricoCantina from './pages/cantina/historico/historicoCantina'
-import RelatorioCantina from './pages/cantina/relatorios/relatoriosCantina'
-import VendasCantina from './pages/cantina/vendas/vendasCantina'
+import HomeCantina from './pages/cantina/home/HomeCantina'
+import ProdutosCantina from './pages/cantina/produtos/ProdutosCantina'
+import ProfileCantina from './pages/cantina/profile/ProfileCantina'
+import HistoricoCantina from './pages/cantina/historico/HistoricoCantina'
+import RelatorioCantina from './pages/cantina/relatorios/RelatoriosCantina'
+import VendasCantina from './pages/cantina/vendas/VendasCantina'
 import { Routes, Route, useLocation } from 'react-router-dom'
 
 function App() {
