@@ -137,7 +137,7 @@ export default function Statistics() {
       <div className='bg-zinc-900 border border-zinc-800 rounded-3xl p-6'>
         <h3 className='text-white font-semibol mb-6'>Formas de débito na sua conta</h3>
         {semDepositos ? (
-          <p>
+          <p className='text-zinc-400 text-sm mt-1'>
             Nenhum gasto registrado ainda.
           </p>
         ) : (

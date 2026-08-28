@@ -1,4 +1,4 @@
-import Sidebar from '../sideBar/sideBar'
+import Sidebar from '../SideBar/SideBar'
 
 function Layout({ children }) {
   return (

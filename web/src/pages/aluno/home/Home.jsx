@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import WelcomeCard from "../../../components/dashboard/welcomeCard.jsx"
+import WelcomeCard from "../../../components/dashboard/WelcomeCard.jsx"
 import { Wallet, ShoppingBag, TrendingDown } from "lucide-react"
 import { API_URL } from "../../../config/api.js"  
 
