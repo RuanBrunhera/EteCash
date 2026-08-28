@@ -1,5 +1,5 @@
 // Imports aluno
-import Layout from './components/layout/layout'
+import Layout from './components/layout/Layout'
 import Home from './pages/aluno/home/Home'
 import Historico from './pages/aluno/historico/Historico'
 import Login from './pages/login/Login'
@@ -7,7 +7,7 @@ import Profile from './pages/aluno/profile/Profile'
 import Statistics from './pages/aluno/statistics/Statistics'
 import FloatingButton from "./components/FloatingButton/FloatingButton"
 // Imports cantina
-import LayoutCantina from './components/layout/layoutCantina'
+import LayoutCantina from './components/layout/LayoutCantina'
 import HomeCantina from './pages/cantina/home/HomeCantina'
 import ProdutosCantina from './pages/cantina/produtos/ProdutosCantina'
 import ProfileCantina from './pages/cantina/profile/ProfileCantina'
