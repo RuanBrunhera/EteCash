@@ -18,6 +18,24 @@
   - Estilo `Statistics.jsx` do aluno — dados agregados, gráficos
   - Rota `/cantina/relatorios` está livre pra isso (não confundir com o histórico, que já existe em `/cantina/historico`)
 
+- [X] **Reorganização de components/ (fazer junto com Fase F3 - camada de services/)
+
+Hoje `components/` mistura dois critérios: por domínio de usuário (`cantina/`)
+e por função (`common/`, `layout/`, `dashboard/`, etc). Decisão: abandonar
+agrupamento por domínio em components/ (isso é papel de pages/), reorganizar
+por função/categoria do componente. Motivo: componentes em components/ devem
+ser tratados como potencialmente reutilizáveis; presos numa pasta por domínio,
+ficam "carimbados" como exclusivos de um usuário mesmo quando não precisam ser.
+
+Estrutura alvo:
+- components/common/       → ModalSucesso, ModalEditarCampo (já está certo)
+- components/layout/        → Layout, LayoutCantina (já está certo)
+- components/navigation/     → SideBar, SidebarCantina (hoje espalhados)
+- components/dashboard/      → StatCard, WelcomeCard, WelcomeCardCantina (hoje espalhados)
+- components/venda/          → CarrinhoVenda, ModalProdutosComprados
+- components/saldo/          → AdicionarSaldo
+- components/fab/            → FloatingButton
+
   - [ ] Botão "ver detalhes da compra" no histórico do aluno (mesmo padrão do ModalProdutosComprados que a cantina já usa)
 
 - [ ] **Recuperação de senha via e-mail** (aluno + funcionário)
