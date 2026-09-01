@@ -15,8 +15,8 @@ import (
 // Erros sentinela: variáveis fixas que representam situações de negócio específicas,
 // permitindo identificar exatamente qual regra falhou (em vez de comparar strings de texto)
 
-var ErrEstoqueInsuficiente = errors.New("estoque insuficiente")
-var ErrSaldoInsuficiente = errors.New("saldo insuficiente")
+var ErrEstoqueInsuficiente = errors.New("Estoque insuficiente")
+var ErrSaldoInsuficiente = errors.New("Saldo insuficiente")
 
 func EfetuarTransacao(c *gin.Context) {
 
