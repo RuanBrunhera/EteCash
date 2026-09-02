@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { API_URL } from '../../../config/api'
-import ModalProdutosComprados from '../../../components/cantina/ModalProdutosComprados'
+import ModalProdutosComprados from '../../../components/venda/ModalProdutosComprados'
 
 function formatarData(dataISO) {
   return new Date(dataISO).toLocaleString('pt-BR', {
