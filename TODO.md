@@ -36,7 +36,7 @@ Estrutura alvo:
 - components/saldo/          → AdicionarSaldo
 - components/fab/            → FloatingButton
 
-  - [ ] Botão "ver detalhes da compra" no histórico do aluno (mesmo padrão do ModalProdutosComprados que a cantina já usa)
+  - [X] Botão "ver detalhes da compra" no histórico do aluno (mesmo padrão do ModalProdutosComprados que a cantina já usa)
 
 - [ ] **Recuperação de senha via e-mail** (aluno + funcionário)
   - Precisa de infraestrutura de envio de e-mail real
