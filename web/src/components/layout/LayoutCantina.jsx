@@ -1,4 +1,4 @@
-import SidebarCantina from '../cantina/SidebarCantina'
+import SidebarCantina from '../navigation/SidebarCantina'
 
 function LayoutCantina({ children }) {
   return (
