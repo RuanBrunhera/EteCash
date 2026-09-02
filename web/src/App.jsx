@@ -5,7 +5,7 @@ import Historico from './pages/aluno/historico/Historico'
 import Login from './pages/login/Login'
 import Profile from './pages/aluno/profile/Profile'
 import Statistics from './pages/aluno/statistics/Statistics'
-import FloatingButton from "./components/FloatingButton/FloatingButton"
+import FloatingButton from "./components/fab/FloatingButton"
 // Imports cantina
 import LayoutCantina from './components/layout/LayoutCantina'
 import HomeCantina from './pages/cantina/home/HomeCantina'
