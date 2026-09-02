@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Plus, Minus } from 'lucide-react'
-import { API_URL } from '../../../config/api'
+import { alunoService } from '../../../services/alunoService'
+import ModalProdutosComprados from '../../../components/venda/ModalProdutosComprados'
 
-function TransacaoCard({ tipo, valor, formaPagamento, data_hora }) {
+function TransacaoCard({ tipo, valor, formaPagamento, data_hora, transacao_id, onDetalhes, carregandoDetalhes }) {
   const isCredito = tipo === 'credito'
 
   const formatarData = (dataISO) => {
@@ -39,6 +40,16 @@ function TransacaoCard({ tipo, valor, formaPagamento, data_hora }) {
           {isCredito ? '+' : '-'} R$ {valor.toFixed(2)}
         </p>
         <p className="text-sm text-zinc-500">{formatarData(data_hora)}</p>
+        {tipo === 'debito' && transacao_id && (
+          <button
+  type="button"
+  onClick={() => onDetalhes(transacao_id)}
+  disabled={carregandoDetalhes}
+  className="mt-2 rounded-xl bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-500 disabled:cursor-wait disabled:opacity-60"
+>
+  {carregandoDetalhes ? 'Carregando...' : 'Ver produtos'}
+</button>
+        )}
       </div>
     </div>
   )
@@ -47,20 +58,46 @@ function TransacaoCard({ tipo, valor, formaPagamento, data_hora }) {
 export default function Historico() {
   const [transacoes, setTransacoes] = useState([])
   const [loading, setLoading] = useState(true)
+  const [transacaoSelecionada, setTransacaoSelecionada] = useState(null)
+  const [transacaoCarregando, setTransacaoCarregando] = useState(null)
+  const [erroDetalhe, setErroDetalhe] = useState(null)
+  const [erroHistorico, setErroHistorico] = useState(null)
+
+  const buscarDetalhe = async (transacaoId) => {
+    setTransacaoCarregando(transacaoId)
+    setErroDetalhe(null)
+
+    const { data, error } = await alunoService.buscarDetalheTransacao(transacaoId)
+
+    if (error) {
+      setErroDetalhe(error)
+    } else {
+      setTransacaoSelecionada(data)
+      setErroDetalhe(null)
+    }
+
+    setTransacaoCarregando(null)
+  }
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return
+    async function carregarHistorico() {
+      setErroHistorico(null)
 
-    fetch(`${API_URL}/api/aluno/historico`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then(res => res.json())
-      .then(data => {
-        setTransacoes(data.historico || [])
-      })
-      .catch(err => console.error('Erro ao buscar histórico:', err))
-      .finally(() => setLoading(false))
+      try {
+        const { data, error } = await alunoService.buscarHistorico()
+
+        if (error) {
+          setErroHistorico(error)
+          return
+        }
+
+        setTransacoes(data || [])
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    carregarHistorico()
   }, [])
 
   return (
@@ -75,16 +112,45 @@ export default function Historico() {
       {/* Lista */}
       {loading ? (
         <p className="text-zinc-400">Carregando...</p>
+      ) : erroHistorico ? (
+        <p className="text-red-400" role="alert">{erroHistorico}</p>
       ) : transacoes.length === 0 ? (
         <p className="text-zinc-400">Nenhuma transação encontrada.</p>
       ) : (
         <div className="space-y-3">
           {transacoes.map((t) => (
-            <TransacaoCard key={t.id} {...t} />
+            <TransacaoCard
+              key={t.id}
+              {...t}
+              onDetalhes={buscarDetalhe}
+              carregandoDetalhes={transacaoCarregando === t.transacao_id}
+            />
           ))}
         </div>
       )}
 
+      {erroDetalhe && (
+  <p className="text-red-400 flex items-center gap-2 text-sm" role="alert">
+    {erroDetalhe}
+    <button
+      type="button"
+      onClick={() => setErroDetalhe(null)}
+      className="underline hover:text-red-300"
+    >
+      Fechar
+    </button>
+  </p>
+)}
+
+      {transacaoSelecionada && (
+        <ModalProdutosComprados
+          itens={transacaoSelecionada.itens || []}
+          onClose={() => {
+            setTransacaoSelecionada(null)
+            setErroDetalhe(null)
+          }}
+        />
+      )}
     </div>
   )
 }

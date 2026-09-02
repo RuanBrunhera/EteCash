@@ -20,7 +20,29 @@ async function atualizarPin(payload) {
     return { data: data.message, error: null }
 }
 
+async function buscarHistorico() {
+    const { data, error } = await apiClient.request('GET', '/api/aluno/historico')
+
+    if (error) {
+        return { data: null, error }
+    }
+
+    return { data: data.historico, error: null }
+}
+
+async function buscarDetalheTransacao(transacaoId) {
+        const { data, error } = await apiClient.request('GET', `/api/aluno/transacao/${transacaoId}`)
+
+        if (error) {
+                return { data: null, error }
+        }
+
+        return { data, error: null }
+}
+
 export const alunoService = {
   atualizarSenha,
-  atualizarPin
+    atualizarPin,
+        buscarHistorico,
+    buscarDetalheTransacao
 }
