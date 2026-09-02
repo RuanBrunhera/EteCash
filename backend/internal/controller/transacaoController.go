@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/RuanBrunhera/Etecash/internal/config"
 	"github.com/RuanBrunhera/Etecash/internal/model"
@@ -141,6 +142,7 @@ func EfetuarTransacao(c *gin.Context) {
 			Tipo:           "debito",
 			FormaPagamento: "saldo",
 			Valor:          valorTotal,
+			TransacaoID:    &transacao.ID,
 		}
 		if err := tx.Create(&historico).Error; err != nil {
 			return err
@@ -238,6 +240,21 @@ func AdicionarSaldo(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"aluno": aluno.ToResponse()})
 }
 
+func montarItensResponse(itens []model.ItemTransacao) []gin.H {
+	resultado := make([]gin.H, 0, len(itens))
+	for _, item := range itens {
+		resultado = append(resultado, gin.H{
+			"id":             item.ID,
+			"produto_id":     item.ProdutoID,
+			"produto_nome":   item.Produto.Nome,
+			"quantidade":     item.Quantidade,
+			"preco_unitario": item.PrecoUnitario,
+			"subtotal":       item.PrecoUnitario * float64(item.Quantidade),
+		})
+	}
+	return resultado
+}
+
 func ListarTransacoes(c *gin.Context) {
 	var transacoes []model.Transacao
 
@@ -252,18 +269,6 @@ func ListarTransacoes(c *gin.Context) {
 
 	resultado := make([]gin.H, 0, len(transacoes))
 	for _, t := range transacoes {
-		itens := make([]gin.H, 0, len(t.Itens))
-		for _, item := range t.Itens {
-			itens = append(itens, gin.H{
-				"id":             item.ID,
-				"produto_id":     item.ProdutoID,
-				"produto_nome":   item.Produto.Nome,
-				"quantidade":     item.Quantidade,
-				"preco_unitario": item.PrecoUnitario,
-				"subtotal":       item.PrecoUnitario * float64(item.Quantidade),
-			})
-		}
-
 		resultado = append(resultado, gin.H{
 			"id":          t.ID,
 			"data_hora":   t.DataHora,
@@ -272,9 +277,40 @@ func ListarTransacoes(c *gin.Context) {
 			"aluno": gin.H{
 				"nome": t.Aluno.Nome,
 			},
-			"itens": itens,
+			"itens": montarItensResponse(t.Itens),
 		})
 	}
 
 	c.JSON(http.StatusOK, gin.H{"transacoes": resultado})
+}
+
+func GetTransacaoDetalhe(c *gin.Context) {
+	userID, ok := c.Get("userID")
+	if !ok {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+	alunoRM := int64(userID.(uint64))
+
+	transacaoID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "ID de transação inválido"})
+		return
+	}
+
+	var transacao model.Transacao
+	if err := config.DB.
+		Preload("Itens.Produto").
+		Where("id = ? AND aluno_rm = ?", transacaoID, alunoRM).
+		First(&transacao).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Transação não encontrada"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"id":          transacao.ID,
+		"data_hora":   transacao.DataHora,
+		"valor_total": transacao.ValorTotal,
+		"itens":       montarItensResponse(transacao.Itens),
+	})
 }

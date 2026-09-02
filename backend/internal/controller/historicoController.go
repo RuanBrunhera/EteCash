@@ -32,6 +32,7 @@ func GetHistoricoAluno(c *gin.Context) {
 			FormaPagamento: h.FormaPagamento,
 			Valor:          h.Valor,
 			DataHora:       h.DataHora,
+			TransacaoID:    h.TransacaoID,
 		})
 	}
 

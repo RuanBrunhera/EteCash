@@ -9,6 +9,7 @@ type Historico struct {
 	FormaPagamento string    `json:"forma_pagamento" gorm:"type:forma_pagamento;not null"`
 	Valor          float64   `json:"valor"           gorm:"type:numeric(10,2);not null"`
 	DataHora       time.Time `json:"data_hora"       gorm:"column:data_hora;default:CURRENT_TIMESTAMP"`
+	TransacaoID    *uint     `json:"transacao_id,omitempty" gorm:"column:transacao_id"`
 }
 
 func (Historico) TableName() string {
@@ -29,4 +30,5 @@ type HistoricoResponse struct {
 	FormaPagamento string    `json:"forma_pagamento"`
 	Valor          float64   `json:"valor"`
 	DataHora       time.Time `json:"data_hora"`
+	TransacaoID    *uint     `json:"transacao_id,omitempty"`
 }
