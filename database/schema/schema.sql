@@ -77,5 +77,7 @@ CREATE TABLE historico (
     forma_pagamento forma_pagamento NOT NULL,
     valor NUMERIC(10,2) NOT NULL,
     data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (aluno_rm) REFERENCES aluno(rm)
+    transacao_id INT,
+    FOREIGN KEY (aluno_rm) REFERENCES aluno(rm),
+    FOREIGN KEY (transacao_id) REFERENCES transacao(id)
 );
