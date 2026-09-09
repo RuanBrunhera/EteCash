@@ -1,22 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
-  Home,
-  BarChart3,
-  UserRound,
   LogOut,
   ChevronFirst,
   ChevronLast,
-  ScrollText,
   X,
 } from 'lucide-react'
-
-const items = [
-  { href: '/aluno/home', label: 'Home', icon: Home },
-  { href: '/aluno/historico', label: "Histórico", icon: ScrollText },
-  { href: '/aluno/statistics', label: 'Estatísticas', icon: BarChart3 },
-  { href: '/aluno/profile', label: 'Perfil', icon: UserRound },
-]
 
 function LogoutModal({ onConfirm, onCancel }) {
   return (
@@ -65,24 +54,26 @@ function LogoutModal({ onConfirm, onCancel }) {
   )
 }
 
-function Sidebar() {
+function Sidebar({ items, storageKey, tipoUsuario }) {
   const [open, setOpen] = useState(true)
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
 
   useEffect(() => {
-    const saved = localStorage.getItem('sidebar-open')
-    if (saved) setOpen(saved === '1')
-  }, [])
+    const savedOpen = localStorage.getItem(storageKey)
+    if (savedOpen !== null) {
+      setOpen(savedOpen === '1' || savedOpen === 'true')
+    }
+  }, [storageKey])
 
   useEffect(() => {
-    localStorage.setItem('sidebar-open', open ? '1' : '0')
-  }, [open])
+    localStorage.setItem(storageKey, open ? '1' : '0')
+  }, [open, storageKey])
 
-  const handleLogout = () => {
+  function handleLogout() {
     localStorage.removeItem('token')
-    localStorage.removeItem('aluno')
+    localStorage.removeItem(tipoUsuario === 'aluno' ? 'aluno' : 'funcionario')
     setShowLogoutModal(false)
     navigate('/')
   }
@@ -117,7 +108,9 @@ function Sidebar() {
       <nav className="mt-2 flex-1">
         <ul className="flex flex-col gap-1 px-3">
           {items.map(({ href, label, icon: Icon }) => {
-            const active = location.pathname === href || location.pathname?.startsWith(href)
+            const active =
+              location.pathname === href ||
+              (href !== '/' && location.pathname?.startsWith(href))
             return (
               <li key={href}>
                 <button
