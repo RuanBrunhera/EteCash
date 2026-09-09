@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 import etecashLogo from '../../assets/etecash_logo.png'
 import { API_URL } from '../../config/api'
 
-function WelcomeCard() {
+function WelcomeCardAluno() {
   
   const [aluno, setAluno] = useState(
     JSON.parse(localStorage.getItem('aluno')) || {nome: 'Aluno', saldo: 0}
@@ -67,4 +67,4 @@ function WelcomeCard() {
   )
 }
 
-export default WelcomeCard
+export default WelcomeCardAluno

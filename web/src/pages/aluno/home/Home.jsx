@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import WelcomeCard from "../../../components/dashboard/WelcomeCard.jsx"
+import WelcomeCardAluno from "../../../components/dashboard/WelcomeCardAluno.jsx"
 import { Wallet, ShoppingBag, TrendingDown } from "lucide-react"
 import { API_URL } from "../../../config/api.js"  
 
@@ -57,7 +57,7 @@ export default function Home() {
   return (
     <main className="flex-1 overflow-auto p-8">
       <div className="space-y-6">
-        <WelcomeCard />
+        <WelcomeCardAluno />
 
         {/* Resumo do mês */}
         <div>
