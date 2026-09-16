@@ -1,34 +1,27 @@
 import {useEffect, useState} from 'react'
 import etecashLogo from '../../assets/etecash_logo.png'
-import { API_URL } from '../../config/api'
+import { alunoService } from '../../services/alunoService' 
 
 function WelcomeCardAluno() {
   
   const [aluno, setAluno] = useState(
     JSON.parse(localStorage.getItem('aluno')) || {nome: 'Aluno', saldo: 0}
   )
-  useEffect(() => {
-    const buscarPerfil = () => {
-      const token = localStorage.getItem('token')
-      if (!token) return
-
-      fetch(`${API_URL}/api/aluno/perfil`, {
-        headers: { Authorization: `Bearer ${token}` }
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.aluno) {
-          setAluno(data.aluno)
-          localStorage.setItem('aluno', JSON.stringify(data.aluno))
-        }
-      })
-      .catch(err => console.error('Erro ao buscar perfil: ', err))
-    }
-
-    buscarPerfil() //buscar perfil depois de montar ele
   
-    window.addEventListener('saldoAtualizado', buscarPerfil) //escuta o evento la do AdicionarSaldo.jsx para atualizar o saldo
-    return () => window.removeEventListener('saldoAtualizado', buscarPerfil)
+  useEffect(() => {
+     async function buscarPerfil() {
+    const { data, error } = await alunoService.buscarPerfil()
+
+    if (!error && data) {
+      setAluno(data)
+      localStorage.setItem("aluno", JSON.stringify(data))
+    }
+  }
+
+  buscarPerfil() 
+
+  window.addEventListener('saldoAtualizado', buscarPerfil)
+  return () => window.removeEventListener('saldoAtualizado', buscarPerfil)
   }, [])
 
   return (

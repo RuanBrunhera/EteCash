@@ -40,9 +40,43 @@ async function buscarDetalheTransacao(transacaoId) {
         return { data, error: null }
 }
 
+async function buscarResumoMes() {
+  const { data, error } = await apiClient.request('GET', '/api/aluno/resumo-mes')
+
+    if (error) {
+        return { data: null, error}
+    }
+
+    return { data, error: null }
+    
+}
+
+async function buscarPerfil() {
+    const { data, error } = await apiClient.request('GET', '/api/aluno/perfil')
+
+    if (error) {
+        return { data: null, error } 
+    }
+
+    return { data: data.aluno, error: null }
+}
+
+async function adicionarSaldo(payload) {
+    const { data, error } = await apiClient.request('POST', '/api/aluno/saldo', payload)
+
+    if (error) {
+        return { data: null, error }
+    }
+
+    return { data: data.aluno, error: null }
+}
+
 export const alunoService = {
-  atualizarSenha,
+    atualizarSenha,
     atualizarPin,
-        buscarHistorico,
-    buscarDetalheTransacao
+    buscarHistorico,
+    buscarDetalheTransacao,
+    buscarResumoMes,
+    buscarPerfil,
+    adicionarSaldo
 }

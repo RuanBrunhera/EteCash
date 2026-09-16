@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import WelcomeCardAluno from "../../../components/dashboard/WelcomeCardAluno.jsx"
 import { Wallet, ShoppingBag, TrendingDown } from "lucide-react"
-import { API_URL } from "../../../config/api.js"  
+import { alunoService } from "../../../services/alunoService.js"
 
 function ResumoCard({ title, value, icon: Icon, color }) {
   const colors = {
@@ -31,25 +31,22 @@ export default function Home() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      setLoading(false)
-      return
-    }
+    async function carregarResumo() {
+    try {
+      const { data, error } = await alunoService.buscarResumoMes()
 
-    fetch(`${API_URL}/api/aluno/resumo-mes`, {
-      headers: { Authorization : `Bearer ${token}` },
-    })
-    .then((res) => res.json())
-    .then((data) => {
-      setResumo({
-        totalDepositos: data.totalDepositos || 0,
-        totalGasto: data.totalGasto || 0,
-        numeroPedidos: data.numeroPedidos || 0,
-      })
-    })
-    .catch((err) => console.error('Erro ao buscar resumo do mês:', err))
-    .finally(() => setLoading(false))
+      if (!error && data) {
+        setResumo({
+          totalDepositos: data.totalDepositos,
+          totalGasto: data.totalGasto,
+          numeroPedidos: data.numeroPedidos,
+        })
+      }
+    } finally {
+      setLoading(false)
+    }
+    }
+    carregarResumo()
   }, [])
   
   const mes = new Date().toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })
