@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Camera, Pencil } from "lucide-react";
 import quandale from "../../../assets/knpgsvnouo191.jpg";
-import { API_URL } from "../../../config/api";
+import { alunoService } from "../../../services/alunoService";
 import ModalEditarCampo from "../../../components/common/ModalEditarCampo";
 import ModalSucesso from "../../../components/common/ModalSucesso";
 
@@ -57,27 +57,22 @@ export default function Profile() {
   }
 
   useEffect(() => {
-    const token = localStorage.getItem("token")
-    
-    if (!token) {
-      setLoading(false)
-      return
-    }
+  async function carregarPerfil() {
+    try {
+      const { data, error } = await alunoService.buscarPerfil()
 
-    fetch(`${API_URL}/api/aluno/perfil`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-    .then((res) => res.json())
-    .then((data) => {
-      if (data.aluno) {
-        setAluno(data.aluno)
-        localStorage.setItem("aluno", JSON.stringify(data.aluno))
+      if (!error && data) {
+        setAluno(data)
+        localStorage.setItem("aluno", JSON.stringify(data))
       } else {
-        setErro("Não foi possível carregar o perfil")
+        setErro("Instabilidade ao pegar os dados atuais. Exibindo os dados salvos.")
       }
-    })
-    .finally(() => setLoading(false))
-  }, [])
+    } finally {
+      setLoading(false)
+    }
+  }
+  carregarPerfil()
+}, [])
 
   const handleFotoChange = (e) => {
     const file = e.target.files?.[0]
