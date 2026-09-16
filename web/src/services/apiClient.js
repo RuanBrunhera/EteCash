@@ -7,21 +7,27 @@ import { API_URL } from "../config/api"
  * @param {string} method - 'GET', 'POST', 'PATCH', etc.
  * @param {string} path - caminho relativo, ex: '/api/func/produtos'
  * @param {object} [body] - corpo da requisição, se houver
+ * @param {boolean} [semAuth=false] - permite chamadas públicas sem token
  * @returns {Promise<{ data: any, error: string|null }>}
  */
 
-async function request(method, path, body) {
+async function request(method, path, body, semAuth = false) {
     const token = localStorage.getItem('token')
 
-    if (!token) {
-        return { data: null, error: 'Token de autenticação não encontrado. Faça login novamente.' }
-    }
-  const headers = {
-    Authorization: `Bearer ${token}`, 
+  if (!token && !semAuth) {
+    return { data: null, error: 'Token de autenticação não encontrado. Faça login novamente' }
   }
+
+    const headers = {}
+
+    if (token) {
+      headers.Authorization = `Bearer ${token}`
+    }
+
   if (body) {
     headers['Content-Type'] = 'application/json'
   }
+
   const options = {
     method, 
     headers,
