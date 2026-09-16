@@ -1,77 +1,55 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { authService } from "../../services/authService";
 import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(false);
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  const [rm, setRm] = useState("");
+  const [senha, setSenha] = useState("");
+  const [cpf, setCpf] = useState("");
+  const [senhaFuncionario, setSenhaFuncionario] = useState("");
 
   const handleLoginAluno = async (e) => {
     e.preventDefault();
-    const rm = document.getElementById("inputRM").value;
-    const senha = document.getElementById("inputSenha").value;
 
     if (!rm || !senha) {
       alert("Preencha todos os campos!");
       return;
     }
 
-    try {
-      const response = await fetch(`${API_URL}/api/login/aluno`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ rm: parseInt(rm), senha }),
-      });
+    const { data, error } = await authService.loginAluno(parseInt(rm, 10), senha);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.error || "Erro ao fazer login");
-        return;
-      }
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("aluno", JSON.stringify(data.aluno));
-
-      navigate("/aluno/home");
-    } catch (error) {
-      alert("Erro ao conectar com o servidor");
+    if (error) {
+      alert(error);
+      return;
     }
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("aluno", JSON.stringify(data.aluno));
+    navigate("/aluno/home");
   };
 
   const handleLoginFuncionario = async (e) => {
     e.preventDefault();
-    const cpf = document.getElementById("inputCPF").value;
-    const senha = document.getElementById("inputSenhaFuncionario").value;
 
-    if (!cpf || !senha) {
+    if (!cpf || !senhaFuncionario) {
       alert("Preencha todos os campos!");
       return;
     }
 
-    try {
-      const response = await fetch(`${API_URL}/api/login/funcionario`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ cpf, senha }),
-      });
+    const { data, error } = await authService.loginFuncionario(cpf, senhaFuncionario);
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        alert(data.error || "Erro ao fazer login");
-        return;
-      }
-
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("funcionario", JSON.stringify(data.funcionario));
-
-      navigate("/cantina/home");
-    } catch (error) {
-      alert("Erro ao conectar com o servidor");
+    if (error) {
+      alert(error);
+      return;
     }
+
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("funcionario", JSON.stringify(data.funcionario));
+    navigate("/cantina/home");
   };
 
   return (
@@ -85,9 +63,10 @@ function Login() {
               <input
                 type="text"
                 placeholder="RM"
-                id="inputRM"
                 maxLength={11}
                 required
+                value={rm}
+                onChange={(e) => setRm(e.target.value)}
               />
               <i className="fa-solid fa-user"></i>
             </div>
@@ -95,8 +74,9 @@ function Login() {
               <input
                 type="password"
                 placeholder="Senha"
-                id="inputSenha"
                 required
+                value={senha}
+                onChange={(e) => setSenha(e.target.value)}
               />
               <i className="fa-solid fa-lock"></i>
             </div>
@@ -117,9 +97,10 @@ function Login() {
               <input
                 type="text"
                 placeholder="CPF"
-                id="inputCPF"
                 maxLength={11}
                 required
+                value={cpf}
+                onChange={(e) => setCpf(e.target.value)}
               />
               <i className="fa-solid fa-id-card"></i>
             </div>
@@ -127,8 +108,9 @@ function Login() {
               <input
                 type="password"
                 placeholder="Senha"
-                id="inputSenhaFuncionario"
                 required
+                value={senhaFuncionario}
+                onChange={(e) => setSenhaFuncionario(e.target.value)}
               />
               <i className="fa-solid fa-lock"></i>
             </div>
