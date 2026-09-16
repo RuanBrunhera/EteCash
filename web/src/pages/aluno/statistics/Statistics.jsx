@@ -3,7 +3,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from 'recharts'
-import { API_URL } from '../../../config/api'
+import { alunoService } from '../../../services/alunoService'
 
 const COLORS = ['#dc2626', '#3b82f6']
 
@@ -78,24 +78,24 @@ export default function Statistics() {
   const [erro, setErro] = useState(null)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      setLoading(false)
-      return
+    async function carregarHistorico() {
+      setErro(null)
+
+      try{
+        const { data, error } = await alunoService.buscarHistorico()
+
+        if(error) {
+          setErro(error)
+          return
+        }
+
+        setHistorico(data || [])
+      } finally{
+        setLoading(false)
+      }
     }
 
-    fetch(`${API_URL}/api/aluno/historico`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setHistorico(data.historico || [])
-      })
-      .catch((err) => {
-        console.error('Erro ao buscar histórico:', err)
-        setErro('Erro ao carregar estatísticas.')
-      })
-      .finally(() => setLoading(false))
+    carregarHistorico()
   }, [])
 
     const gastosPorMes = agruparGastosPorMes(historico)
