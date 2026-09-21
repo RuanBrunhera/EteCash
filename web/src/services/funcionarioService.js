@@ -30,8 +30,30 @@ async function cadastrarFuncionario(payload) {
     return { data: data.funcionario, error: null }
 }
 
+async function buscarResumoDia() {
+    const { data, error } = await apiClient.request('GET', '/api/func/resumo-dia')
+
+    if (error) {
+        return { data: null, error } 
+    }
+
+    return { data, error: null }
+} 
+
+async function buscarPerfil() {
+    const { data, error } = await apiClient.request('GET', '/api/func/perfil')
+    
+    if (error) {
+        return { data: null, error } 
+    }
+
+    return { data: data.funcionario, error: null }
+}
+
 export const funcionarioService = {
   atualizarPerfil, 
   atualizarSenha,
-  cadastrarFuncionario
+  cadastrarFuncionario,
+  buscarResumoDia,
+  buscarPerfil,
 }

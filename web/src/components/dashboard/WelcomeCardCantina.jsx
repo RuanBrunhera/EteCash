@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import etecashLogo from '../../assets/etecash_logo.png'
-import { API_URL } from '../../config/api'
+import { funcionarioService } from '../../services/funcionarioService' 
 
 function WelcomeCardCantina() {
   const [funcionario, setFuncionario] = useState(
@@ -9,21 +9,18 @@ function WelcomeCardCantina() {
   const [resumo, setResumo] = useState({ faturamento: 0, numero_vendas: 0 })
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) return
+    async function carregarResumo() {
+      const { data, error } = await funcionarioService.buscarResumoDia()
 
-    fetch(`${API_URL}/api/func/resumo-dia`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
+      if (!error && data) {
         setResumo({
           faturamento: data.faturamento || 0,
           numero_vendas: data.numero_vendas || 0,
         })
-      })
-      .catch((err) => console.error('Erro ao buscar resumo do dia:', err))
-  }, [])
+      }
+    }
+    carregarResumo()
+  },[])
 
   return (
     <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-zinc-900 to-zinc-800 p-6 text-white border border-zinc-700">
