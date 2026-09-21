@@ -5,7 +5,7 @@ import {
   Trophy,
 } from 'lucide-react'
 import WelcomeCardCantina from '../../../components/dashboard/WelcomeCardCantina'
-import { API_URL } from '../../../config/api'
+import { funcionarioService } from "../../../services/funcionarioService.js"
 
 function ResumoCardCantina({ title, value, icon: Icon, color }) {
   const colors = {
@@ -32,26 +32,24 @@ export default function HomeCantina() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      setLoading(false)
-      return
-    }
+    async function carregarResumo() {
+      try {
+        const { data, error } = await funcionarioService.buscarResumoDia()
 
-    fetch(`${API_URL}/api/func/resumo-dia`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setResumo({
-          faturamento: data.faturamento || 0,
-          numero_vendas: data.numero_vendas || 0,
-          produto_mais_vendido: data.produto_mais_vendido || '—',
-        })
-      })
-      .catch((err) => console.error('Erro ao buscar resumo do dia:', err))
-      .finally(() => setLoading(false))
-  }, [])
+        if (!error && data) {
+          setResumo({
+            faturamento: data.faturamento || 0,
+            numero_vendas: data.numero_vendas || 0,
+            produto_mais_vendido: data.produto_mais_vendido || '—',
+          })
+        }
+          
+      } finally {
+        setLoading(false)
+      }
+    }
+    carregarResumo()
+  },[])
 
   return (
     <div className='p-8 space-y-6'>
