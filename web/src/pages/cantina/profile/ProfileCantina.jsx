@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Camera, Pencil } from "lucide-react";
-import { API_URL } from "../../../config/api";
+import { funcionarioService } from "../../../services/funcionarioService";
 import ModalEditarCampo from "../../../components/common/ModalEditarCampo";
 import ModalSucesso from "../../../components/common/ModalSucesso";
 
@@ -67,29 +67,23 @@ export default function ProfileCantina() {
   const [mensagemSucesso, setMensagemSucesso] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    async function carregarPerfil() {
+      try {
+        const { data, error } = await funcionarioService.buscarPerfil();
 
-    fetch(`${API_URL}/api/func/perfil`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.funcionario) {
-          setFuncionario(data.funcionario);
-          localStorage.setItem("funcionario", JSON.stringify(data.funcionario));
+        if (!error && data) {
+          setFuncionario(data);
+          localStorage.setItem("funcionario", JSON.stringify(data));
         } else {
-          setErro("Não foi possível carregar o perfil.");
+          setErro(
+            "Instabilidade ao carregar dados atualizado. Exibindo os dados salvos.",
+          );
         }
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar o perfil:", err);
-        setErro("Erro ao conectar com o servidor.");
-      })
-      .finally(() => setLoading(false));
+      } finally {
+        setLoading(false);
+      }
+    }
+    carregarPerfil();
   }, []);
 
   const handleFotoChange = (e) => {
