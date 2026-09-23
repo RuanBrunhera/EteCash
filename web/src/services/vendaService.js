@@ -30,8 +30,19 @@ import { apiClient } from "./apiClient"
     return { data: data.transacao , error: null }
   }
 
+  async function listarTransacoes() {
+    const { data, error } = await apiClient.request('GET', '/api/func/transacoes')
+
+    if (error) {
+      return { data: null, error }
+    }
+
+    return { data: data.transacoes, error: null }
+  }
+
 export const vendaService = {
   buscarAlunoPorRm,
   listarProdutos,
-  finalizarVenda
+  finalizarVenda,
+  listarTransacoes,
 }

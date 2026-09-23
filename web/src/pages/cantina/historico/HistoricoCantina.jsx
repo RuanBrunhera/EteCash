@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { API_URL } from '../../../config/api'
+import { vendaService } from '../../../services/vendaService'
 import ModalProdutosComprados from '../../../components/venda/ModalProdutosComprados'
 
 function formatarData(dataISO) {
@@ -16,26 +16,24 @@ export default function HistoricoCantina() {
   const [transacoes, setTransacoes] = useState([])
   const [loading, setLoading] = useState(true)
   const [transacaoSelecionada, setTransacaoSelecionada] = useState(null)
+  const [erro, setErro] = useState("")
 
   useEffect(() => {
-    const token = localStorage.getItem('token')
-    if (!token) {
-      setLoading(false)
-      return
+    async function carregarTransacoes() {
+      try {
+        const { data, error } = await vendaService.listarTransacoes()
+    
+        if (!error && data) {
+          setTransacoes(data)
+        } else {
+          setErro("Erro ao carregar histórico de venda.")
+        }
+      } finally {
+        setLoading(false)
+      }
     }
-
-    fetch(`${API_URL}/api/func/transacoes`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setTransacoes(data.transacoes || [])
-      })
-      .catch((err) => {
-        console.error('Erro ao buscar transações:', err)
-      })
-      .finally(() => setLoading(false))
-  }, [])
+    carregarTransacoes()
+  },[])
 
   return (
     <div className="p-8 space-y-6">
@@ -45,6 +43,8 @@ export default function HistoricoCantina() {
           Lista de transações com data, aluno, valor total e itens comprados.
         </p>
       </div>
+
+      {erro && <p className="text-red-500 text-sm">{erro}</p>}
 
       {loading ? (
         <p className="text-zinc-400">Carregando...</p>
