@@ -8,7 +8,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { API_URL } from "../../../config/api";
+import { funcionarioService } from "../../../services/funcionarioService";
 
 const MESES = [
   "Jan",
@@ -74,29 +74,25 @@ export default function RelatoriosCantina() {
   const [erro, setErro] = useState("");
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+  async function carregarRelatorio() {
+    try {
+      const { data, error } = await funcionarioService.buscarRelatorioVendas()
 
-    fetch(`${API_URL}/api/func/relatorio-vendas`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
-      .then((res) => res.json())
-      .then((data) => {
+      if (!error && data) {
         setDados({
           faturamento_semana: data.faturamento_semana || [],
           faturamento_mensal: data.faturamento_mensal || [],
           top_produtos: data.top_produtos || [],
-        });
-      })
-      .catch((err) => {
-        console.error("Erro ao buscar relatórios:", err);
-        setErro("Erro ao carregar relatório.");
-      })
-      .finally(() => setLoading(false));
-  }, []);
+        })
+      } else {
+        setErro("Erro ao carregar relatório de vendas.")
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+  carregarRelatorio()
+}, [])
 
   if (loading) {
     return (

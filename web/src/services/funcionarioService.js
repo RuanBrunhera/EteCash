@@ -50,10 +50,21 @@ async function buscarPerfil() {
     return { data: data.funcionario, error: null }
 }
 
+async function buscarRelatorioVendas() {
+    const { data, error } = await apiClient.resquest('GET', '/api/func/relatorio-vendas')
+
+    if (error) {
+        return { data: null, error }
+    }
+
+    return { data, error: null }
+}
+
 export const funcionarioService = {
   atualizarPerfil, 
   atualizarSenha,
   cadastrarFuncionario,
   buscarResumoDia,
   buscarPerfil,
+  buscarRelatorioVendas,
 }
