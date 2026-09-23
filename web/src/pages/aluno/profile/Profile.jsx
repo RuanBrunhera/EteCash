@@ -92,23 +92,20 @@ export default function Profile() {
     setSucessoAberto(true)
   }
 
-  const getModalProps = () => {
-    if (modalAberto === "senha") {
-      return {
-        titulo: "Alterar senha",
-        campos: camposSenha,
-        endpoint: "/api/aluno/senha",
-      }
-    }
-    if (modalAberto === "pin") {
-      return {
-        titulo: "Alterar pin",
-        campos: camposPin,
-        endpoint: "/api/aluno/pin"
-      }
-    }
-    return null
+ const MODAIS_ALUNO = {
+  senha: {
+    titulo: "Alterar senha",
+    campos: camposSenha,
+    onSave: alunoService.atualizarSenha,
+  },
+  pin: {
+    titulo: "Alterar PIN",
+    campos: camposPin,
+    onSave: alunoService.atualizarPin,
   }
+ }
+
+ const getModalProps = () => MODAIS_ALUNO[modalAberto] || null
 
   if (loading) {
     return (
@@ -180,7 +177,7 @@ export default function Profile() {
             onClose={() => setModalAberto(null)}
             titulo={modalProps.titulo}
             campos={modalProps.campos}
-            endpoint={modalProps.endpoint}
+            onSave={modalProps.onSave}
             onSuccess={() => handleSuccess(
               modalAberto === "senha"
               ? "Senha alterada com sucesso!"

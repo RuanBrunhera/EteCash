@@ -22,19 +22,19 @@ const MODAIS = {
   email: {
     titulo: "Alterar e-mail",
     campos: camposEmail,
-    endpoint: "/api/func/perfil",
+    onSave: funcionarioService.atualizarPerfil,
     mensagemSucesso: "E-mail alterado com sucesso!",
   },
   telefone: {
     titulo: "Alterar telefone",
     campos: camposTelefone,
-    endpoint: "/api/func/perfil",
+    onSave: funcionarioService.atualizarPerfil,
     mensagemSucesso: "Telefone alterado com sucesso!",
   },
   senha: {
     titulo: "Alterar senha",
     campos: camposSenha,
-    endpoint: "/api/func/senha",
+    onSave: funcionarioService.atualizarSenha,
     mensagemSucesso: "Senha alterada com sucesso!",
   },
 };
@@ -203,7 +203,7 @@ export default function ProfileCantina() {
           onClose={() => setModalAberto(null)}
           titulo={modalProps.titulo}
           campos={modalProps.campos}
-          endpoint={modalProps.endpoint}
+          onSave={modalProps.onSave}
           onSuccess={() => handleSuccess(modalProps.mensagemSucesso)}
         />
       )}

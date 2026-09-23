@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { API_URL } from "../../config/api";
 
 export default function ModalEditarCampo({
   isOpen,
   onClose,
   titulo,
   campos,      // array de { chave, label, tipo }
-  endpoint,    // ex: "/api/aluno/senha"
+  onSave,
   onSuccess,   // função chamada depois do PATCH dar certo
 }) {
     
@@ -26,33 +25,18 @@ export default function ModalEditarCampo({
     setEnviando(true);
     setErro(null);
 
-    const token = localStorage.getItem("token");
+    const { error }= await onSave(valores)
 
-    try {
-      const res = await fetch(`${API_URL}${endpoint}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(valores),
-      });
-
-      if (res.ok) {
-        onSuccess();
-        onClose();
-        setValores({});
-      } else {
-        const data = await res.json();
-        setErro(data.error || "Erro ao atualizar");
-        setValores({});
-      }
-    } catch (err) {
-      setErro("Erro ao conectar com o servidor");
-      setValores({});
-    } finally {
-      setEnviando(false);
+    if (error) {
+      setErro(error)
+      setValores({})
+    } else {
+      onSuccess()
+      onClose()
+      setValores({})
     }
+
+    setEnviando(false)
   };
 
   if (!isOpen) {
