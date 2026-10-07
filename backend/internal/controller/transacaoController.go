@@ -314,3 +314,63 @@ func GetTransacaoDetalhe(c *gin.Context) {
 		"itens":       montarItensResponse(transacao.Itens),
 	})
 }
+
+func RetirarSaldo(c *gin.Context) {
+	var body struct {
+		Valor float64 `json:"valor" validate:"required,gt=0"`
+	}
+
+	if err := c.ShouldBindJSON(&body); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
+		return
+	}
+
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	userIDUint, ok := userID.(uint64)
+	if !ok {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "ID do usuário inválido"})
+		return
+	}
+
+	rm := int64(userIDUint)
+	var aluno model.Aluno
+	if err := config.DB.Preload("Curso").Where("rm = ?", rm).First(&aluno).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
+		return
+	}
+
+	if aluno.ChavePix == "" {
+		c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "Cadastre uma chave PIX antes de retirar saldo"})
+		return
+	}
+
+	if aluno.Saldo < body.Valor {
+		c.JSON(http.StatusBadRequest, gin.H{"error": ErrSaldoInsuficiente.Error()})
+		return
+	}
+
+	aluno.Saldo -= body.Valor
+	if err := config.DB.Save(&aluno).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar saldo do aluno"})
+		return
+	}
+
+	historico := model.Historico{
+		AlunoRM:        aluno.RM,
+		Tipo:           "debito",
+		FormaPagamento: "pix",
+		Valor:          body.Valor,
+	}
+
+	if err := config.DB.Create(&historico).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao registrar histórico"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"aluno": aluno.ToResponse()})
+}
