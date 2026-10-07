@@ -11,6 +11,7 @@ type Aluno struct {
 	Saldo      float64     `json:"saldo"  gorm:"type:numeric(10,2);default:0"   validate:"min=0"`
 	Senha      string      `json:"-"      gorm:"not null;column:senha"`
 	PIN        string      `json:"-" gorm:"not null;column:pin"`
+	ChavePix   string      `json:"chave_pix" gorm:"column:chave_pix"`
 	Transacoes []Transacao `json:"transacoes,omitempty" gorm:"foreignKey:AlunoRM;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
 	CreatedAt  time.Time   `json:"created_at"`
 	UpdatedAt  time.Time   `json:"updated_at"`
@@ -35,6 +36,7 @@ type AlunoResponse struct {
 	Serie     string    `json:"serie"`
 	Curso     Curso     `json:"curso"`
 	Saldo     float64   `json:"saldo"`
+	ChavePix  string    `json:"chave_pix"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -72,6 +74,10 @@ type AlunoAtualizarPIN struct {
 	ConfirmarNovoPIN string `json:"confirmarNovoPIN"`
 }
 
+type AlunoAtualizarChavePix struct {
+	ChavePix string `json:"chave_pix" validate:"required"`
+}
+
 func (a *Aluno) ToResponse() AlunoResponse {
 	return AlunoResponse{
 		RM:        a.RM,
@@ -79,6 +85,7 @@ func (a *Aluno) ToResponse() AlunoResponse {
 		Serie:     a.Serie,
 		Curso:     a.Curso,
 		Saldo:     a.Saldo,
+		ChavePix:  a.ChavePix,
 		CreatedAt: a.CreatedAt,
 		UpdatedAt: a.UpdatedAt,
 	}
