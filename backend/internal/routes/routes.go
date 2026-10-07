@@ -49,6 +49,8 @@ func SetupRoutes(r *gin.Engine) {
 		authAluno.POST("/saldo", controller.AdicionarSaldo)
 		authAluno.PATCH("/senha", controller.AtualizarSenhaAluno)
 		authAluno.PATCH("/pin", controller.AtualizarPINAluno)
+		authAluno.PATCH("/chave-pix", controller.AtualizarChavePixAluno)
 		authAluno.GET("/transacao/:id", controller.GetTransacaoDetalhe)
+		authAluno.POST("/saldo/retirar", controller.RetirarSaldo)
 	}
 }

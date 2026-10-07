@@ -8,7 +8,11 @@ import ModalSucesso from "../../../components/common/ModalSucesso";
 const camposSenha = [
   { chave: "senhaAtual", label: "Senha atual", tipo: "password" },
   { chave: "novaSenha", label: "Nova senha", tipo: "password" },
-  { chave: "confirmarSenhaNova", label: "Confirmar nova senha", tipo: "password" },
+  {
+    chave: "confirmarSenhaNova",
+    label: "Confirmar nova senha",
+    tipo: "password",
+  },
 ];
 
 const camposPin = [
@@ -17,11 +21,13 @@ const camposPin = [
   { chave: "confirmarNovoPIN", label: "Confirmar novo PIN", tipo: "pin" },
 ];
 
+const camposPix = [{ chave: "chave_pix", label: "Chave Pix", tipo: "text" }];
+
 const PERIODOS = {
   manha: "Manhã",
   tarde: "Tarde",
   noite: "Noturno",
-}
+};
 
 function ProfileInfoCard({ titulo, info }) {
   return (
@@ -31,7 +37,7 @@ function ProfileInfoCard({ titulo, info }) {
       </div>
       <p className="font-semibold text-white">{info}</p>
     </div>
-  )
+  );
 }
 
 export default function Profile() {
@@ -40,82 +46,92 @@ export default function Profile() {
       nome: "Aluno",
       rm: "",
       serie: "",
-      curso: null
-    }
-  )
-  const [foto, setFoto] = useState(quandale)
-  const [loading, setLoading] = useState(true)
-  const [erro, setErro] = useState(null)
-  const [modalAberto, setModalAberto] = useState(null)
-  const [sucessoAberto, setSucessoAberto] = useState(false)
-  const [mensagemSucesso, setMensagemSucesso] = useState("")
+      curso: null,
+    },
+  );
+  const [foto, setFoto] = useState(quandale);
+  const [loading, setLoading] = useState(true);
+  const [erro, setErro] = useState(null);
+  const [modalAberto, setModalAberto] = useState(null);
+  const [sucessoAberto, setSucessoAberto] = useState(false);
+  const [mensagemSucesso, setMensagemSucesso] = useState("");
 
   const formatarCurso = (aluno) => {
-    if (!aluno.curso || !aluno.curso.nome) return "—"
-    const periodo = PERIODOS[aluno.curso.periodo] || aluno.curso.periodo
-    return `${aluno.serie}º ${aluno.curso.nome} - ${periodo}`
-  }
+    if (!aluno.curso || !aluno.curso.nome) return "—";
+    const periodo = PERIODOS[aluno.curso.periodo] || aluno.curso.periodo;
+    return `${aluno.serie}º ${aluno.curso.nome} - ${periodo}`;
+  };
 
   useEffect(() => {
-  async function carregarPerfil() {
-    try {
-      const { data, error } = await alunoService.buscarPerfil()
+    async function carregarPerfil() {
+      try {
+        const { data, error } = await alunoService.buscarPerfil();
 
-      if (!error && data) {
-        setAluno(data)
-        localStorage.setItem("aluno", JSON.stringify(data))
-      } else {
-        setErro("Instabilidade ao pegar os dados atuais. Exibindo os dados salvos.")
+        if (!error && data) {
+          setAluno(data);
+          localStorage.setItem("aluno", JSON.stringify(data));
+        } else {
+          setErro(
+            "Instabilidade ao pegar os dados atuais. Exibindo os dados salvos.",
+          );
+        }
+      } finally {
+        setLoading(false);
       }
-    } finally {
-      setLoading(false)
     }
-  }
-  carregarPerfil()
-}, [])
+    carregarPerfil();
+  }, []);
 
   const handleFotoChange = (e) => {
-    const file = e.target.files?.[0]
+    const file = e.target.files?.[0];
 
     if (file) {
-      const reader = new FileReader()
+      const reader = new FileReader();
       reader.onloadend = () => {
-        setFoto(reader.result)
-      }
-      reader.readAsDataURL(file)
+        setFoto(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
-  }
+  };
 
   const handleSuccess = (mensagem) => {
-    setModalAberto(null)
-    setMensagemSucesso(mensagem)
-    setSucessoAberto(true)
-  }
+    setModalAberto(null);
+    setMensagemSucesso(mensagem);
+    setSucessoAberto(true);
+  };
 
- const MODAIS_ALUNO = {
-  senha: {
-    titulo: "Alterar senha",
-    campos: camposSenha,
-    onSave: alunoService.atualizarSenha,
-  },
-  pin: {
-    titulo: "Alterar PIN",
-    campos: camposPin,
-    onSave: alunoService.atualizarPin,
-  }
- }
+  const MODAIS_ALUNO = {
+    senha: {
+      titulo: "Alterar senha",
+      campos: camposSenha,
+      onSave: alunoService.atualizarSenha,
+      mensagemSucesso: "Senha alterada com sucesso!",
+    },
+    pin: {
+      titulo: "Alterar PIN",
+      campos: camposPin,
+      onSave: alunoService.atualizarPin,
+      mensagemSucesso: "PIN alterado com sucesso!",
+    },
+    chavePix: {
+      titulo: "Alterar Pix",
+      campos: camposPix,
+      onSave: alunoService.atualizarChavePix,
+      mensagemSucesso: "Chave pix alterada com sucesso!",
+    },
+  };
 
- const getModalProps = () => MODAIS_ALUNO[modalAberto] || null
+  const getModalProps = () => MODAIS_ALUNO[modalAberto] || null;
 
   if (loading) {
     return (
       <div className="max-w-md mx-auto mt-10 flex items-center justify-center h-screen">
         <p className="text-zinc-400">Carregando perfil...</p>
       </div>
-    )
+    );
   }
 
-  const modalProps = getModalProps()
+  const modalProps = getModalProps();
 
   return (
     <div className="max-w-md mx-auto mt-10">
@@ -123,26 +139,24 @@ export default function Profile() {
         {/* Foto/Avatar */}
         <div className="flex justify-center mb-6 relative">
           <div className="relative">
-            <img 
+            <img
               src={foto}
               alt="Foto do aluno"
               className="w-20 h-20 rounded-full object-cover"
             />
             <label className="absolute bottom-0 right-0 bg-red-600 rounded-full p-2 cursor-pointer hover:bg-red-700 transition-colors">
-              <Camera className="size-4 text-white"/>
-              <input 
+              <Camera className="size-4 text-white" />
+              <input
                 type="file"
                 accept="image/*"
                 onChange={handleFotoChange}
                 className="hidden"
               />
             </label>
+          </div>
         </div>
-      </div>
 
-        {erro && (
-          <p>{erro}</p>
-        )}
+        {erro && <p>{erro}</p>}
 
         <div className="space-y-3">
           <ProfileInfoCard titulo="RM" info={aluno.rm || "—"} />
@@ -150,49 +164,55 @@ export default function Profile() {
           <ProfileInfoCard titulo="Curso" info={formatarCurso(aluno)} />
         </div>
 
-            <div className="mt-6 pt-6 border-t border-zinc-800">
-              <p className="text-xs text-zinc-500 mb-3 font-semibold">SEGURANÇA</p>
-                <div className="flex gap-3">
-                  <button
-                    onClick={() => setModalAberto("senha")}
-                    className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Pencil size={14}/>
-                    Alterar senha
-                  </button>
-                  <button
-                    onClick={() => setModalAberto("pin")}
-                    className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2"
-                  >
-                    <Pencil size={14}/>
-                    Alterar PIN
-                  </button>
-                </div>
-            </div>
+        <div className="mt-6 pt-6 border-t border-zinc-800">
+          <p className="text-xs text-zinc-500 mb-3 font-semibold">SEGURANÇA</p>
+          <div className="flex gap-3">
+            <button
+              onClick={() => setModalAberto("senha")}
+              className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2"
+            >
+              <Pencil size={14} />
+              Alterar senha
+            </button>
+            <button
+              onClick={() => setModalAberto("pin")}
+              className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2"
+            >
+              <Pencil size={14} />
+              Alterar PIN
+            </button>
+          </div>
+        </div>
+        <div className="mt-6 pt-6 border-t border-zinc-800">
+          <p className="text-xs text-zinc-500 mb-3 font-semibold">PAGAMENTO</p>
+          <button
+            onClick={() => setModalAberto("chavePix")}
+            className="w-full rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2"
+          >
+            <Pencil size={14} />
+            {aluno.chave_pix ? "Alterar chave Pix" : "Cadastrar chave Pix"}
+          </button>
+        </div>
       </div>
 
-        {modalProps && (
-          <ModalEditarCampo 
-            isOpen={modalAberto !== null}
-            onClose={() => setModalAberto(null)}
-            titulo={modalProps.titulo}
-            campos={modalProps.campos}
-            onSave={modalProps.onSave}
-            onSuccess={() => handleSuccess(
-              modalAberto === "senha"
-              ? "Senha alterada com sucesso!"
-              : "PIN alterado com sucesso!"
-            )}
-          />
-        )}
+      {modalProps && (
+        <ModalEditarCampo
+          isOpen={modalAberto !== null}
+          onClose={() => setModalAberto(null)}
+          titulo={modalProps.titulo}
+          campos={modalProps.campos}
+          onSave={modalProps.onSave}
+          onSuccess={() => handleSuccess(modalProps.mensagemSucesso)}
+        />
+      )}
 
-          {sucessoAberto && (
-            <ModalSucesso 
-              titulo="Sucesso!"
-              mensagem={mensagemSucesso}
-              onClose={() => setSucessoAberto(false)}
-            />
-          )}
+      {sucessoAberto && (
+        <ModalSucesso
+          titulo="Sucesso!"
+          mensagem={mensagemSucesso}
+          onClose={() => setSucessoAberto(false)}
+        />
+      )}
     </div>
   );
 }

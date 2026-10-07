@@ -20,6 +20,17 @@ async function atualizarPin(payload) {
     return { data: data.message, error: null }
 }
 
+async function atualizarChavePix(payload) {
+  const { data, error } = await apiClient.request('PATCH', '/api/aluno/chave-pix', payload)
+
+  if (error) {
+    return { data: null, error } 
+  } 
+
+  return { data: data.message, error: null }
+
+}
+
 async function buscarHistorico() {
     const { data, error } = await apiClient.request('GET', '/api/aluno/historico')
 
@@ -71,12 +82,24 @@ async function adicionarSaldo(payload) {
     return { data: data.aluno, error: null }
 }
 
+async function retirarSaldo(payload) {
+  const { data, error } = await apiClient.request('POST', '/api/aluno/saldo/retirar', payload)
+
+  if (error) {
+    return { data: null, error }
+  }
+
+  return { data: data.aluno, error: null }
+}
+
 export const alunoService = {
     atualizarSenha,
     atualizarPin,
+    atualizarChavePix,
     buscarHistorico,
     buscarDetalheTransacao,
     buscarResumoMes,
     buscarPerfil,
-    adicionarSaldo
+    adicionarSaldo,
+    retirarSaldo
 }

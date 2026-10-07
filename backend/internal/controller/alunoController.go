@@ -229,3 +229,34 @@ func AtualizarPINAluno(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "PIN atualizado com sucesso"})
 }
+
+func AtualizarChavePixAluno(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
+
+	rm := int64(userID.(uint64))
+
+	var update model.AlunoAtualizarChavePix
+
+	if err := c.ShouldBindJSON(&update); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Dados inválidos", "details": err.Error()})
+		return
+	}
+
+	var aluno model.Aluno
+	if err := config.DB.Where("rm = ?", rm).First(&aluno).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Usuário não encontrado"})
+		return
+	}
+
+	aluno.ChavePix = update.ChavePix
+	if err := config.DB.Save(&aluno).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar Chave Pix"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Chave Pix atualizada com sucesso"})
+}
