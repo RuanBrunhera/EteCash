@@ -50,6 +50,6 @@ async function request(method, path, body, semAuth = false) {
     console.error('Erro de rede ou parsing:', err)
     return { data: null, error: 'Falha de rede ou erro ao processar resposta' }
   }
-  }
+}
 
 export const apiClient = { request }
