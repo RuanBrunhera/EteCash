@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom"
 import "./styles.css"
 import AdicionarSaldoModal from "../saldo/AdicionarSaldo"
@@ -6,12 +6,14 @@ import CarrinhoVenda from "../venda/CarrinhoVenda";
 
 const allOptions = [
   { emoji: "💲", label: "Adicionar saldo", contexto: "aluno", key: "saldo" },
+  { emoji: "💸", label: "Retirar saldo", contexto: "aluno", key: "retirada"},
   { emoji: "🛒", label: "Efetuar venda", contexto: "cantina", key: "venda"},
 ];
 
 export default function FloatingButton() {
   const [open, setOpen] = useState(false);
   const [modalAberto, setModalAberto] = useState(null); //guarda null ou a key, que é a chave para saber se é "venda" (parte do carrinho da cantina) ou "saldo" (parte do adicionar saldo do aluno)
+  const fabRef = useRef(null)
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -22,6 +24,19 @@ export default function FloatingButton() {
   
   //filtra as opções pelo contexto atual
   const options = allOptions.filter((o) => o.contexto === context);
+
+  useEffect(() => {
+    if (!open) return
+
+    function handleClickFora(event) {
+      if (fabRef.current && !fabRef.current.contains(event.target)) {
+        setOpen(false)
+      }
+    }
+
+    document.addEventListener("mousedown", handleClickFora)
+    return () => document.removeEventListener("mousedown", handleClickFora)
+  }, [open])
 
   function abrirModal(key) {
     setOpen(false)
@@ -34,7 +49,7 @@ export default function FloatingButton() {
 
   return (
     <>
-      <div className='fab-wrapper'>
+      <div className='fab-wrapper' ref={fabRef}>
         {open && options.length > 0 && (
           <div className='fab-menu'>
             {options.map((opt) => (
@@ -65,6 +80,15 @@ export default function FloatingButton() {
           <AdicionarSaldoModal 
             isOpen={true}
             onClose={fecharModal}
+            modo="deposito"
+          />
+        )}
+
+        {modalAberto === "retirada" && (
+          <AdicionarSaldoModal 
+            isOpen={true}
+            onClose={fecharModal}
+            modo="retirada"
           />
         )}
 
@@ -81,7 +105,6 @@ export default function FloatingButton() {
             </div>
           </div>
         )}
-
     </>
   );
 }
