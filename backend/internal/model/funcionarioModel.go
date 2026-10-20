@@ -11,6 +11,7 @@ type Funcionario struct {
 	Telefone  *string    `json:"telefone"   gorm:"column:telefone"            validate:"omitempty,min=10,max=20"`
 	Senha     string     `json:"-"          gorm:"not null;column:senha"`
 	IsAdmin   bool       `json:"-"          gorm:"not null;column:is_admin;default:false"`
+	Ativo     bool       `json:"ativo"      gorm:"not null;column:ativo;default:true"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
 }
@@ -47,6 +48,8 @@ type FuncionarioResponse struct {
 	Email     *string    `json:"email,omitempty"`
 	DataNasc  *time.Time `json:"data_nasc,omitempty"`
 	Telefone  *string    `json:"telefone,omitempty"`
+	IsAdmin   bool       `json:"is_admin"`
+	Ativo     bool       `json:"ativo"`
 	CreatedAt time.Time  `json:"created_at"`
 	UpdatedAt time.Time  `json:"updated_at"`
 }
@@ -74,6 +77,8 @@ func (f *Funcionario) ToResponse() FuncionarioResponse {
 		Email:     f.Email,
 		DataNasc:  f.DataNasc,
 		Telefone:  f.Telefone,
+		IsAdmin:   f.IsAdmin,
+		Ativo:     f.Ativo,
 		CreatedAt: f.CreatedAt,
 		UpdatedAt: f.UpdatedAt,
 	}

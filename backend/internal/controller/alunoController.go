@@ -31,6 +31,11 @@ func LoginAluno(c *gin.Context) {
 		return
 	}
 
+	if !aluno.Ativo {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Conta desativada. Procure a secretaria."})
+		return
+	}
+
 	// Gera o token JWT
 	token, err := security.GenerateToken(uint64(aluno.RM), "aluno", 24*time.Hour)
 	if err != nil {
@@ -40,6 +45,7 @@ func LoginAluno(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"token": token,
+		"role":  "aluno",
 		"aluno": aluno.ToResponse(),
 	})
 }

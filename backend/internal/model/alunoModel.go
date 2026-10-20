@@ -12,6 +12,7 @@ type Aluno struct {
 	Senha      string      `json:"-"      gorm:"not null;column:senha"`
 	PIN        string      `json:"-" gorm:"not null;column:pin"`
 	ChavePix   string      `json:"chave_pix" gorm:"column:chave_pix"`
+	Ativo      bool        `json:"ativo" gorm:"not null;column:ativo;default:true"`
 	Transacoes []Transacao `json:"transacoes,omitempty" gorm:"foreignKey:AlunoRM;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
 	CreatedAt  time.Time   `json:"created_at"`
 	UpdatedAt  time.Time   `json:"updated_at"`
@@ -37,6 +38,7 @@ type AlunoResponse struct {
 	Curso     Curso     `json:"curso"`
 	Saldo     float64   `json:"saldo"`
 	ChavePix  string    `json:"chave_pix"`
+	Ativo     bool      `json:"ativo"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -86,6 +88,7 @@ func (a *Aluno) ToResponse() AlunoResponse {
 		Curso:     a.Curso,
 		Saldo:     a.Saldo,
 		ChavePix:  a.ChavePix,
+		Ativo:     a.Ativo,
 		CreatedAt: a.CreatedAt,
 		UpdatedAt: a.UpdatedAt,
 	}

@@ -58,6 +58,11 @@ func EfetuarTransacao(c *gin.Context) {
 		return
 	}
 
+	if !aluno.Ativo {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Aluno desativado"})
+		return
+	}
+
 	// 3 Dentro de config.DB.Transaction(func(tx *gorm.DB) error { ... }): itera pelos itens, busca cada produto, valida estoque, soma o total
 	var valorTotal float64
 

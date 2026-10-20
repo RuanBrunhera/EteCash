@@ -55,6 +55,11 @@ func LoginFuncionario(c *gin.Context) {
 		return
 	}
 
+	if !funcionario.Ativo {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Conta desativada. Procure um administrador."})
+		return
+	}
+
 	// Decide a role com base em funcionario.IsAdmin
 	role := "funcionario"
 	if funcionario.IsAdmin {
@@ -72,6 +77,7 @@ func LoginFuncionario(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"token":       token,
+		"role":        role,
 		"funcionario": funcionario.ToResponse(),
 	})
 }
