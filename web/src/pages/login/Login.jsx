@@ -3,6 +3,12 @@ import { useState } from "react";
 import { authService } from "../../services/authService";
 import "./Login.css";
 
+const limparSessao = () => {
+  ["token", "role", "aluno", "funcionario"].forEach((chave) =>
+    localStorage.removeItem(chave),
+  );
+};
+
 function Login() {
   const navigate = useNavigate();
   const [isActive, setIsActive] = useState(false);
@@ -27,7 +33,9 @@ function Login() {
       return;
     }
 
+    limparSessao();
     localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
     localStorage.setItem("aluno", JSON.stringify(data.aluno));
     navigate("/aluno/home");
   };
@@ -47,9 +55,11 @@ function Login() {
       return;
     }
 
+    limparSessao();
     localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
     localStorage.setItem("funcionario", JSON.stringify(data.funcionario));
-    navigate("/cantina/home");
+    navigate(data.role === "admin" ? "/admin/alunos" : "/cantina/home");
   };
 
   return (

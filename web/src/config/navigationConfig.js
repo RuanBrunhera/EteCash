@@ -7,7 +7,24 @@ import {
   ChartNoAxesCombined,
   BarChart3,
   UserRound,
+  GraduationCap,
+  Users,
+  Store,
+  ShieldCheck,
 } from 'lucide-react'
+
+export const itemsAdmin = [
+  { href:'/admin/alunos', label: 'Alunos', icon: GraduationCap},
+  { href:'/admin/funcionarios', label: 'Funcionários', icon: Users},
+  { href:'cantina/home', label: 'Ir para a cantina', icon: Store},
+]
+
+//aparece na sidebar da cantina só para quem é admin]
+export const itemAdminNoMenuCantina = {
+  href: '/admin/alunos',
+  label: 'Administração',
+  icon: ShieldCheck,
+}
 
 export const itemsAluno = [
   { href: '/aluno/home', label: 'Home', icon: Home },

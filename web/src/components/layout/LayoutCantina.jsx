@@ -1,9 +1,14 @@
 import LayoutBase from './LayoutBase'
-import { itemsCantina } from '../../config/navigationConfig'
+import { itemsCantina, itemAdminNoMenuCantina } from '../../config/navigationConfig'
 
 function LayoutCantina({ children }) {
+  const items =
+    localStorage.getItem('role') === 'admin'
+      ? [...itemsCantina, itemAdminNoMenuCantina]
+      : itemsCantina
+
   return (
-    <LayoutBase items={itemsCantina} storageKey="sidebar-cantina-open" tipoUsuario="funcionario">
+    <LayoutBase items={items} storageKey="sidebar-cantina-open" tipoUsuario="funcionario">
       {children}
     </LayoutBase>
   )

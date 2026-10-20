@@ -72,11 +72,12 @@ function Sidebar({ items, storageKey, tipoUsuario }) {
   }, [open, storageKey])
 
   function handleLogout() {
-    localStorage.removeItem('token')
-    localStorage.removeItem(tipoUsuario === 'aluno' ? 'aluno' : 'funcionario')
-    setShowLogoutModal(false)
-    navigate('/')
-  }
+  localStorage.removeItem('token')
+  localStorage.removeItem('role')
+  localStorage.removeItem(tipoUsuario === 'aluno' ? 'aluno' : 'funcionario')
+  setShowLogoutModal(false)
+  navigate('/')
+}
 
   return (
     <aside
