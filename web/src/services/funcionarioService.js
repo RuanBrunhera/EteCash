@@ -51,7 +51,7 @@ async function buscarPerfil() {
 }
 
 async function buscarRelatorioVendas() {
-    const { data, error } = await apiClient.resquest('GET', '/api/func/relatorio-vendas')
+    const { data, error } = await apiClient.request('GET', '/api/func/relatorio-vendas')
 
     if (error) {
         return { data: null, error }
