@@ -12,14 +12,16 @@ func SetupRoutes(r *gin.Engine) {
 	// Rotas sem autenticação
 	api.POST("/login/aluno", controller.LoginAluno)
 	api.POST("/login/funcionario", controller.LoginFuncionario)
-	api.POST("/aluno/cadastrar", controller.CadastrarAluno)
 	api.GET("/cursos", controller.ListarCursos)
 
 	// Rotas exclusivas de Admins
 	authAdmin := api.Group("/admin")
 	authAdmin.Use(middleware.AuthMiddleware("admin"))
 	{
-		authAdmin.POST("/funcionario", controller.CadastrarFuncionario)
+		authAdmin.GET("/alunos", controller.ListarAlunos)
+		authAdmin.PATCH("/aluno/:rm/ativo", controller.AlterarStatusAluno)
+		authAdmin.GET("/funcionarios", controller.ListarFuncionarios)
+		authAdmin.PATCH("/funcionario/:id/ativo", controller.AlterarStatusFuncionario)
 	}
 
 	// Rotas exclusivas de Funcionários
