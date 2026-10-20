@@ -62,7 +62,7 @@ Estrutura alvo:
 
 ## Dívida técnica / organização
 
-- [ ] **Organizar estrutura de pastas do projeto**
+- [X] **Organizar estrutura de pastas do projeto**
   - Padronizar convenções (hoje há inconsistência entre pastas/arquivos)
 
 - [ ] **Comentar o código**
@@ -71,3 +71,7 @@ Estrutura alvo:
 ## Ajustes visuais
 
 - [ ] Revisar visual de outras telas que ainda não passaram por polimento (o carrinho de vendas já foi todo estilizado)
+
+- [ ] Não ta funcionando o relatório do funcionário
+
+- [ ] Trocar a cor do fundo do modal de adicionar/retirar saldo, que esta branco
