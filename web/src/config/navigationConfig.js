@@ -16,7 +16,7 @@ import {
 export const itemsAdmin = [
   { href:'/admin/alunos', label: 'Alunos', icon: GraduationCap},
   { href:'/admin/funcionarios', label: 'Funcionários', icon: Users},
-  { href:'cantina/home', label: 'Ir para a cantina', icon: Store},
+  { href:'/cantina/home', label: 'Ir para a cantina', icon: Store},
 ]
 
 //aparece na sidebar da cantina só para quem é admin]
