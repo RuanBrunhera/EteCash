@@ -4,11 +4,11 @@ import "time"
 
 type Funcionario struct {
 	ID        uint       `json:"id"         gorm:"primaryKey"`
-	Nome      string     `json:"nome"       gorm:"not null;column:nome"      validate:"required,min=3,max=100"`
-	CPF       string     `json:"cpf"        gorm:"not null;unique;column:cpf" validate:"required,len=11"`
-	Email     *string    `json:"email"      gorm:"column:email"               validate:"omitempty,email"`
+	Nome      string     `json:"nome"       gorm:"not null;column:nome"      binding:"required,min=3,max=100"`
+	CPF       string     `json:"cpf"        gorm:"not null;unique;column:cpf" binding:"required,len=11"`
+	Email     *string    `json:"email"      gorm:"column:email"               binding:"omitempty,email"`
 	DataNasc  *time.Time `json:"data_nasc"  gorm:"column:data_nasc"`
-	Telefone  *string    `json:"telefone"   gorm:"column:telefone"            validate:"omitempty,min=10,max=20"`
+	Telefone  *string    `json:"telefone"   gorm:"column:telefone"            binding:"omitempty,min=10,max=20"`
 	Senha     string     `json:"-"          gorm:"not null;column:senha"`
 	IsAdmin   bool       `json:"-"          gorm:"not null;column:is_admin;default:false"`
 	Ativo     bool       `json:"ativo"      gorm:"not null;column:ativo;default:true"`
@@ -21,18 +21,18 @@ func (Funcionario) TableName() string {
 }
 
 type FuncionarioCreate struct {
-	Nome     string     `json:"nome" validate:"required,min=3,max=100"`
-	CPF      string     `json:"cpf" validate:"required,len=11"`
-	Email    *string    `json:"email" validate:"omitempty,email"`
+	Nome     string     `json:"nome" binding:"required,min=3,max=100"`
+	CPF      string     `json:"cpf" binding:"required,len=11"`
+	Email    *string    `json:"email" binding:"omitempty,email"`
 	DataNasc *time.Time `json:"data_nasc"`
-	Telefone *string    `json:"telefone" validate:"omitempty,min=10,max=20"`
+	Telefone *string    `json:"telefone" binding:"omitempty,min=10,max=20"`
 }
 
 type FuncionarioUpdate struct {
-	Nome     *string    `json:"nome" validate:"omitempty,min=3,max=100"`
-	Email    *string    `json:"email" validate:"omitempty,email"`
+	Nome     *string    `json:"nome" binding:"omitempty,min=3,max=100"`
+	Email    *string    `json:"email" binding:"omitempty,email"`
 	DataNasc *time.Time `json:"data_nasc"`
-	Telefone *string    `json:"telefone" validate:"omitempty,min=10,max=20"`
+	Telefone *string    `json:"telefone" binding:"omitempty,min=10,max=20"`
 }
 
 type FuncionarioAtualizarSenha struct {
@@ -65,8 +65,8 @@ type FuncionarioCadastroResponse struct {
 }
 
 type FuncionarioLogin struct {
-	CPF   string `json:"cpf" validate:"required,len=11"`
-	Senha string `json:"senha" validate:"required,min=6"`
+	CPF   string `json:"cpf" binding:"required,len=11"`
+	Senha string `json:"senha" binding:"required,min=6"`
 }
 
 func (f *Funcionario) ToResponse() FuncionarioResponse {

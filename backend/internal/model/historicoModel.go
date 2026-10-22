@@ -17,10 +17,10 @@ func (Historico) TableName() string {
 }
 
 type HistoricoCreate struct {
-	AlunoRM        int64   `json:"aluno_rm"        validate:"required"`
-	Tipo           string  `json:"tipo"            validate:"required,oneof=credito debito"`
-	FormaPagamento string  `json:"forma_pagamento" validate:"required,oneof=pix boleto saldo"`
-	Valor          float64 `json:"valor"           validate:"required,gt=0"`
+	AlunoRM        int64   `json:"aluno_rm"        binding:"required"`
+	Tipo           string  `json:"tipo"            binding:"required,oneof=credito debito"`
+	FormaPagamento string  `json:"forma_pagamento" binding:"required,oneof=pix boleto saldo"`
+	Valor          float64 `json:"valor"           binding:"required,gt=0"`
 }
 
 type HistoricoResponse struct {

@@ -187,8 +187,8 @@ func EfetuarTransacao(c *gin.Context) {
 func AdicionarSaldo(c *gin.Context) {
 	var body struct {
 		RM             int64   `json:"rm"`
-		Valor          float64 `json:"valor"           validate:"required,gt=0"`
-		FormaPagamento string  `json:"forma_pagamento" validate:"required,oneof=pix boleto"`
+		Valor          float64 `json:"valor"           binding:"required,gt=0"`
+		FormaPagamento string  `json:"forma_pagamento" binding:"required,oneof=pix boleto"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {
@@ -322,7 +322,7 @@ func GetTransacaoDetalhe(c *gin.Context) {
 
 func RetirarSaldo(c *gin.Context) {
 	var body struct {
-		Valor float64 `json:"valor" validate:"required,gt=0"`
+		Valor float64 `json:"valor" binding:"required,gt=0"`
 	}
 
 	if err := c.ShouldBindJSON(&body); err != nil {

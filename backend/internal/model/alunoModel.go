@@ -4,11 +4,11 @@ import "time"
 
 type Aluno struct {
 	RM         int64       `json:"rm"     gorm:"primaryKey;column:rm"`
-	Nome       string      `json:"nome"   gorm:"not null;column:nome"          validate:"required,min=3,max=100"`
-	Serie      string      `json:"serie"  gorm:"type:char(1);not null;column:serie" validate:"required,oneof=1 2 3"`
+	Nome       string      `json:"nome"   gorm:"not null;column:nome"          binding:"required,min=3,max=100"`
+	Serie      string      `json:"serie"  gorm:"type:char(1);not null;column:serie" binding:"required,oneof=1 2 3"`
 	CursoID    uint        `json:"curso_id" gorm:"not null;column:curso_id"`
 	Curso      Curso       `json:"curso" gorm:"foreignKey:CursoID"`
-	Saldo      float64     `json:"saldo"  gorm:"type:numeric(10,2);default:0"   validate:"min=0"`
+	Saldo      float64     `json:"saldo"  gorm:"type:numeric(10,2);default:0"   binding:"min=0"`
 	Senha      string      `json:"-"      gorm:"not null;column:senha"`
 	PIN        string      `json:"-" gorm:"not null;column:pin"`
 	ChavePix   string      `json:"chave_pix" gorm:"column:chave_pix"`
@@ -23,12 +23,10 @@ func (Aluno) TableName() string {
 }
 
 type AlunoCreate struct {
-	RM      int64   `json:"rm" validate:"required"`
-	Nome    string  `json:"nome" validate:"required,min=3,max=100"`
-	Serie   string  `json:"serie" validate:"required,oneof=1 2 3"`
-	CursoID uint    `json:"curso_id" validate:"required"`
-	Senha   string  `json:"senha" validate:"required,min=6"`
-	Saldo   float64 `json:"saldo" validate:"min=0"`
+	RM      int64  `json:"rm" binding:"required"`
+	Nome    string `json:"nome" binding:"required,min=3,max=100"`
+	Serie   string `json:"serie" binding:"required,oneof=1 2 3"`
+	CursoID uint   `json:"curso_id" binding:"required"`
 }
 
 type AlunoResponse struct {
@@ -50,6 +48,7 @@ type AlunoCadastroResponse struct {
 	Curso     Curso     `json:"curso"`
 	Saldo     float64   `json:"saldo"`
 	PIN       string    `json:"pin"`
+	SenhaTemp string    `json:"senha_temp"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
@@ -60,24 +59,24 @@ type AlunoBuscaRmResponse struct {
 }
 
 type AlunoLogin struct {
-	RM    int64  `json:"rm" validate:"required"`
-	Senha string `json:"senha" validate:"required"`
+	RM    int64  `json:"rm" binding:"required"`
+	Senha string `json:"senha" binding:"required"`
 }
 
 type AlunoAtualizarSenha struct {
-	SenhaAtual         string `json:"senhaAtual"`
-	NovaSenha          string `json:"novaSenha"`
-	ConfirmarSenhaNova string `json:"confirmarSenhaNova"`
+	SenhaAtual         string `json:"senhaAtual" binding:"required"`
+	NovaSenha          string `json:"novaSenha" binding:"required,min=6"`
+	ConfirmarSenhaNova string `json:"confirmarSenhaNova" binding:"required"`
 }
 
 type AlunoAtualizarPIN struct {
-	PINAtual         string `json:"pinAtual"`
-	NovoPIN          string `json:"novoPin"`
-	ConfirmarNovoPIN string `json:"confirmarNovoPIN"`
+	PINAtual         string `json:"pinAtual" binding:"required"`
+	NovoPIN          string `json:"novoPin" binding:"required,len=4,numeric"`
+	ConfirmarNovoPIN string `json:"confirmarNovoPIN" binding:"required"`
 }
 
 type AlunoAtualizarChavePix struct {
-	ChavePix string `json:"chave_pix" validate:"required"`
+	ChavePix string `json:"chave_pix" binding:"required"`
 }
 
 func (a *Aluno) ToResponse() AlunoResponse {
