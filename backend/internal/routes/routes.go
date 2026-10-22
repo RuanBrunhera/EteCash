@@ -20,6 +20,7 @@ func SetupRoutes(r *gin.Engine) {
 	{
 		authAdmin.GET("/alunos", controller.ListarAlunos)
 		authAdmin.PATCH("/aluno/:rm/ativo", controller.AlterarStatusAluno)
+		authAdmin.POST("/aluno", controller.CadastrarAluno)
 		authAdmin.GET("/funcionarios", controller.ListarFuncionarios)
 		authAdmin.PATCH("/funcionario/:id/ativo", controller.AlterarStatusFuncionario)
 	}

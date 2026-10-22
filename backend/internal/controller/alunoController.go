@@ -60,34 +60,33 @@ func CadastrarAluno(c *gin.Context) {
 
 	// Verifica se o RM já existe
 	var count int64
-	config.DB.Model(&model.Aluno{}).Where("rm = ?", create.RM).Count(&count)
+	if err := config.DB.Model(&model.Aluno{}).Where("rm = ?", create.RM).Count(&count).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao verificar RM"})
+		return
+	}
 	if count > 0 {
 		c.JSON(http.StatusConflict, gin.H{"error": "RM já cadastrado"})
 		return
 	}
 
-	// Verifica se o curso_id existe e está ativo
+	// Verifica se o curso existe e está ativo
 	var curso model.Curso
 	if err := config.DB.Where("id = ? AND ativo = ?", create.CursoID, true).First(&curso).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Curso inválido ou indisponível"})
 		return
 	}
 
-	// Cria hash do PIN do aluno
+	// PIN e senha temporária: só os hashes vão para o banco
 	pinGerado := security.GerarPin()
-	hashedPin := security.HashSHA256(pinGerado)
-
-	// Hash da senha
-	hashed := security.HashSHA256(create.Senha)
+	senhaTemp := security.GerarSenhaTemporaria()
 
 	aluno := model.Aluno{
 		RM:      create.RM,
 		Nome:    create.Nome,
 		Serie:   create.Serie,
 		CursoID: create.CursoID,
-		Saldo:   create.Saldo,
-		Senha:   hashed,
-		PIN:     hashedPin,
+		Senha:   security.HashSHA256(senhaTemp),
+		PIN:     security.HashSHA256(pinGerado),
 	}
 
 	if err := config.DB.Create(&aluno).Error; err != nil {
@@ -95,17 +94,17 @@ func CadastrarAluno(c *gin.Context) {
 		return
 	}
 
-	resposta := model.AlunoCadastroResponse{
+	c.JSON(http.StatusCreated, gin.H{"aluno": model.AlunoCadastroResponse{
 		RM:        aluno.RM,
 		Nome:      aluno.Nome,
 		Serie:     aluno.Serie,
 		Curso:     curso,
 		Saldo:     aluno.Saldo,
 		PIN:       pinGerado,
+		SenhaTemp: senhaTemp,
 		CreatedAt: aluno.CreatedAt,
 		UpdatedAt: aluno.UpdatedAt,
-	}
-	c.JSON(http.StatusCreated, gin.H{"aluno": resposta})
+	}})
 }
 
 func GetPerfilAluno(c *gin.Context) {
