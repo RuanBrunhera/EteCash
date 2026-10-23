@@ -62,6 +62,9 @@ Estrutura alvo:
 
 ## Dívida técnica / organização
 
+- [ ] **Cache curto da verificação de conta ativa**
+  - A checagem no middleware adiciona uma consulta por requisição; manter simples enquanto a carga for baixa e considerar cache de 30 s se isso se tornar um gargalo
+
 - [X] **Organizar estrutura de pastas do projeto**
   - Padronizar convenções (hoje há inconsistência entre pastas/arquivos)
 
