@@ -3,18 +3,20 @@ import {
   AlertCircle,
   RefreshCw,
   Search,
+  UserPlus,
   UserRound,
   UserRoundX,
   X,
 } from "lucide-react";
 import adminService from "../../../services/adminService";
+import ModalCadastroAluno from "./ModalCadastroAluno";
 
-// Cada curso do filtro é reconhecido por trechos do nome (sem acento, minúsculo).
-// Se os nomes no seu banco forem diferentes, ajuste só os "termos".
+// Os nomes são comparados normalizados para não depender de maiúsculas ou acentos.
+// Se os nomes no seu banco forem diferentes, ajuste só os "nomes".
 const CURSOS = [
-  { sigla: "ADM", termos: ["adm"] },
-  { sigla: "DS", termos: ["ds"] },
-  { sigla: "QUI", termos: ["quimica"] },
+  { sigla: "ADM", nomes: ["adm"] },
+  { sigla: "DS", nomes: ["ds"] },
+  { sigla: "QUI", nomes: ["quimica"] },
 ];
 
 const PERIODOS = [
@@ -43,6 +45,7 @@ export default function AlunosAdmin() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState("");
   const [rmAtualizando, setRmAtualizando] = useState(null);
+  const [cadastroAberto, setCadastroAberto] = useState(false);
 
   const [busca, setBusca] = useState("");
   const [cursoFiltro, setCursoFiltro] = useState(null);
@@ -104,7 +107,7 @@ export default function AlunosAdmin() {
 
       if (curso) {
         const nomeCurso = normalizar(aluno.curso?.nome);
-        if (!curso.termos.some((t) => nomeCurso.includes(t))) return false;
+        if (!curso.nomes.includes(nomeCurso)) return false;
       }
 
       if (periodoFiltro && normalizar(aluno.curso?.periodo) !== periodoFiltro) {
@@ -142,6 +145,14 @@ export default function AlunosAdmin() {
                 ? `${alunosFiltrados.length} de ${alunos.length}`
                 : `${alunos.length} ${alunos.length === 1 ? "aluno" : "alunos"}`}
             </span>
+            <button
+              type="button"
+              onClick={() => setCadastroAberto(true)}
+              className="inline-flex h-10 items-center gap-2 rounded-md bg-red-600 px-4 text-sm font-medium text-white transition hover:bg-red-700"
+            >
+              <UserPlus size={17} aria-hidden="true" />
+              Novo aluno
+            </button>
             <button
               type="button"
               onClick={carregar}
@@ -315,6 +326,12 @@ export default function AlunosAdmin() {
           </div>
         </section>
       </div>
+
+      <ModalCadastroAluno
+        isOpen={cadastroAberto}
+        onClose={() => setCadastroAberto(false)}
+        onSuccess={carregar}
+      />
     </main>
   );
 }

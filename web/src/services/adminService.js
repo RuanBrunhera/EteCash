@@ -40,12 +40,34 @@ async function alterarStatusFuncionario(id, ativo) {
     return { data: data.message, error: null }
 }
 
+async function listarCursos() {
+    const { data, error } = await apiClient.request("GET", "/api/cursos", undefined, true)
+
+    if (error) {
+        return { data: null, error }
+    }
+
+    return { data: data.cursos, error: null }
+}
+
+async function cadastrarAluno(dados) {
+    const { data, error } = await apiClient.request("POST", "/api/admin/aluno", dados)
+
+    if (error) {
+        return { data: null, error }
+    }
+
+    return { data: data.aluno, error: null }
+}
+
 
 const adminService = {
     listarAlunos,
     alterarStatusAluno,
     listarFuncionarios,
     alterarStatusFuncionario,
+    listarCursos,
+    cadastrarAluno,
 };
 
 export default adminService;
