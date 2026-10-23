@@ -14,18 +14,27 @@ import (
 
 var errRoleDesconhecida = errors.New("role desconhecida")
 
+const codSessaoInvalida = "SESSAO_INVALIDA"
+
+func abortarSessaoInvalida(c *gin.Context, mensagem string) {
+	c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
+		"error": mensagem,
+		"code":  codSessaoInvalida,
+	})
+}
+
 func AuthMiddleware(roles ...string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Token não fornecido ou inválido"})
+			abortarSessaoInvalida(c, "Token não fornecido ou inválido")
 			return
 		}
 
 		tokenStr := strings.TrimPrefix(authHeader, "Bearer ")
 		claims, err := security.ValidateToken(tokenStr)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Token inválido/expirado"})
+			abortarSessaoInvalida(c, "Token inválido/expirado")
 			return
 		}
 
@@ -58,13 +67,13 @@ func AuthMiddleware(roles ...string) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"error": "Acesso negado."})
 			return
 		case errors.Is(err, gorm.ErrRecordNotFound):
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Conta não encontrada. Faça login novamente."})
+			abortarSessaoInvalida(c, "Conta não encontrada. Faça login novamente.")
 			return
 		case err != nil:
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Erro ao verificar a conta."})
 			return
 		case !conta.Ativo:
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Conta desativada. Faça login novamente."})
+			abortarSessaoInvalida(c, "Conta desativada. Faça login novamente.")
 			return
 		}
 

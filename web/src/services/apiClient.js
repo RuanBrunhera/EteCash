@@ -41,6 +41,12 @@ async function request(method, path, body, semAuth = false) {
   const json = await res.json()
   
     if (!res.ok) {
+      if (res.status === 401 && json.code === 'SESSAO_INVALIDA' && !semAuth) {
+        ["token", "role", "aluno", "funcionario"].forEach((sessionKey) =>
+          localStorage.removeItem(sessionKey),
+        )
+        if (window.location.pathname !== "/") window.location.assign("/")
+      }
       const errorMessage = json.error || 'Erro na requisição'
       return { data: null, error: errorMessage}
     }
