@@ -46,7 +46,7 @@ function Login() {
 
     const cpfLimpo = somenteDigitos(cpf)
 
-    if (cpfLimpo !== 11 || !senhaFuncionario) {
+    if (cpfLimpo.length !== 11 || !senhaFuncionario) {
       alert("Preencha todos os campos!");
       return;
     }

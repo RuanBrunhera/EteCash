@@ -38,7 +38,7 @@ function agruparGastosPorMes(historico) {
   }
 
   historico
-    .filter((h) => h.tipo === 'credito')
+    .filter((h) => h.tipo === 'debito')
     .forEach((h) => {
       const data = new Date(h.data_hora)
       const alvo = meses.find(
