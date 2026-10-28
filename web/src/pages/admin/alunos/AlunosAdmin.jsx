@@ -63,8 +63,6 @@ export default function AlunosAdmin() {
       }
 
       setAlunos(data ?? []);
-    } catch {
-      setErro("Não foi possível carregar os alunos.");
     } finally {
       setCarregando(false);
     }
@@ -91,8 +89,6 @@ export default function AlunosAdmin() {
           item.rm === aluno.rm ? { ...item, ativo } : item,
         ),
       );
-    } catch {
-      setErro("Não foi possível atualizar o status do aluno.");
     } finally {
       setRmAtualizando(null);
     }
