@@ -23,6 +23,7 @@ func SetupRoutes(r *gin.Engine) {
 		authAdmin.POST("/aluno", controller.CadastrarAluno)
 		authAdmin.GET("/funcionarios", controller.ListarFuncionarios)
 		authAdmin.PATCH("/funcionario/:id/ativo", controller.AlterarStatusFuncionario)
+		authAdmin.POST("/funcionario", controller.CadastrarFuncionario)
 	}
 
 	// Rotas exclusivas de Funcionários
