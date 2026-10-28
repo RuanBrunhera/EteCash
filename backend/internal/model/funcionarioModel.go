@@ -22,7 +22,7 @@ func (Funcionario) TableName() string {
 
 type FuncionarioCreate struct {
 	Nome     string     `json:"nome" binding:"required,min=3,max=100"`
-	CPF      string     `json:"cpf" binding:"required,len=11,numeric"`
+	CPF      string     `json:"cpf" binding:"required,len=11,number"`
 	Email    *string    `json:"email" binding:"omitempty,email"`
 	DataNasc *time.Time `json:"data_nasc"`
 	Telefone *string    `json:"telefone" binding:"omitempty,min=10,max=20"`

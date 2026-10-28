@@ -32,7 +32,7 @@ func (ItemTransacao) TableName() string {
 
 type TransacaoCreate struct {
 	AlunoRM  int64                 `json:"aluno_rm"       binding:"required"`
-	AlunoPIN string                `json:"aluno_pin" binding:"required,len=4,numeric"`
+	AlunoPIN string                `json:"aluno_pin" binding:"required,len=4,number"`
 	Itens    []ItemTransacaoCreate `json:"itens"          binding:"required,min=1,dive"`
 }
 

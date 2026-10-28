@@ -71,7 +71,7 @@ type AlunoAtualizarSenha struct {
 
 type AlunoAtualizarPIN struct {
 	PINAtual         string `json:"pinAtual" binding:"required"`
-	NovoPIN          string `json:"novoPin" binding:"required,len=4,numeric"`
+	NovoPIN          string `json:"novoPin" binding:"required,len=4,number"`
 	ConfirmarNovoPIN string `json:"confirmarNovoPIN" binding:"required"`
 }
 
