@@ -60,6 +60,16 @@ async function cadastrarAluno(dados) {
     return { data: data.aluno, error: null }
 }
 
+async function cadastrarFuncionario(dados) {
+    const { data, error } = await apiClient.request("POST", "/api/admin/funcionario", dados)
+    
+    if (error) {
+        return { data: null, error }
+    }
+
+    return { data: data.funcionario, error: null }
+}
+
 
 const adminService = {
     listarAlunos,
@@ -68,6 +78,7 @@ const adminService = {
     alterarStatusFuncionario,
     listarCursos,
     cadastrarAluno,
+    cadastrarFuncionario,
 };
 
 export default adminService;
