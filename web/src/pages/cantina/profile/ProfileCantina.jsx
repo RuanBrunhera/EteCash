@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Camera, Pencil } from "lucide-react";
 import { funcionarioService } from "../../../services/funcionarioService";
+import { formatarCPF } from "../../../utils/cpf";
 import ModalEditarCampo from "../../../components/common/ModalEditarCampo";
 import ModalSucesso from "../../../components/common/ModalSucesso";
 
@@ -94,11 +95,6 @@ export default function ProfileCantina() {
     }
   };
 
-  const formatarCPF = (cpf) => {
-    if (!cpf || cpf.length !== 11) return cpf || "-";
-    return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-  };
-
   const iniciais = (funcionario.nome || "Funcionário")
     .split(" ")
     .filter(Boolean)
@@ -166,7 +162,7 @@ export default function ProfileCantina() {
           <ProfileInfoCard titulo="E-mail" info={funcionario.email || "-"} />
           <ProfileInfoCard
             titulo="Telefone"
-            info={funcionario.telefone || "-"}
+            info={funcionario.cpf ? formatarCPF(funcionario.cpf) : "-"}
           />
         </div>
         <div className="mt-6 pt-6 border-t border-zinc-800">

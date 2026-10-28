@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { authService } from "../../services/authService";
+import { formatarCPF, somenteDigitos } from "../../utils/cpf"
 import "./Login.css";
 
 const limparSessao = () => {
@@ -43,12 +44,14 @@ function Login() {
   const handleLoginFuncionario = async (e) => {
     e.preventDefault();
 
-    if (!cpf || !senhaFuncionario) {
+    const cpfLimpo = somenteDigitos(cpf)
+
+    if (cpfLimpo !== 11 || !senhaFuncionario) {
       alert("Preencha todos os campos!");
       return;
     }
 
-    const { data, error } = await authService.loginFuncionario(cpf, senhaFuncionario);
+    const { data, error } = await authService.loginFuncionario(cpfLimpo, senhaFuncionario);
 
     if (error) {
       alert(error);
@@ -107,10 +110,10 @@ function Login() {
               <input
                 type="text"
                 placeholder="CPF"
-                maxLength={11}
+                maxLength={14}
                 required
                 value={cpf}
-                onChange={(e) => setCpf(e.target.value)}
+                onChange={(e) => setCpf(formatarCPF(e.target.value))}
               />
               <i className="fa-solid fa-id-card"></i>
             </div>
