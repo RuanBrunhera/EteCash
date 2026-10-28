@@ -6,6 +6,7 @@ import (
 
 	"github.com/RuanBrunhera/Etecash/internal/config"
 	"github.com/RuanBrunhera/Etecash/internal/routes"
+	"github.com/RuanBrunhera/Etecash/internal/security"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
@@ -16,6 +17,7 @@ func main() {
 
 	// Carregar configurações do servidor
 	cfg := config.LoadConfig()
+	security.Init(cfg.JWT.SecretKey)
 
 	// Criar roteador
 	r := gin.Default()

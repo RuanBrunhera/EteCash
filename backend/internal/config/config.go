@@ -65,7 +65,7 @@ func LoadConfig() *Config {
 			SSLMode:  getEnv("DB_SSLMODE", "disable"),
 		},
 		JWT: JWTConfig{
-			SecretKey: getEnv("JWT_SECRET", "etec"),
+			SecretKey: getEnv("JWT_SECRET", ""),
 			Duration:  24 * time.Hour,
 		},
 		RateLimit: RateLimitConfig{
@@ -74,8 +74,8 @@ func LoadConfig() *Config {
 		},
 	}
 
-	if config.JWT.SecretKey == "etec" {
-		log.Println("AVISO: JWT_SECRET_KEY não está configurado, usando valor padrão inseguro")
+	if config.JWT.SecretKey == "" || config.JWT.SecretKey == "etec" || config.JWT.SecretKey == "troque-por-um-valor-gerado" {
+		log.Fatal("JWT_SECRET não configurado ou usando um valor de exemplo/inseguro")
 	}
 
 	if config.Database.Password == "123456" {

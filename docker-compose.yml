@@ -16,6 +16,7 @@ services:
       - DB_NAME=etecash
       - DB_USER=postgres
       - DB_PASSWORD=1q2w3e4r5T
+      - JWT_SECRET=${JWT_SECRET:?defina JWT_SECRET no .env}
     depends_on:
       db:
         condition: service_healthy
