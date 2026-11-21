@@ -18,6 +18,7 @@ import (
 
 var ErrEstoqueInsuficiente = errors.New("Estoque insuficiente")
 var ErrSaldoInsuficiente = errors.New("Saldo insuficiente")
+var ErrProdutoInativo = errors.New("Produto inativo")
 
 func EfetuarTransacao(c *gin.Context) {
 
@@ -118,6 +119,10 @@ func EfetuarTransacao(c *gin.Context) {
 				return err
 			}
 
+			if !produto.Ativo {
+				return fmt.Errorf("%w: %s", ErrProdutoInativo, produto.Nome)
+			}
+
 			//   b) verificar se `produto.Estoque >= item.Quantidade` (senão, retornar erro)
 			if produto.Estoque < item.Quantidade {
 				return fmt.Errorf("%w: %s", ErrEstoqueInsuficiente, produto.Nome)
@@ -158,6 +163,8 @@ func EfetuarTransacao(c *gin.Context) {
 
 	if err != nil {
 		switch {
+		case errors.Is(err, ErrProdutoInativo):
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": err.Error()})
 		case errors.Is(err, ErrEstoqueInsuficiente):
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		case errors.Is(err, ErrSaldoInsuficiente):
