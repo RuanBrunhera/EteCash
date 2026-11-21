@@ -3,19 +3,20 @@ package model
 import "time"
 
 type Aluno struct {
-	RM         int64       `json:"rm"     gorm:"primaryKey;column:rm"`
-	Nome       string      `json:"nome"   gorm:"not null;column:nome"          binding:"required,min=3,max=100"`
-	Serie      string      `json:"serie"  gorm:"type:char(1);not null;column:serie" binding:"required,oneof=1 2 3"`
-	CursoID    uint        `json:"curso_id" gorm:"not null;column:curso_id"`
-	Curso      Curso       `json:"curso" gorm:"foreignKey:CursoID"`
-	Saldo      float64     `json:"saldo"  gorm:"type:numeric(10,2);default:0"   binding:"min=0"`
-	Senha      string      `json:"-"      gorm:"not null;column:senha"`
-	PIN        string      `json:"-" gorm:"not null;column:pin"`
-	ChavePix   string      `json:"chave_pix" gorm:"column:chave_pix"`
-	Ativo      bool        `json:"ativo" gorm:"not null;column:ativo;default:true"`
-	Transacoes []Transacao `json:"transacoes,omitempty" gorm:"foreignKey:AlunoRM;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
-	CreatedAt  time.Time   `json:"created_at"`
-	UpdatedAt  time.Time   `json:"updated_at"`
+	RM             int64       `json:"rm"     gorm:"primaryKey;column:rm"`
+	Nome           string      `json:"nome"   gorm:"not null;column:nome"          binding:"required,min=3,max=100"`
+	Serie          string      `json:"serie"  gorm:"type:char(1);not null;column:serie" binding:"required,oneof=1 2 3"`
+	CursoID        uint        `json:"curso_id" gorm:"not null;column:curso_id"`
+	Curso          Curso       `json:"curso" gorm:"foreignKey:CursoID"`
+	Saldo          float64     `json:"saldo"  gorm:"type:numeric(10,2);default:0"   binding:"min=0"`
+	Senha          string      `json:"-"      gorm:"not null;column:senha"`
+	PIN            string      `json:"-" gorm:"not null;column:pin"`
+	ChavePix       string      `json:"chave_pix" gorm:"column:chave_pix"`
+	Ativo          bool        `json:"ativo" gorm:"not null;column:ativo;default:true"`
+	DataInativacao *time.Time  `json:"data_inativacao" gorm:"column:data_inativacao"`
+	Transacoes     []Transacao `json:"transacoes,omitempty" gorm:"foreignKey:AlunoRM;constraint:OnUpdate:CASCADE,OnDelete:RESTRICT;"`
+	CreatedAt      time.Time   `json:"created_at"`
+	UpdatedAt      time.Time   `json:"updated_at"`
 }
 
 func (Aluno) TableName() string {
@@ -30,15 +31,16 @@ type AlunoCreate struct {
 }
 
 type AlunoResponse struct {
-	RM        int64     `json:"rm"`
-	Nome      string    `json:"nome"`
-	Serie     string    `json:"serie"`
-	Curso     Curso     `json:"curso"`
-	Saldo     float64   `json:"saldo"`
-	ChavePix  string    `json:"chave_pix"`
-	Ativo     bool      `json:"ativo"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	RM             int64      `json:"rm"`
+	Nome           string     `json:"nome"`
+	Serie          string     `json:"serie"`
+	Curso          Curso      `json:"curso"`
+	Saldo          float64    `json:"saldo"`
+	ChavePix       string     `json:"chave_pix"`
+	Ativo          bool       `json:"ativo"`
+	DataInativacao *time.Time `json:"data_inativacao"`
+	CreatedAt      time.Time  `json:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at"`
 }
 
 type AlunoCadastroResponse struct {
@@ -81,15 +83,16 @@ type AlunoAtualizarChavePix struct {
 
 func (a *Aluno) ToResponse() AlunoResponse {
 	return AlunoResponse{
-		RM:        a.RM,
-		Nome:      a.Nome,
-		Serie:     a.Serie,
-		Curso:     a.Curso,
-		Saldo:     a.Saldo,
-		ChavePix:  a.ChavePix,
-		Ativo:     a.Ativo,
-		CreatedAt: a.CreatedAt,
-		UpdatedAt: a.UpdatedAt,
+		RM:             a.RM,
+		Nome:           a.Nome,
+		Serie:          a.Serie,
+		Curso:          a.Curso,
+		Saldo:          a.Saldo,
+		ChavePix:       a.ChavePix,
+		Ativo:          a.Ativo,
+		DataInativacao: a.DataInativacao,
+		CreatedAt:      a.CreatedAt,
+		UpdatedAt:      a.UpdatedAt,
 	}
 }
 
