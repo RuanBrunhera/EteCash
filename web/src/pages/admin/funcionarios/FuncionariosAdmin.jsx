@@ -50,6 +50,7 @@ export default function FuncionariosAdmin() {
   const [cadastroAberto, setCadastroAberto] = useState(false);
   const [busca, setBusca] = useState("");
   const [filtro, setFiltro] = useState("todos");
+  const [anoInativacaoFiltro, setAnoInativacaoFiltro] = useState("");
   const logado = obterFuncionarioLogado();
 
   async function carregar() {
@@ -93,7 +94,13 @@ export default function FuncionariosAdmin() {
 
       setFuncionarios((atuais) =>
         atuais.map((item) =>
-          item.id === funcionario.id ? { ...item, ativo } : item,
+          item.id === funcionario.id
+            ? {
+                ...item,
+                ativo,
+                data_inativacao: ativo ? null : new Date().toISOString(),
+              }
+            : item,
         ),
       );
     } finally {
@@ -106,6 +113,7 @@ export default function FuncionariosAdmin() {
     const buscaPorCpf = termo !== "" && /^[\d\s()./-]+$/.test(termo);
     const cpfBusca = termo.replace(/\D/g, "");
     const nomeBusca = normalizar(termo);
+    const ano = Number(anoInativacaoFiltro);
 
     return funcionarios.filter((funcionario) => {
       if (termo) {
@@ -120,20 +128,41 @@ export default function FuncionariosAdmin() {
       if (filtro === "admins" && !funcionario.is_admin) return false;
       if (filtro === "ativos" && !funcionario.ativo) return false;
       if (filtro === "inativos" && funcionario.ativo) return false;
+      if (
+        filtro === "inativos" &&
+        ano &&
+        new Date(funcionario.data_inativacao).getFullYear() !== ano
+      ) return false;
 
       return true;
     });
-  }, [funcionarios, busca, filtro]);
+  }, [funcionarios, busca, filtro, anoInativacaoFiltro]);
 
-  const temFiltro = busca.trim() !== "" || filtro !== "todos";
+  const anosInativacao = useMemo(
+    () =>
+      [...new Set(
+        funcionarios
+          .filter((funcionario) => !funcionario.ativo && funcionario.data_inativacao)
+          .map((funcionario) =>
+            new Date(funcionario.data_inativacao).getFullYear(),
+          ),
+      )].sort((a, b) => b - a),
+    [funcionarios],
+  );
+
+  const temFiltro =
+    busca.trim() !== "" ||
+    filtro !== "todos" ||
+    anoInativacaoFiltro !== "";
 
   function limparFiltros() {
     setBusca("");
     setFiltro("todos");
+    setAnoInativacaoFiltro("");
   }
 
   return (
-    <main className="min-h-full overflow-y-auto bg-[var(--color-background)] px-4 py-6 text-[var(--color-text)] sm:px-6 lg:px-8">
+    <main className="min-h-full overflow-y-auto rounded-3xl bg-[var(--color-background)] px-4 py-6 text-[var(--color-text)] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
           <div>
@@ -213,13 +242,32 @@ export default function FuncionariosAdmin() {
                 key={valor}
                 type="button"
                 aria-pressed={filtro === valor}
-                onClick={() => setFiltro(valor)}
+                onClick={() => {
+                  setFiltro(valor);
+                  if (valor !== "inativos") setAnoInativacaoFiltro("");
+                }}
                 className={classeFiltro(filtro === valor)}
               >
                 {label}
               </button>
             ))}
           </div>
+
+          {filtro === "inativos" && anosInativacao.length > 0 && (
+            <div className="border-l border-[var(--color-border-subtle)] pl-3">
+              <select
+                value={anoInativacaoFiltro}
+                onChange={(event) => setAnoInativacaoFiltro(event.target.value)}
+                aria-label="Filtrar ano de inativação"
+                className="h-10 rounded-md border border-[var(--color-border)] bg-[var(--color-card)] px-3 text-xs text-[var(--color-text)]"
+              >
+                <option value="">Todos os anos</option>
+                {anosInativacao.map((ano) => (
+                  <option key={ano} value={ano}>{ano}</option>
+                ))}
+              </select>
+            </div>
+          )}
 
           {temFiltro && (
             <button

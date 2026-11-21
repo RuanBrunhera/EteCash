@@ -50,6 +50,8 @@ export default function AlunosAdmin() {
   const [busca, setBusca] = useState("");
   const [cursoFiltro, setCursoFiltro] = useState(null);
   const [periodoFiltro, setPeriodoFiltro] = useState(null);
+  const [statusFiltro, setStatusFiltro] = useState("todos");
+  const [anoInativacaoFiltro, setAnoInativacaoFiltro] = useState("");
 
   async function carregar() {
     setCarregando(true);
@@ -86,7 +88,13 @@ export default function AlunosAdmin() {
 
       setAlunos((atuais) =>
         atuais.map((item) =>
-          item.rm === aluno.rm ? { ...item, ativo } : item,
+          item.rm === aluno.rm
+            ? {
+                ...item,
+                ativo,
+                data_inativacao: ativo ? null : new Date().toISOString(),
+              }
+            : item,
         ),
       );
     } finally {
@@ -97,9 +105,17 @@ export default function AlunosAdmin() {
   const alunosFiltrados = useMemo(() => {
     const termo = busca.trim();
     const curso = CURSOS.find((c) => c.sigla === cursoFiltro);
+    const ano = Number(anoInativacaoFiltro);
 
     return alunos.filter((aluno) => {
       if (termo && !String(aluno.rm).includes(termo)) return false;
+      if (statusFiltro === "ativos" && !aluno.ativo) return false;
+      if (statusFiltro === "inativos" && aluno.ativo) return false;
+      if (
+        statusFiltro === "inativos" &&
+        ano &&
+        new Date(aluno.data_inativacao).getFullYear() !== ano
+      ) return false;
 
       if (curso) {
         const nomeCurso = normalizar(aluno.curso?.nome);
@@ -112,18 +128,35 @@ export default function AlunosAdmin() {
 
       return true;
     });
-  }, [alunos, busca, cursoFiltro, periodoFiltro]);
+  }, [alunos, busca, cursoFiltro, periodoFiltro, statusFiltro, anoInativacaoFiltro]);
 
-  const temFiltro = busca !== "" || cursoFiltro !== null || periodoFiltro !== null;
+  const anosInativacao = useMemo(
+    () =>
+      [...new Set(
+        alunos
+          .filter((aluno) => !aluno.ativo && aluno.data_inativacao)
+          .map((aluno) => new Date(aluno.data_inativacao).getFullYear()),
+      )].sort((a, b) => b - a),
+    [alunos],
+  );
+
+  const temFiltro =
+    busca !== "" ||
+    cursoFiltro !== null ||
+    periodoFiltro !== null ||
+    statusFiltro !== "todos" ||
+    anoInativacaoFiltro !== "";
 
   function limparFiltros() {
     setBusca("");
     setCursoFiltro(null);
     setPeriodoFiltro(null);
+    setStatusFiltro("todos");
+    setAnoInativacaoFiltro("");
   }
 
   return (
-    <main className="min-h-full overflow-y-auto bg-[var(--color-background)] px-4 py-6 text-[var(--color-text)] sm:px-6 lg:px-8">
+    <main className="min-h-full overflow-y-auto rounded-3xl bg-[var(--color-background)] px-4 py-6 text-[var(--color-text)] sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
         <header className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-[var(--color-border-subtle)] pb-6">
           <div>
@@ -221,6 +254,41 @@ export default function AlunosAdmin() {
               </button>
             ))}
           </div>
+
+          <div role="group" aria-label="Filtrar por status" className="flex gap-2 border-l border-[var(--color-border-subtle)] pl-3">
+            {[
+              ["todos", "Todos"],
+              ["ativos", "Ativos"],
+              ["inativos", "Inativos"],
+            ].map(([valor, label]) => (
+              <button
+                key={valor}
+                type="button"
+                aria-pressed={statusFiltro === valor}
+                onClick={() => {
+                  setStatusFiltro(valor);
+                  if (valor !== "inativos") setAnoInativacaoFiltro("");
+                }}
+                className={classeFiltro(statusFiltro === valor)}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          {statusFiltro === "inativos" && anosInativacao.length > 0 && (
+            <select
+              value={anoInativacaoFiltro}
+              onChange={(event) => setAnoInativacaoFiltro(event.target.value)}
+              aria-label="Filtrar ano de inativação"
+              className="h-10 rounded-md border border-[var(--color-border)] bg-[var(--color-card)] px-3 text-xs text-[var(--color-text)]"
+            >
+              <option value="">Todos os anos</option>
+              {anosInativacao.map((ano) => (
+                <option key={ano} value={ano}>{ano}</option>
+              ))}
+            </select>
+          )}
 
           {temFiltro && (
             <button

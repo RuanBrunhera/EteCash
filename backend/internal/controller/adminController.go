@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/RuanBrunhera/Etecash/internal/config"
 	"github.com/RuanBrunhera/Etecash/internal/model"
@@ -39,8 +40,14 @@ func AlterarStatusAluno(c *gin.Context) {
 		return
 	}
 
-	// Update("ativo", ...) e não Updates(struct): o GORM ignora false em struct
-	resultado := config.DB.Model(&model.Aluno{}).Where("rm = ?", rm).Update("ativo", *body.Ativo)
+	dados := map[string]interface{}{"ativo": *body.Ativo}
+	if *body.Ativo {
+		dados["data_inativacao"] = nil
+	} else {
+		now := time.Now()
+		dados["data_inativacao"] = &now
+	}
+	resultado := config.DB.Model(&model.Aluno{}).Where("rm = ?", rm).Updates(dados)
 	if resultado.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar aluno"})
 		return
@@ -91,7 +98,14 @@ func AlterarStatusFuncionario(c *gin.Context) {
 		}
 	}
 
-	resultado := config.DB.Model(&model.Funcionario{}).Where("id = ?", id).Update("ativo", *body.Ativo)
+	dados := map[string]interface{}{"ativo": *body.Ativo}
+	if *body.Ativo {
+		dados["data_inativacao"] = nil
+	} else {
+		now := time.Now()
+		dados["data_inativacao"] = &now
+	}
+	resultado := config.DB.Model(&model.Funcionario{}).Where("id = ?", id).Updates(dados)
 	if resultado.Error != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao atualizar funcionário"})
 		return

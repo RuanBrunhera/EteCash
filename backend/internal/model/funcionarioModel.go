@@ -3,17 +3,18 @@ package model
 import "time"
 
 type Funcionario struct {
-	ID        uint       `json:"id"         gorm:"primaryKey"`
-	Nome      string     `json:"nome"       gorm:"not null;column:nome"      binding:"required,min=3,max=100"`
-	CPF       string     `json:"cpf"        gorm:"not null;unique;column:cpf" binding:"required,len=11"`
-	Email     *string    `json:"email"      gorm:"column:email"               binding:"omitempty,email"`
-	DataNasc  *time.Time `json:"data_nasc"  gorm:"column:data_nasc"`
-	Telefone  *string    `json:"telefone"   gorm:"column:telefone"            binding:"omitempty,min=10,max=20"`
-	Senha     string     `json:"-"          gorm:"not null;column:senha"`
-	IsAdmin   bool       `json:"-"          gorm:"not null;column:is_admin;default:false"`
-	Ativo     bool       `json:"ativo"      gorm:"not null;column:ativo;default:true"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+	ID             uint       `json:"id"         gorm:"primaryKey"`
+	Nome           string     `json:"nome"       gorm:"not null;column:nome"      binding:"required,min=3,max=100"`
+	CPF            string     `json:"cpf"        gorm:"not null;unique;column:cpf" binding:"required,len=11"`
+	Email          *string    `json:"email"      gorm:"column:email"               binding:"omitempty,email"`
+	DataNasc       *time.Time `json:"data_nasc"  gorm:"column:data_nasc"`
+	Telefone       *string    `json:"telefone"   gorm:"column:telefone"            binding:"omitempty,min=10,max=20"`
+	Senha          string     `json:"-"          gorm:"not null;column:senha"`
+	IsAdmin        bool       `json:"-"          gorm:"not null;column:is_admin;default:false"`
+	Ativo          bool       `json:"ativo"      gorm:"not null;column:ativo;default:true"`
+	DataInativacao *time.Time `json:"data_inativacao" gorm:"column:data_inativacao"`
+	CreatedAt      time.Time  `json:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at"`
 }
 
 func (Funcionario) TableName() string {
@@ -42,16 +43,17 @@ type FuncionarioAtualizarSenha struct {
 }
 
 type FuncionarioResponse struct {
-	ID        uint       `json:"id"`
-	Nome      string     `json:"nome"`
-	CPF       string     `json:"cpf"`
-	Email     *string    `json:"email,omitempty"`
-	DataNasc  *time.Time `json:"data_nasc,omitempty"`
-	Telefone  *string    `json:"telefone,omitempty"`
-	IsAdmin   bool       `json:"is_admin"`
-	Ativo     bool       `json:"ativo"`
-	CreatedAt time.Time  `json:"created_at"`
-	UpdatedAt time.Time  `json:"updated_at"`
+	ID             uint       `json:"id"`
+	Nome           string     `json:"nome"`
+	CPF            string     `json:"cpf"`
+	Email          *string    `json:"email,omitempty"`
+	DataNasc       *time.Time `json:"data_nasc,omitempty"`
+	Telefone       *string    `json:"telefone,omitempty"`
+	IsAdmin        bool       `json:"is_admin"`
+	Ativo          bool       `json:"ativo"`
+	DataInativacao *time.Time `json:"data_inativacao"`
+	CreatedAt      time.Time  `json:"created_at"`
+	UpdatedAt      time.Time  `json:"updated_at"`
 }
 
 type FuncionarioCadastroResponse struct {
@@ -71,15 +73,16 @@ type FuncionarioLogin struct {
 
 func (f *Funcionario) ToResponse() FuncionarioResponse {
 	return FuncionarioResponse{
-		ID:        f.ID,
-		Nome:      f.Nome,
-		CPF:       f.CPF,
-		Email:     f.Email,
-		DataNasc:  f.DataNasc,
-		Telefone:  f.Telefone,
-		IsAdmin:   f.IsAdmin,
-		Ativo:     f.Ativo,
-		CreatedAt: f.CreatedAt,
-		UpdatedAt: f.UpdatedAt,
+		ID:             f.ID,
+		Nome:           f.Nome,
+		CPF:            f.CPF,
+		Email:          f.Email,
+		DataNasc:       f.DataNasc,
+		Telefone:       f.Telefone,
+		IsAdmin:        f.IsAdmin,
+		Ativo:          f.Ativo,
+		DataInativacao: f.DataInativacao,
+		CreatedAt:      f.CreatedAt,
+		UpdatedAt:      f.UpdatedAt,
 	}
 }

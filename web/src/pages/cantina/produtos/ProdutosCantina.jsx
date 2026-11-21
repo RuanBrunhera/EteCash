@@ -325,6 +325,7 @@ export default function ProdutosCantina() {
   const [modalProdutoAberto, setModalProdutoAberto] = useState(false);
   const [modalReceberCargaAberto, setModalReceberCargaAberto] = useState(false);
   const [filtroEstoque, setFiltroEstoque] = useState("todos"); //pode ser "todos", "baixo" ou "esgotado"
+  const [filtroStatus, setFiltroStatus] = useState("ativos");
 
   const buscarProdutos = async () => {
     try {
@@ -399,8 +400,24 @@ export default function ProdutosCantina() {
 
   const produtosFiltrado = produtos.filter((p) => {
     const status = getEstoqueStatus(p.estoque);
-    return filtroEstoque === "todos" || status === filtroEstoque;
+    const statusAtivo =
+      filtroStatus === "todos" ||
+      (filtroStatus === "ativos" && p.ativo) ||
+      (filtroStatus === "inativos" && !p.ativo);
+    const statusEstoque =
+      filtroStatus === "inativos" ||
+      filtroEstoque === "todos" ||
+      (filtroEstoque === "normal" && status === "normal") ||
+      status === filtroEstoque;
+    return statusAtivo && statusEstoque;
   });
+
+  const selecionarStatusProduto = (valor) => {
+    setFiltroStatus(valor);
+    if (valor === "inativos") {
+      setFiltroEstoque("todos");
+    }
+  };
 
   return (
     <div className="p-8 space-y-6">
@@ -436,37 +453,83 @@ export default function ProdutosCantina() {
       ) : (
         <>
           {/* Botões de filtro */}
-          <div className="flex gap-2">
-            <button
-              onClick={() => setFiltroEstoque("todos")}
-              className={`text-sm px-4 py-2 rounded-xl transition-colors ${
-                filtroEstoque === "todos"
-                  ? "bg-red-600 text-white"
-                  : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-              }`}
+          <div className="flex flex-wrap items-center gap-3">
+            <div
+              role="group"
+              aria-label="Filtrar por estoque"
+              className="flex flex-wrap gap-2"
             >
-              Todos os produtos
-            </button>
-            <button
-              onClick={() => setFiltroEstoque("baixo")}
-              className={`text-sm px-4 py-2 rounded-xl transition-colors ${
-                filtroEstoque === "baixo"
-                  ? "bg-yellow-500 text-black"
-                  : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-              }`}
+              <button
+                onClick={() => setFiltroEstoque("todos")}
+                disabled={filtroStatus === "inativos"}
+                className={`text-sm px-4 py-2 rounded-xl transition-colors ${
+                  filtroEstoque === "todos"
+                    ? "bg-red-600 text-white"
+                    : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                } disabled:cursor-not-allowed disabled:opacity-40`}
+              >
+                Todos
+              </button>
+              <button
+                onClick={() => setFiltroEstoque("normal")}
+                disabled={filtroStatus === "inativos"}
+                className={`text-sm px-4 py-2 rounded-xl transition-colors ${
+                  filtroEstoque === "normal"
+                    ? "bg-emerald-500 text-black"
+                    : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                } disabled:cursor-not-allowed disabled:opacity-40`}
+              >
+                Em estoque
+              </button>
+              <button
+                onClick={() => setFiltroEstoque("baixo")}
+                disabled={filtroStatus === "inativos"}
+                className={`text-sm px-4 py-2 rounded-xl transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                  filtroEstoque === "baixo"
+                    ? "bg-yellow-500 text-black"
+                    : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                }`}
+              >
+                Estoque baixo
+              </button>
+              <button
+                onClick={() => setFiltroEstoque("esgotado")}
+                disabled={filtroStatus === "inativos"}
+                className={`text-sm px-4 py-2 rounded-xl transition-colors disabled:cursor-not-allowed disabled:opacity-40 ${
+                  filtroEstoque === "esgotado"
+                    ? "bg-red-500 text-white"
+                    : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                }`}
+              >
+                Fora de estoque
+              </button>
+            </div>
+
+            <div
+              role="group"
+              aria-label="Filtrar por status"
+              className="flex flex-wrap gap-2 border-l-2 border-zinc-600 pl-4"
             >
-              Estoque baixo
-            </button>
-            <button
-              onClick={() => setFiltroEstoque("esgotado")}
-              className={`text-sm px-4 py-2 rounded-xl transition-colors ${
-                filtroEstoque === "esgotado"
-                  ? "bg-red-500 text-white"
-                  : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
-              }`}
-            >
-              Fora de estoque
-            </button>
+              {[
+                ["todos", "Todos"],
+                ["ativos", "Ativo"],
+                ["inativos", "Inativo"],
+              ].map(([valor, label]) => (
+                <button
+                  key={valor}
+                  type="button"
+                  aria-pressed={filtroStatus === valor}
+                  onClick={() => selecionarStatusProduto(valor)}
+                  className={`text-sm px-4 py-2 rounded-xl transition-colors ${
+                    filtroStatus === valor
+                      ? "bg-red-600 text-white"
+                      : "bg-zinc-800 text-zinc-400 hover:bg-zinc-700"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Lista única já filtrada */}
