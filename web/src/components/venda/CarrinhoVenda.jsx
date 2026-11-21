@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ModalSucesso from "../common/ModalSucesso";
 import { Search } from "lucide-react";
 import { vendaService } from "../../services/vendaService";
+import { formatarMoeda } from "../../utils/formatarMoeda";
 
 export default function CarrinhoVenda({ onClose }) {
   const [etapa, setEtapa] = useState("buscar-aluno");
@@ -255,7 +256,7 @@ export default function CarrinhoVenda({ onClose }) {
                   <div>
                     <p className="text-white font-semibold">{produto.nome}</p>
                     <p className="text-zinc-400 text-sm">
-                      R$ {produto.preco.toFixed(2)}
+                      {formatarMoeda(produto.preco)}
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
@@ -285,7 +286,7 @@ export default function CarrinhoVenda({ onClose }) {
             <p className="text-white font-semibold">
               Total parcial:{" "}
               <span className="text-emerald-400">
-                R$ {totalParcial().toFixed(2)}
+                {formatarMoeda(totalParcial())}
               </span>
             </p>
           </div>
@@ -322,7 +323,7 @@ export default function CarrinhoVenda({ onClose }) {
             <p className="text-white font-semibold">
               Total da compra:{" "}
               <span className="text-emerald-400">
-                R$ {totalParcial().toFixed(2)}
+                {formatarMoeda(totalParcial())}
               </span>
             </p>
           </div>

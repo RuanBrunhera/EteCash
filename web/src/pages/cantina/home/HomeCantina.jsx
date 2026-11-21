@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import WelcomeCardCantina from '../../../components/dashboard/WelcomeCardCantina'
 import { funcionarioService } from "../../../services/funcionarioService.js"
+import { formatarMoeda } from '../../../utils/formatarMoeda.js'
 
 function ResumoCardCantina({ title, value, icon: Icon, color }) {
   const colors = {
@@ -62,7 +63,7 @@ export default function HomeCantina() {
           <div className='grid grid-cols-1 gap-4 md:grid-cols-3'>
             <ResumoCardCantina
               title="Faturamento"
-              value={`R$ ${resumo.faturamento.toFixed(2)}`}
+              value={formatarMoeda(resumo.faturamento)}
               icon={DollarSign}
               color="green"
             />

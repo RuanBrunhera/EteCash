@@ -4,6 +4,7 @@ import {
   PieChart, Pie, Cell, Legend
 } from 'recharts'
 import { alunoService } from '../../../services/alunoService'
+import { formatarMoeda } from '../../../utils/formatarMoeda'
 
 const COLORS = ['#dc2626', '#3b82f6']
 
@@ -15,7 +16,7 @@ const CustomTooltip = ({ active, payload, label }) => {
     return (
       <div className="bg-zinc-800 border border-zinc-700 rounded-xl px-4 py-2">
         <p className="text-zinc-400 text-xs">{label}</p>
-        <p className="text-white font-bold">R$ {payload[0].value.toFixed(2)}</p>
+        <p className="text-white font-bold">{formatarMoeda(payload[0].value)}</p>
       </div>
     )
   }

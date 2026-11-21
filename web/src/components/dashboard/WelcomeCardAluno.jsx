@@ -1,33 +1,32 @@
-import {useEffect, useState} from 'react'
-import etecashLogo from '../../assets/etecash_logo.png'
-import { alunoService } from '../../services/alunoService' 
+import { useEffect, useState } from "react";
+import etecashLogo from "../../assets/etecash_logo.png";
+import { alunoService } from "../../services/alunoService";
+import { formatarMoeda } from "../../utils/formatarMoeda";
 
 function WelcomeCardAluno() {
-  
   const [aluno, setAluno] = useState(
-    JSON.parse(localStorage.getItem('aluno')) || {nome: 'Aluno', saldo: 0}
-  )
-  
+    JSON.parse(localStorage.getItem("aluno")) || { nome: "Aluno", saldo: 0 },
+  );
+
   useEffect(() => {
-     async function buscarPerfil() {
-    const { data, error } = await alunoService.buscarPerfil()
+    async function buscarPerfil() {
+      const { data, error } = await alunoService.buscarPerfil();
 
-    if (!error && data) {
-      setAluno(data)
-      localStorage.setItem("aluno", JSON.stringify(data))
+      if (!error && data) {
+        setAluno(data);
+        localStorage.setItem("aluno", JSON.stringify(data));
+      }
     }
-  }
 
-  buscarPerfil() 
+    buscarPerfil();
 
-  window.addEventListener('saldoAtualizado', buscarPerfil)
-  return () => window.removeEventListener('saldoAtualizado', buscarPerfil)
-  }, [])
+    window.addEventListener("saldoAtualizado", buscarPerfil);
+    return () => window.removeEventListener("saldoAtualizado", buscarPerfil);
+  }, []);
 
   return (
     <section className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-zinc-900 to-zinc-800 p-6 text-white border border-zinc-700">
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-
         {/* Lado esquerdo */}
         <div className="max-w-xl md:w-3/5">
           <p className="text-zinc-400 text-sm mb-1">Bem-vindo de volta,</p>
@@ -36,28 +35,28 @@ function WelcomeCardAluno() {
             Sistema de pagamentos digitais da cantina escolar.
           </p>
           <div className="mt-6 flex items-center gap-4 rounded-2xl bg-zinc-700/50 border border-zinc-600 px-4 py-3 text-sm">
-            <span className="text-2xl font-bold text-red-500">R$</span>
+            <span className="text-2xl font-bold text-red-500">$$</span>
             <div>
               <div className="font-medium text-zinc-300">Saldo atual</div>
-              <div className="text-white font-bold text-lg">R$ {aluno.saldo?.toFixed(2) || '0,00'}</div>
+              <div className="text-white font-bold text-lg">
+                {formatarMoeda(aluno.saldo ?? 0)}
+              </div>
             </div>
           </div>
         </div>
 
         {/* Lado direito - decorativo */}
-        <div className="relative lg:w-2/5 flex items-center justify-center">
-          <div className="text-8xl">
-            <img 
-            src={etecashLogo} 
-            alt=""
-            />
-          </div>
+        <div className="relative w-full lg:w-2/5 flex items-center justify-center p-4">
+          <img
+            src={etecashLogo}
+            alt="Logo do EteCash"
+          />
         </div>
       </div>
 
       <div className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-red-600/10 blur-2xl" />
     </section>
-  )
+  );
 }
 
-export default WelcomeCardAluno
+export default WelcomeCardAluno;

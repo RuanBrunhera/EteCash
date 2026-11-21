@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import etecashLogo from '../../assets/etecash_logo.png'
 import { funcionarioService } from '../../services/funcionarioService' 
+import { formatarMoeda } from '../../utils/formatarMoeda'
 
 function WelcomeCardCantina() {
   const [funcionario, setFuncionario] = useState(
@@ -50,7 +51,7 @@ function WelcomeCardCantina() {
             <div className="rounded-2xl bg-zinc-700/50 border border-zinc-600 px-4 py-3">
               <div className="text-xs text-zinc-400">Faturamento hoje</div>
               <div className="font-bold text-lg text-emerald-400">
-                R$ {resumo.faturamento.toFixed(2)}
+                {formatarMoeda(resumo.faturamento)}
               </div>
             </div>
             <div className="rounded-2xl bg-zinc-700/50 border border-zinc-600 px-4 py-3">

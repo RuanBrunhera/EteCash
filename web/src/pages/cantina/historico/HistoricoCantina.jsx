@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { vendaService } from '../../../services/vendaService'
 import ModalProdutosComprados from '../../../components/venda/ModalProdutosComprados'
+import { formatarMoeda } from '../../../utils/formatarMoeda'
 
 function formatarData(dataISO) {
   return new Date(dataISO).toLocaleString('pt-BR', {
@@ -66,7 +67,7 @@ export default function HistoricoCantina() {
                     Aluno: {transacao.aluno?.nome || transacao.aluno_rm}
                   </p>
                   <p className="text-emerald-400 font-semibold">
-                    Total: R$ {transacao.valor_total.toFixed(2)}
+                    Total: {formatarMoeda(transacao.valor_total)}
                   </p>
                 </div>
 

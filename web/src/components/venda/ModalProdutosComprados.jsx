@@ -1,3 +1,5 @@
+import { formatarMoeda } from "../../utils/formatarMoeda"
+
 export default function ModalProdutosComprados({ itens, onClose }) {
   return (
     <div
@@ -36,10 +38,10 @@ export default function ModalProdutosComprados({ itens, onClose }) {
                   </div>
                   <div className="text-right">
                     <p className="text-white">
-                      R$ {item.preco_unitario.toFixed(2)}
+                      {formatarMoeda(item.preco_unitario)}
                     </p>
                     <p className="text-zinc-400 text-sm">
-                      Subtotal: R$ {item.subtotal.toFixed(2)}
+                      Subtotal: {formatarMoeda(item.subtotal)}
                     </p>
                   </div>
                 </div>

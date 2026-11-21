@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Plus, Pencil, X, Package } from "lucide-react";
 import { produtoService } from "../../../services/produtoService";
+import { formatarMoeda } from "../../../utils/formatarMoeda";
 
 function getEstoqueStatus(estoque) {
   if (estoque === 0) return "esgotado";
@@ -47,7 +48,7 @@ function ProdutoCard({ produto, onEdit }) {
       <div className="flex items-center justify-between mt-auto pt-3 border-t border-zinc-800">
         <div>
           <p className="text-white font-bold text-lg">
-            R$ {produto.preco.toFixed(2)}
+            {formatarMoeda(produto.preco)}
           </p>
           <p className={`text-xs ${estoqueLabel}`}>
             Estoque: {produto.estoque}

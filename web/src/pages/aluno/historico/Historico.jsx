@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Plus, Minus } from 'lucide-react'
 import { alunoService } from '../../../services/alunoService'
 import ModalProdutosComprados from '../../../components/venda/ModalProdutosComprados'
+import { formatarMoeda } from '../../../utils/formatarMoeda'
 
 function TransacaoCard({ tipo, valor, formaPagamento, data_hora, transacao_id, onDetalhes, carregandoDetalhes }) {
   const isCredito = tipo === 'credito'
@@ -37,7 +38,7 @@ function TransacaoCard({ tipo, valor, formaPagamento, data_hora, transacao_id, o
 
       <div className="text-right">
         <p className={`font-bold text-lg ${isCredito ? 'text-emerald-400' : 'text-red-400'}`}>
-          {isCredito ? '+' : '-'} R$ {valor.toFixed(2)}
+          {isCredito ? '+' : '-'} {formatarMoeda(valor)}
         </p>
         <p className="text-sm text-zinc-500">{formatarData(data_hora)}</p>
         {tipo === 'debito' && transacao_id && (

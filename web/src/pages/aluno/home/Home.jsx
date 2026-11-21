@@ -2,6 +2,7 @@ import { useState, useEffect } from "react"
 import WelcomeCardAluno from "../../../components/dashboard/WelcomeCardAluno.jsx"
 import { Wallet, ShoppingBag, TrendingDown } from "lucide-react"
 import { alunoService } from "../../../services/alunoService.js"
+import { formatarMoeda } from "../../../utils/formatarMoeda.js"
 
 function ResumoCard({ title, value, icon: Icon, color }) {
   const colors = {
@@ -67,13 +68,13 @@ export default function Home() {
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
               <ResumoCard 
                 title="Total Depositado"
-                value={`R$ ${resumo.totalDepositos.toFixed(2)}`}
+                value={formatarMoeda(resumo.totalDepositos)}
                 icon={Wallet}
                 color="green"
               />
                <ResumoCard 
                 title="Total gasto"
-                value={`R$ ${resumo.totalGasto.toFixed(2)}`}
+                value={formatarMoeda(resumo.totalGasto)}
                 icon={TrendingDown}
                 color="red"
               /> 
