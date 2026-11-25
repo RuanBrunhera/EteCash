@@ -24,7 +24,7 @@ func main() {
 	// Criar roteador
 	r := gin.Default()
 
-	// CORS
+	// Configuração de CORS
 	r.Use(cors.New(cors.Config{
 		AllowOriginFunc: func(origin string) bool {
 			if origin == "" {
@@ -37,12 +37,18 @@ func main() {
 			}
 
 			host := strings.ToLower(parsed.Hostname())
-			return parsed.Scheme == "http" && host == "localhost" ||
-				parsed.Scheme == "https" && strings.HasSuffix(host, ".app.github.dev")
+
+			return (parsed.Scheme == "http" && host == "localhost") ||
+				(parsed.Scheme == "https" && strings.HasSuffix(host, ".app.github.dev")) ||
+				(parsed.Scheme == "https" && host == "etecash.vercel.app")
 		},
-		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"Authorization", "Content-Type", "Accept", "Origin"},
-		ExposeHeaders: []string{"Content-Length"},
+		AllowMethods: []string{
+			"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS",
+		},
+		AllowHeaders: []string{
+			"Authorization", "Content-Type", "Accept", "Origin",
+		},
+		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true,
 	}))
 
@@ -53,11 +59,12 @@ func main() {
 		})
 	})
 
-	// Setup de todas as rotas
+	// Configuração das rotas da API
 	routes.SetupRoutes(r)
 
-	// Iniciar Servidor
+	// Iniciar servidor
 	log.Printf("Iniciando servidor na porta %s...\n", cfg.Server.Port)
+
 	if err := r.Run(":" + cfg.Server.Port); err != nil {
 		log.Fatalf("Falha ao iniciar servidor: %v", err)
 	}
