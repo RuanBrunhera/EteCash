@@ -29,7 +29,7 @@ Nenhum dado é inserido neste arquivo.
 
 ---
 
-### `seed.sql`
+### `seed/*.sql`
 
 Contém dados iniciais para testes e validação do sistema, simulando:
 
@@ -37,6 +37,11 @@ Contém dados iniciais para testes e validação do sistema, simulando:
 - Funcionários da cantina
 - Produtos
 - Transações e itens de transação
+- Créditos e débitos no histórico dos alunos
+
+Os seeds foram preparados para cobrir vários cursos e períodos, vendas distribuídas
+entre funcionários e dados relativos à semana atual e aos últimos seis meses.
+Use `make seeds` com os containers em execução para aplicar todos na ordem correta.
 
 Este arquivo é utilizado apenas em ambiente de desenvolvimento e testes.
 

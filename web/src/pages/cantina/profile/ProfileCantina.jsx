@@ -103,7 +103,11 @@ export default function ProfileCantina() {
     .slice(0, 2)
     .toUpperCase();
 
-  const handleSuccess = (mensagem) => {
+  const handleSuccess = (mensagem, dadosAtualizados) => {
+    if (dadosAtualizados) {
+      setFuncionario(dadosAtualizados);
+      localStorage.setItem("funcionario", JSON.stringify(dadosAtualizados));
+    }
     setModalAberto(null);
     setMensagemSucesso(mensagem);
     setSucessoAberto(true);
@@ -162,7 +166,7 @@ export default function ProfileCantina() {
           <ProfileInfoCard titulo="E-mail" info={funcionario.email || "-"} />
           <ProfileInfoCard
             titulo="Telefone"
-            info={funcionario.cpf ? formatarCPF(funcionario.cpf) : "-"}
+            info={funcionario.telefone || "-"}
           />
         </div>
         <div className="mt-6 pt-6 border-t border-zinc-800">
@@ -200,7 +204,9 @@ export default function ProfileCantina() {
           titulo={modalProps.titulo}
           campos={modalProps.campos}
           onSave={modalProps.onSave}
-          onSuccess={() => handleSuccess(modalProps.mensagemSucesso)}
+          onSuccess={(dadosAtualizados) =>
+            handleSuccess(modalProps.mensagemSucesso, dadosAtualizados)
+          }
         />
       )}
 

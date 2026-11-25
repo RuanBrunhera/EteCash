@@ -9,6 +9,13 @@ function WelcomeCardCantina() {
   )
   const [resumo, setResumo] = useState({ faturamento: 0, numero_vendas: 0 })
 
+  const mockDate = import.meta.env.VITE_MOCK_DATE
+  const parsedMockDate = mockDate ? new Date(`${mockDate}T12:00:00`) : null
+  const dataExibida =
+    parsedMockDate && !Number.isNaN(parsedMockDate.getTime())
+      ? parsedMockDate
+      : new Date()
+
   useEffect(() => {
     async function carregarResumo() {
       const { data, error } = await funcionarioService.buscarResumoDia()
@@ -41,7 +48,7 @@ function WelcomeCardCantina() {
             <div>
               <div className="font-medium text-zinc-300">Hoje é</div>
               <div className="text-white font-bold text-lg capitalize">
-                {new Date().toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
+                {dataExibida.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' })}
               </div>
             </div>
           </div>

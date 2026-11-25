@@ -25,13 +25,13 @@ export default function ModalEditarCampo({
     setEnviando(true);
     setErro(null);
 
-    const { error }= await onSave(valores)
+    const { data, error } = await onSave(valores)
 
     if (error) {
       setErro(error)
       setValores({})
     } else {
-      onSuccess()
+      onSuccess(data)
       onClose()
       setValores({})
     }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Camera, Pencil } from "lucide-react";
-import quandale from "../../../assets/knpgsvnouo191.jpg";
+import quandale from "../../../assets/download.jpeg";
 import { alunoService } from "../../../services/alunoService";
 import ModalEditarCampo from "../../../components/common/ModalEditarCampo";
 import ModalSucesso from "../../../components/common/ModalSucesso";

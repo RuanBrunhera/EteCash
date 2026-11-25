@@ -74,6 +74,7 @@ services:
     environment:
       - NODE_ENV=development
       - VITE_API_URL=${VITE_API_URL:-http://localhost:3000}
+      - VITE_MOCK_DATE=${VITE_MOCK_DATE:-}
     depends_on:
       - api
 

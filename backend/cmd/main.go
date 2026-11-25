@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/RuanBrunhera/Etecash/internal/config"
 	"github.com/RuanBrunhera/Etecash/internal/routes"
@@ -24,9 +26,24 @@ func main() {
 
 	// CORS
 	r.Use(cors.New(cors.Config{
-		AllowOrigins: []string{"*"},
+		AllowOriginFunc: func(origin string) bool {
+			if origin == "" {
+				return false
+			}
+
+			parsed, err := url.Parse(origin)
+			if err != nil || parsed.Scheme == "" || parsed.Host == "" {
+				return false
+			}
+
+			host := strings.ToLower(parsed.Hostname())
+			return parsed.Scheme == "http" && host == "localhost" ||
+				parsed.Scheme == "https" && strings.HasSuffix(host, ".app.github.dev")
+		},
 		AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"},
-		AllowHeaders: []string{"*"},
+		AllowHeaders: []string{"Authorization", "Content-Type", "Accept", "Origin"},
+		ExposeHeaders: []string{"Content-Length"},
+		AllowCredentials: true,
 	}))
 
 	// Health check

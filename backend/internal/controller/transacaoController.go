@@ -269,12 +269,22 @@ func montarItensResponse(itens []model.ItemTransacao) []gin.H {
 
 func ListarTransacoes(c *gin.Context) {
 	var transacoes []model.Transacao
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Usuário não autenticado"})
+		return
+	}
 
-	if err := config.DB.
+	query := config.DB.
 		Preload("Aluno").
 		Preload("Itens.Produto").
-		Order("data_hora DESC").
-		Find(&transacoes).Error; err != nil {
+		Order("data_hora DESC")
+
+	if role, ok := c.Get("userRole"); !ok || role != "admin" {
+		query = query.Where("funcionario_id = ?", userID)
+	}
+
+	if err := query.Find(&transacoes).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Erro ao buscar transações"})
 		return
 	}
