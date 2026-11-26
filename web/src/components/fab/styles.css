@@ -2,8 +2,8 @@
 
   .fab-wrapper {
     position: fixed;
-    bottom: 32px;
-    right: 45px;
+    bottom: max(20px, env(safe-area-inset-bottom));
+    right: max(20px, env(safe-area-inset-right));
     z-index: 1000;
     font-family: 'DM Sans', sans-serif;
   }
@@ -92,6 +92,19 @@
   .fab-icon {
     transition: transform 0.3s ease;
     font-size: 22px;
+  }
+
+  @media (max-width: 640px) {
+    .fab-wrapper {
+      right: max(16px, env(safe-area-inset-right));
+      bottom: max(16px, env(safe-area-inset-bottom));
+    }
+
+    .fab-label {
+      max-width: calc(100vw - 100px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   }
 
   .fab-icon.open {

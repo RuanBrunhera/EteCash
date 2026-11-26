@@ -117,7 +117,7 @@ export default function ProfileCantina() {
 
   if (loading) {
     return (
-      <div className="max-w-md mx-auto mt-10 text-center text-zinc-400">
+      <div className="mx-auto mt-6 max-w-md px-4 text-center text-zinc-400 sm:mt-10">
         Carregando perfil...
       </div>
     );
@@ -126,8 +126,8 @@ export default function ProfileCantina() {
   const modalProps = getModalProps();
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <div className="bg-zinc-900 rounded-3xl shadow-sm ring-1 ring-zinc-800 p-8">
+    <div className="mx-auto mt-4 w-full max-w-md px-4 sm:mt-10">
+      <div className="rounded-3xl bg-zinc-900 p-5 shadow-sm ring-1 ring-zinc-800 sm:p-8">
         {erro && (
           <p className="text-red-400 text-sm text-center mb-4">{erro}</p>
         )}
@@ -171,7 +171,7 @@ export default function ProfileCantina() {
         </div>
         <div className="mt-6 pt-6 border-t border-zinc-800">
           <p className="text-xs text-zinc-500 mb-3 font-semibold">SEGURANÇA</p>
-          <div className="flex gap-3">
+          <div className="flex gap-2 sm:gap-3">
             <button
               onClick={() => setModalAberto("email")}
               className="flex-1 min-w-0 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 px-2 hover:bg-zinc-700 transition-colors flex flex-col items-center justify-center gap-1 text-center"

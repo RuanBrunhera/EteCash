@@ -54,7 +54,7 @@ function LogoutModal({ onConfirm, onCancel }) {
   )
 }
 
-function Sidebar({ items, storageKey, tipoUsuario }) {
+function Sidebar({ items, storageKey, tipoUsuario, mobileOpen, onMobileClose }) {
   const [open, setOpen] = useState(true)
   const [showLogoutModal, setShowLogoutModal] = useState(false)
   const navigate = useNavigate()
@@ -72,19 +72,19 @@ function Sidebar({ items, storageKey, tipoUsuario }) {
   }, [open, storageKey])
 
   function handleLogout() {
-  localStorage.removeItem('token')
-  localStorage.removeItem('role')
-  localStorage.removeItem(tipoUsuario === 'aluno' ? 'aluno' : 'funcionario')
-  setShowLogoutModal(false)
-  navigate('/')
-}
+    localStorage.removeItem('token')
+    localStorage.removeItem('role')
+    localStorage.removeItem(tipoUsuario === 'aluno' ? 'aluno' : 'funcionario')
+    setShowLogoutModal(false)
+    navigate('/')
+  }
 
   return (
     <aside
-      className={`relative bg-gradient-to-b from-zinc-900 to-zinc-950 text-white transition-[width] duration-300 rounded-l-3xl flex flex-col h-full border-r border-zinc-800 ${
-        open ? 'w-52' : 'w-20'
-      }`}
-      aria-label="Primary navigation"
+      className={`fixed inset-y-0 left-0 z-50 flex h-dvh w-64 flex-col rounded-r-3xl border-r border-zinc-800 bg-gradient-to-b from-zinc-900 to-zinc-950 text-white shadow-2xl transition-transform duration-300 md:relative md:z-auto md:h-full md:shrink-0 md:rounded-l-3xl md:rounded-r-none md:shadow-none md:transition-[width] ${
+        mobileOpen ? 'translate-x-0' : '-translate-x-full'
+      } ${open ? 'md:w-52' : 'md:w-20'} md:translate-x-0`}
+      aria-label="Navegação principal"
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-2 px-4 py-5 border-b border-zinc-800">
@@ -92,14 +92,15 @@ function Sidebar({ items, storageKey, tipoUsuario }) {
           <div className="size-9 rounded-xl bg-red-600 grid place-items-center font-bold text-sm">
             EC
           </div>
-          <span className={`${open ? 'block' : 'hidden'} text-sm font-semibold text-white`}>
+          <span className="text-sm font-semibold text-white">
             EteCash
           </span>
         </div>
         <button
-          aria-label={open ? 'Collapse sidebar' : 'Expand sidebar'}
+          className="hidden rounded-lg bg-zinc-800 p-1.5 transition-colors hover:bg-zinc-700 md:block"
+          aria-label={open ? 'Recolher menu lateral' : 'Expandir menu lateral'}
+          aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="rounded-lg bg-zinc-800 p-1.5 hover:bg-zinc-700 transition-colors"
         >
           {open ? <ChevronFirst className="size-5" /> : <ChevronLast className="size-5" />}
         </button>
@@ -115,7 +116,10 @@ function Sidebar({ items, storageKey, tipoUsuario }) {
             return (
               <li key={href}>
                 <button
-                  onClick={() => navigate(href)}
+                  onClick={() => {
+                    navigate(href)
+                    onMobileClose()
+                  }}
                   aria-current={active ? 'page' : undefined}
                   className={`w-full flex items-center gap-3 rounded-xl px-3 py-3 transition-colors ${
                     active
@@ -124,7 +128,7 @@ function Sidebar({ items, storageKey, tipoUsuario }) {
                   }`}
                 >
                   <Icon className="size-5" />
-                  <span className={`${open ? 'block' : 'hidden'} text-sm`}>{label}</span>
+                  <span className={`text-sm ${open ? 'md:block' : 'md:hidden'}`}>{label}</span>
                 </button>
               </li>
             )
@@ -135,11 +139,14 @@ function Sidebar({ items, storageKey, tipoUsuario }) {
       {/* Rodapé */}
       <div className="px-3 pb-5 pt-2 border-t border-zinc-800 space-y-3">
         <button
-          onClick={() => setShowLogoutModal(true)}
+          onClick={() => {
+            setShowLogoutModal(true)
+            onMobileClose()
+          }}
           className="w-full flex items-center gap-3 rounded-xl px-3 py-3 text-zinc-400 hover:bg-red-600/10 hover:text-red-400 transition-colors"
         >
           <LogOut className="size-5" />
-          <span className={`${open ? 'block' : 'hidden'} text-sm`}>Sair</span>
+          <span className={`text-sm ${open ? 'md:block' : 'md:hidden'}`}>Sair</span>
         </button>
       </div>
 

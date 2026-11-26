@@ -97,7 +97,7 @@ export default function RelatoriosCantina() {
 
   if (loading) {
     return (
-      <div className="p-8 text-center text-zinc-400">
+      <div className="p-4 text-center text-zinc-400 sm:p-6 lg:p-8">
         Carregando relatório...
       </div>
     );
@@ -108,7 +108,7 @@ export default function RelatoriosCantina() {
   const topProdutos = dados.top_produtos;
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <div className="mb-6">
         <h1 className="text-white text-2xl font-semibold">
           Relatório de vendas
@@ -124,7 +124,7 @@ export default function RelatoriosCantina() {
         {/* Coluna esquerda: os 2 gráficos empilhados */}
         <div className="lg:col-span-2 space-y-6">
           {/* Gráfico 1: faturamento por dia da semana */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+          <div className="min-w-0 rounded-3xl border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
             <h3 className="text-white font-semibold mb-6">
               Faturamento por semana
             </h3>
@@ -151,7 +151,7 @@ export default function RelatoriosCantina() {
           </div>
 
           {/* Gráfico 2: faturamento por mês (6 meses) */}
-          <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+          <div className="min-w-0 rounded-3xl border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
             <h3 className="text-white font-semibold mb-6">
               Faturamento por mês
             </h3>
@@ -179,7 +179,7 @@ export default function RelatoriosCantina() {
         </div>
 
         {/* Coluna direita: top 10 produtos, com scroll */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-3xl p-6">
+        <div className="min-w-0 rounded-3xl border border-zinc-800 bg-zinc-900 p-4 sm:p-6">
           <h3 className="text-white font-semibold mb-4">
             Top 10 produtos mais vendidos
           </h3>

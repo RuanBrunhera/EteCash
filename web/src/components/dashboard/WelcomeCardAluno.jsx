@@ -30,7 +30,7 @@ function WelcomeCardAluno() {
         {/* Lado esquerdo */}
         <div className="max-w-xl md:w-3/5">
           <p className="text-zinc-400 text-sm mb-1">Bem-vindo de volta,</p>
-          <h1 className="text-3xl font-semibold">{aluno.nome} 👋</h1>
+          <h1 className="text-2xl font-semibold sm:text-3xl">{aluno.nome} 👋</h1>
           <p className="mt-2 text-sm leading-6 text-zinc-400">
             Sistema de pagamentos digitais da cantina escolar.
           </p>
@@ -50,6 +50,7 @@ function WelcomeCardAluno() {
           <img
             src={etecashLogo}
             alt="Logo do EteCash"
+            className="max-h-40 w-full max-w-[220px] object-contain"
           />
         </div>
       </div>

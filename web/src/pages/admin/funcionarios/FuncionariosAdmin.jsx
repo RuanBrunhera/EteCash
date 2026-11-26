@@ -235,7 +235,7 @@ export default function FuncionariosAdmin() {
           <div
             role="group"
             aria-label="Filtrar funcionários"
-            className="flex flex-wrap gap-2 border-l border-[var(--color-border-subtle)] pl-3"
+            className="flex flex-wrap gap-2 sm:border-l sm:border-[var(--color-border-subtle)] sm:pl-3"
           >
             {FILTROS.map(({ valor, label }) => (
               <button

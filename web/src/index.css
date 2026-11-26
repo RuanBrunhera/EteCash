@@ -16,6 +16,26 @@
   --color-input-bg: #27272a;
 }
 
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-width: 320px;
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-text);
+  font-family: "DM Sans", "Poppins", sans-serif;
+}
+
 html {
   scrollbar-gutter: stable;
 }

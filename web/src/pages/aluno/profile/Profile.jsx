@@ -125,7 +125,7 @@ export default function Profile() {
 
   if (loading) {
     return (
-      <div className="max-w-md mx-auto mt-10 flex items-center justify-center h-screen">
+      <div className="mx-auto mt-6 flex min-h-[50vh] max-w-md items-center justify-center px-4 sm:mt-10">
         <p className="text-zinc-400">Carregando perfil...</p>
       </div>
     );
@@ -134,8 +134,8 @@ export default function Profile() {
   const modalProps = getModalProps();
 
   return (
-    <div className="max-w-md mx-auto mt-10">
-      <div className="bg-zinc-950 rounded-3xl shadow-sm ring-1 ring-zinc-800 p-8">
+    <div className="mx-auto mt-4 w-full max-w-md px-4 sm:mt-10">
+      <div className="rounded-3xl bg-zinc-950 p-5 shadow-sm ring-1 ring-zinc-800 sm:p-8">
         {/* Foto/Avatar */}
         <div className="flex justify-center mb-6 relative">
           <div className="relative">
@@ -166,7 +166,7 @@ export default function Profile() {
 
         <div className="mt-6 pt-6 border-t border-zinc-800">
           <p className="text-xs text-zinc-500 mb-3 font-semibold">SEGURANÇA</p>
-          <div className="flex gap-3">
+          <div className="flex flex-col gap-3 sm:flex-row">
             <button
               onClick={() => setModalAberto("senha")}
               className="flex-1 rounded-xl bg-zinc-800 text-white text-sm font-medium py-2.5 hover:bg-zinc-700 transition-colors flex items-center justify-center gap-2"

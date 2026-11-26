@@ -105,12 +105,12 @@ export default function Statistics() {
 
     if (loading) {
       return (
-        <div className='p-8 text-center text-zinc-400'>Carregando estatísticas...</div>
+        <div className='p-4 text-center text-zinc-400 sm:p-6 lg:p-8'>Carregando estatísticas...</div>
       )
     }
   
   return (
-    <div className='p-8 space-y-8'>
+    <div className='space-y-6 p-4 sm:space-y-8 sm:p-6 lg:p-8'>
       
       {/* Header */}
       <div>
@@ -121,7 +121,7 @@ export default function Statistics() {
       {erro && <p className='text-red-400 text-sm'>{erro}</p>}
 
       {/* Gráfico de Barras - Gastos por mês */}
-      <div className='bg-zinc-900 border border-zinc-800 rounded-3xl p-6'>
+      <div className='min-w-0 rounded-3xl border border-zinc-800 bg-zinc-900 p-4 sm:p-6'>
         <h3 className='text-white font-semibold mb-6'>Gastos por mês</h3>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={gastosPorMes}>
@@ -135,7 +135,7 @@ export default function Statistics() {
       </div>
 
       {/* Gráfico de pizza - Métodos de pagamento */}
-      <div className='bg-zinc-900 border border-zinc-800 rounded-3xl p-6'>
+      <div className='min-w-0 rounded-3xl border border-zinc-800 bg-zinc-900 p-4 sm:p-6'>
         <h3 className='text-white font-semibol mb-6'>Formas de débito na sua conta</h3>
         {semDepositos ? (
           <p className='text-zinc-400 text-sm mt-1'>

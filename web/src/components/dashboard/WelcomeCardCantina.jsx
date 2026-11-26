@@ -37,7 +37,7 @@ function WelcomeCardCantina() {
         {/* Lado esquerdo */}
         <div className="max-w-xl md:w-3/5">
           <p className="text-zinc-400 text-sm mb-1">Bem-vindo de volta,</p>
-          <h1 className="text-3xl font-semibold">{funcionario.nome} 👋</h1>
+          <h1 className="text-2xl font-semibold sm:text-3xl">{funcionario.nome} 👋</h1>
           <p className="mt-2 text-sm leading-6 text-zinc-400">
             Sistema de pagamentos digitais da cantina escolar.
           </p>
@@ -69,8 +69,8 @@ function WelcomeCardCantina() {
         </div>
 
         {/* Lado direito - Logo */}
-        <div className="relative lg:w-2/5 flex items-center justify-center">
-          <img src={etecashLogo} alt="EteCash Logo" className="opacity-90" />
+        <div className="relative flex items-center justify-center lg:w-2/5">
+        <img src={etecashLogo} alt="EteCash Logo" className="max-h-40 w-full max-w-[220px] object-contain opacity-90" />
         </div>
       </div>
 

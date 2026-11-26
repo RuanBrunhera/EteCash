@@ -223,7 +223,7 @@ export default function AlunosAdmin() {
             )}
           </div>
 
-          <div role="group" aria-label="Filtrar por curso" className="flex gap-2 border-l border-[var(--color-border-subtle)] pl-3">
+          <div role="group" aria-label="Filtrar por curso" className="flex flex-wrap gap-2 sm:border-l sm:border-[var(--color-border-subtle)] sm:pl-3">
             {CURSOS.map(({ sigla }) => (
               <button
                 key={sigla}
@@ -239,7 +239,7 @@ export default function AlunosAdmin() {
             ))}
           </div>
 
-          <div role="group" aria-label="Filtrar por período" className="flex gap-2 border-l border-[var(--color-border-subtle)] pl-3">
+          <div role="group" aria-label="Filtrar por período" className="flex flex-wrap gap-2 sm:border-l sm:border-[var(--color-border-subtle)] sm:pl-3">
             {PERIODOS.map(({ valor, label }) => (
               <button
                 key={valor}
@@ -255,7 +255,7 @@ export default function AlunosAdmin() {
             ))}
           </div>
 
-          <div role="group" aria-label="Filtrar por status" className="flex gap-2 border-l border-[var(--color-border-subtle)] pl-3">
+          <div role="group" aria-label="Filtrar por status" className="flex flex-wrap gap-2 sm:border-l sm:border-[var(--color-border-subtle)] sm:pl-3">
             {[
               ["todos", "Todos"],
               ["ativos", "Ativos"],

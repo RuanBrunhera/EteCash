@@ -53,7 +53,7 @@ export default function HomeCantina() {
   },[])
 
   return (
-    <div className='p-8 space-y-6'>
+    <div className='space-y-6 p-4 sm:p-6 lg:p-8'>
       <div>
         <WelcomeCardCantina />
         <h2 className='text-white font-semibold mb-4 mt-6'>Resumo de hoje</h2>
