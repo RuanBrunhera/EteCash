@@ -190,6 +190,12 @@ form {
     transition: 0.6s ease-in-out;
 }
 
+.toggle-panel h1 {
+    max-width: 100%;
+    text-align: center;
+    text-wrap: balance;
+}
+
 .toggle-panel.toggle-left {
     left: 0;
     transition-delay: 1.2s;
@@ -227,6 +233,17 @@ form {
     background: rgba(255, 255, 255, 0.1);
 }
 
+@media (min-width: 769px) and (max-width: 1024px) {
+    .toggle-panel {
+        padding: 0 18px;
+    }
+
+    .toggle-panel h1 {
+        font-size: clamp(22px, 3.2vw, 30px);
+        line-height: 1.2;
+    }
+}
+
 @media (max-width: 768px) {
     .login-page {
         align-items: flex-start;
@@ -253,7 +270,7 @@ form {
         height: auto;
         min-height: 0;
         padding: 36px clamp(20px, 7vw, 32px) 28px;
-        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0.3s;
+        transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out, visibility 0s 0.6s;
     }
 
     .container .form-box.login {
@@ -266,7 +283,7 @@ form {
     .container .form-box.register {
         z-index: 1;
         opacity: 0;
-        transform: translateY(24px);
+        transform: translateX(32px);
         visibility: hidden;
     }
 
@@ -277,7 +294,7 @@ form {
     .container.active .form-box.login {
         z-index: 1;
         opacity: 0;
-        transform: translateY(-24px);
+        transform: translateX(-32px);
         visibility: hidden;
     }
 
@@ -309,7 +326,7 @@ form {
         padding: 22px clamp(18px, 6vw, 28px);
         background: linear-gradient(135deg, #dc2626, #991b1b);
         text-align: center;
-        transition: opacity 0.3s ease, transform 0.3s ease, visibility 0s 0.3s;
+        transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out, visibility 0s 0.6s;
     }
 
     .toggle-panel.toggle-left {
@@ -324,7 +341,7 @@ form {
         z-index: 1;
         right: auto;
         opacity: 0;
-        transform: translateY(24px);
+        transform: translateX(32px);
         visibility: hidden;
     }
 
@@ -332,7 +349,7 @@ form {
         z-index: 1;
         left: auto;
         opacity: 0;
-        transform: translateY(-24px);
+        transform: translateX(-32px);
         visibility: hidden;
     }
 
@@ -349,14 +366,14 @@ form {
         max-width: 100%;
         font-size: clamp(19px, 5.5vw, 24px);
         line-height: 1.3;
-        overflow-wrap: anywhere;
+        overflow-wrap: normal;
     }
 
     .toggle-panel p {
         max-width: 32ch;
         margin: 8px 0 16px;
         line-height: 1.5;
-        overflow-wrap: anywhere;
+        overflow-wrap: normal;
     }
 
     .toggle-panel .btn {
@@ -406,6 +423,6 @@ form {
 @media (max-width: 768px) and (prefers-reduced-motion: reduce) {
     .form-box,
     .toggle-panel {
-        transition-duration: 0.01ms;
+        transition: none;
     }
 }
