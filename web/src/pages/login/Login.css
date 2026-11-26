@@ -228,91 +228,93 @@ form {
 }
 
 @media (max-width: 768px) {
+    .login-page {
+        align-items: flex-start;
+        overflow-y: auto;
+        padding: max(16px, env(safe-area-inset-top)) 16px max(16px, env(safe-area-inset-bottom));
+    }
+
     .container {
-        width: 100%;
+        display: flex;
+        flex-direction: column;
+        width: min(100%, 440px);
         height: auto;
-        min-height: 600px;
-        border-radius: 20px;
-        margin: 10px;
+        min-height: 0;
+        margin: auto;
+        border-radius: 24px;
     }
 
     .form-box {
+        position: relative;
+        inset: auto;
+        display: none;
         width: 100%;
-        height: 50%;
-        right: 0;
-        bottom: 0;
-        top: auto;
-        padding: 30px 24px;
+        height: auto;
+        min-height: 0;
+        padding: 36px clamp(20px, 7vw, 32px) 28px;
+        transition: none;
+        visibility: visible;
     }
 
-    .container.active .form-box {
-        right: 0;
-        bottom: 50%;
+    .container:not(.active) .form-box.login,
+    .container.active .form-box.register {
+        display: flex;
     }
 
-    .toggle-box::before {
-        left: 0;
-        top: -250%;
-        width: 100%;
-        height: 300%;
-        border-radius: 100px;
+    .form-box form {
+        max-width: 360px;
+        margin: 0 auto;
     }
 
-    .container.active .toggle-box::before {
-        left: 0;
-        top: 50%;
+    .toggle-box {
+        display: none;
     }
 
     .toggle-panel {
+        position: relative;
+        inset: auto;
+        display: none;
         width: 100%;
-        height: 50%;
+        height: auto;
+        min-height: 145px;
+        padding: 22px 20px max(22px, env(safe-area-inset-bottom));
+        border-top: 1px solid var(--color-border-subtle);
+        background: #202024;
+        text-align: center;
+        transition: none;
     }
 
-    .toggle-panel.toggle-left {
-        left: 0;
-        top: 0;
-    }
-
-    .container.active .toggle-panel.toggle-left {
-        left: 0;
-        top: -50%;
-    }
-
-    .toggle-panel.toggle-right {
-        right: 0;
-        top: -50%;
-    }
-
+    .container:not(.active) .toggle-panel.toggle-left,
     .container.active .toggle-panel.toggle-right {
-        right: 0;
-        top: 0;
+        display: flex;
+    }
+
+    .toggle-panel p {
+        margin: 6px 0 14px;
     }
 
     .container h1 {
-        font-size: 26px;
+        font-size: clamp(25px, 7vw, 30px);
+        margin: 0;
     }
 
     .input-box {
-        margin: 18px 0;
+        margin: 20px 0;
+    }
+
+    .toggle-panel .btn {
+        width: min(100%, 240px);
+        height: 44px;
+        font-size: 14px;
     }
 }
 
 @media (max-width: 400px) {
-    .container {
-        border-radius: 0;
-    }
-
     .form-box {
-        padding: 20px 16px;
-    }
-
-    .container h1 {
-        font-size: 23px;
+        padding: 30px 20px 24px;
     }
 
     .toggle-panel .btn {
-        width: min(200px, 90%);
-        padding: 0 10px;
-        font-size: 14px;
+        width: 100%;
     }
 }
