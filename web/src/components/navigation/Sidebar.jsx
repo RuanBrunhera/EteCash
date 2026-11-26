@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   LogOut,
@@ -150,12 +151,14 @@ function Sidebar({ items, storageKey, tipoUsuario, mobileOpen, onMobileClose }) 
         </button>
       </div>
 
-      {showLogoutModal && (
-        <LogoutModal
-          onConfirm={handleLogout}
-          onCancel={() => setShowLogoutModal(false)}
-        />
-      )}
+      {showLogoutModal &&
+        createPortal(
+          <LogoutModal
+            onConfirm={handleLogout}
+            onCancel={() => setShowLogoutModal(false)}
+          />,
+          document.body,
+        )}
     </aside>
   )
 }
